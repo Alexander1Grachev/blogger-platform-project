@@ -74,7 +74,7 @@ describe('CREATE post check', () => {
       })
       .expect(HttpStatus.BadRequest);
 
-    expect(invalidResponse.body.errorMessages).toHaveLength(4);
+    expect(invalidResponse.body.errorsMessages).toHaveLength(4);
 
     const PostList = await request(app).get(POSTS_PATH).expect(HttpStatus.Ok);
     expect(PostList.body).toHaveLength(0);

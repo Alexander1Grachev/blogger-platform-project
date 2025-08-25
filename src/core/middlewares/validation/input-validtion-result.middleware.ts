@@ -11,7 +11,7 @@ import { HttpStatus } from '../../consts/http-statuses';
 export const createErrorMessages = (
   errors: ValidationErrorType[],
 ): ValidationErrorDto => {
-  return { errorMessages: errors };
+  return { errorsMessages: errors };
 };
 
 export const formatErrors = (error: ValidationError): ValidationErrorType => {
@@ -31,7 +31,7 @@ export const inputValidationResultMiddleware = (
     .array({ onlyFirstError: true });
 
   if (errors.length > 0) {
-    res.status(HttpStatus.BadRequest).json({ errorMessages: errors });
+    res.status(HttpStatus.BadRequest).json({ errorsMessages: errors });
     return;
   }
   next();

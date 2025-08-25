@@ -7,7 +7,7 @@ import { ValidationErrorType } from '../../../core/types/validationError';
 import { createErrorMessages } from '../../../core/utils/error.utils';
 export function getBlogHandler(
   req: Request<{ id: string }>,
-  res: Response<Blog | { errorMessages: ValidationErrorType[] }>,
+  res: Response<Blog | { errorsMessages: ValidationErrorType[] }>,
 ) {
   const id = req.params.id;
   const blog = blogsReposytory.findById(id);
@@ -15,11 +15,9 @@ export function getBlogHandler(
   if (!blog) {
     res
       .status(HttpStatus.NotFound)
-      .send(
-        createErrorMessages([{ field: 'id', message: 'Blog not found' }]),
-      );
+      .send(createErrorMessages([{ message: 'Post not found', field: 'id' }]));
     return;
   }
 
-  res.send(blog);// httpStatus по дефолту 200
+  res.send(blog); // httpStatus по дефолту 200
 }

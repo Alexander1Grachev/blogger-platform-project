@@ -71,7 +71,7 @@ describe('UPDATE posts', () => {
         blogId: 123,
       })
       .expect(HttpStatus.BadRequest);
-    expect(invalidUpdate.body.errorMessages).toHaveLength(4);
+    expect(invalidUpdate.body.errorsMessages).toHaveLength(4);
   });
   
 

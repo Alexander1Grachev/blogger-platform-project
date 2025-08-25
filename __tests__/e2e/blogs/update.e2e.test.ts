@@ -49,7 +49,7 @@ describe('UPDATE blog checks', () => {
       })
       .expect(HttpStatus.BadRequest);
 
-    expect(invalidUpdate.body.errorMessages).toHaveLength(3);
+    expect(invalidUpdate.body.errorsMessages).toHaveLength(3);
   });
 
   it('✅ should update blog with valid data', async () => {

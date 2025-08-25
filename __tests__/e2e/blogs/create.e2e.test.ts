@@ -48,7 +48,7 @@ describe('CREATE blog checks', () => {
       })
       .expect(HttpStatus.BadRequest);
 
-    expect(invalidResponse.body.errorMessages).toHaveLength(3);
+    expect(invalidResponse.body.errorsMessages).toHaveLength(3);
 
     const blogList = await request(app).get(BLOGS_PATH).expect(HttpStatus.Ok);
     expect(blogList.body).toHaveLength(0);

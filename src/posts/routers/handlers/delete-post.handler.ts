@@ -8,14 +8,14 @@ import { ValidationErrorType } from '../../../core/types/validationError';
 
 export function deletePostHandler(
   req: Request<{ id: string }, void>,
-  res: Response<{ errorMessages: ValidationErrorType[] } | void>,
+  res: Response<{ errorsMessages: ValidationErrorType[] } | void>,
 ) {
   const id = req.params.id;
   const post = postsReposytory.findById(id);
   if (!post) {
     res
       .status(HttpStatus.NotFound)
-      .send(createErrorMessages([{ field: 'id', message: 'Post not found' }]));
+      .send(createErrorMessages([{ message: 'Post not found', field: 'id' }]));
     return;
   }
   postsReposytory.delete(id);

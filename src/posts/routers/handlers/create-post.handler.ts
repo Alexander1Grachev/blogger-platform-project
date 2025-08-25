@@ -11,8 +11,10 @@ export function createPostHandler(
 ) {
   const blog = db.blogs.find((b) => b.id === req.body.blogId);
   if (!blog) {
-    res.status(HttpStatus.NotFound).send({ message: 'Blog not found' });
-  return
+    res
+      .status(HttpStatus.NotFound)
+      .send({ message: 'Blog not found', field: 'id' });
+    return;
   }
   const newPost: Post = {
     id: db.blogs.length
