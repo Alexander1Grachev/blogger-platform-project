@@ -11,7 +11,7 @@ const titleValidation = body('title')
   .notEmpty()
   .withMessage('Title must not be empty')
   .bail()
-  
+
   .isLength({ max: 30 })
   .withMessage('Title must be fewer than 30 characters');
 
@@ -37,18 +37,18 @@ const contentValidation = body('content')
   .withMessage('Content should be string')
   .bail()
   .trim()
+  .notEmpty()
+  .withMessage('Content must not be empty')
+  .bail()
   .isLength({ max: 1000 })
-  .withMessage('Content must be fewer than 1000 characters')
+  .withMessage('Content must be fewer than 1000 characters');
 
-
-
-  const blogIdValidation = body('blogId')
+const blogIdValidation = body('blogId')
   .exists()
   .withMessage('BlogId is required')
   .bail()
   .isString()
-  .withMessage('BlogId should be string')
-
+  .withMessage('BlogId should be string');
 
 export const postInputDtoValidation = [
   titleValidation,
