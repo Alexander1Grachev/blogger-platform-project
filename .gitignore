@@ -1,0 +1,14 @@
+# node_modules и dist — лишние в репо
+node_modules/
+dist/
+
+# временные файлы и логи
+*.log
+.env
+.DS_Store
+
+# IDE-шный мусор
+.vscode/
+
+# Lock-файлы
+yarn.lock       

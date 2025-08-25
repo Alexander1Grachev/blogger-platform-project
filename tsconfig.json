@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "outDir": "./dist",// компилятор папка
+    "rootDir": "./src",// оснавная директория на ТС
+    "strict": true,
+    "noImplicitReturns": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],// берем все файлы из папки для компеляции в жс
+  "exclude": ["node_modules","dist", "__tests__"]//папки не нужны для прода
+}
