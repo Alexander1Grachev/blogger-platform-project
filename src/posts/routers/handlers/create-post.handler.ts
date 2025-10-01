@@ -2,30 +2,36 @@ import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { PostInputDto } from '../../dto/post-input-model';
 import { Post } from '../../types/post';
-import { postsReposytory } from '../../reposytories/posts.reposytories';
-import { db } from '../../../db/in-memory.db';
+import { ObjectId } from 'mongodb';
 
-export function createPostHandler(
+import { postsReposytory } from '../../reposytories/posts.reposytories';
+import { blogsReposytory } from '../../../blogs/reposytories/blogs.reposytories';
+import { mapToPostViewModel } from '../mappers/map-to-post-view-model.util';
+
+export async function createPostHandler(
   req: Request<{}, {}, PostInputDto>,
   res: Response,
 ) {
-  const blog = db.blogs.find((b) => b.id === req.body.blogId);
-  if (!blog) {
-    res
-      .status(HttpStatus.NotFound)
-      .send({ message: 'Blog not found', field: 'id' });
-    return;
+  try {
+    const blogId = req.body.blogId;
+    const blog = await blogsReposytory.findById(blogId);
+    if (!blog) {
+      res
+        .status(HttpStatus.NotFound)
+        .send({ message: 'Blog not found', field: 'id' });
+      return;
+    }
+    const newPost: Post = {
+      title: req.body.title,
+      shortDescription: req.body.shortDescription,
+      content: req.body.content,
+      blogId: new ObjectId(blogId), // ← Конвертируем в ObjectId!
+      createdAt: new Date(), 
+    };
+    const createdPost = await postsReposytory.create(newPost);
+    const postViewModel = mapToPostViewModel(createdPost, blog);
+    res.status(HttpStatus.Created).send(postViewModel);
+  } catch (e: unknown) {
+    res.sendStatus(HttpStatus.InternalServerError);
   }
-  const newPost: Post = {
-    id: db.blogs.length
-      ? String(Number(db.blogs[db.blogs.length - 1].id) + 1)
-      : '1',
-    title: req.body.title,
-    shortDescription: req.body.shortDescription,
-    content: req.body.content,
-    blogId: req.body.blogId,
-    blogName: blog.name,
-  };
-  postsReposytory.create(newPost);
-  res.status(HttpStatus.Created).send(newPost);
 }

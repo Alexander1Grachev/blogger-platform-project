@@ -6,27 +6,26 @@ import { BLOGS_PATH } from '../../../src/core/paths/paths';
 import { BlogInputDto } from '../../../src/blogs/dto/blog-input-model';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
 import { clearDb } from '../../utils/clear-db';
+import { getBlogDto } from '../../utils/blogs/get-blog-dto';
+import { createBlog } from '../../utils/blogs/create-blog';
 
 
 describe('CREATE blog checks', () => {
   const app = express();
   setupApp(app);
   const adminToken = generateBasicAuthToken();
-  const correctBlogData: BlogInputDto = {
-    name: 'Tea blog',
-    description: 'About tea and tea culture',
-    websiteUrl: 'https://example.com/path',
-  };
+  const correctBlogData: BlogInputDto = getBlogDto()
 
   beforeAll(async () => {
     await clearDb(app);
   });
-    afterAll(async () => {
-    await clearDb(app); // чистим базу после всех тестов
-  });
+
 
   it('❌ should not create blog without auth', async () => {
-    await request(app).post(BLOGS_PATH).send(correctBlogData).expect(HttpStatus.Unauthorized);
+    await request(app)
+      .post(BLOGS_PATH)
+      .send(correctBlogData)
+      .expect(HttpStatus.Unauthorized);
   });
 
   it('❌ should not create blog with wrong auth', async () => {
@@ -50,20 +49,21 @@ describe('CREATE blog checks', () => {
 
     expect(invalidResponse.body.errorsMessages).toHaveLength(3);
 
-    const blogList = await request(app).get(BLOGS_PATH).expect(HttpStatus.Ok);
+    // check что никто не создался
+    const blogList = await request(app)
+      .get(BLOGS_PATH)
+      .expect(HttpStatus.Ok);
     expect(blogList.body).toHaveLength(0);
   });
 
   it('✅ should create blog with valid data & auth', async () => {
-    const res = await request(app)
-      .post(BLOGS_PATH)
-      .set('Authorization', adminToken)
-      .send(correctBlogData)
-      .expect(HttpStatus.Created);
+    const createdBlog = await createBlog(app)
 
-    expect(res.body).toMatchObject({
+    expect(createdBlog).toMatchObject({
       id: expect.any(String),
       ...correctBlogData,
+      createdAt: expect.any(String),
+      isMembership: expect.any(Boolean),
     });
   });
 });

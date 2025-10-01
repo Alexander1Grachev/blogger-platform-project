@@ -3,9 +3,8 @@ import { setupApp } from '../../../src/setup-app';
 import express from 'express';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { BLOGS_PATH } from '../../../src/core/paths/paths';
-import { BlogInputDto } from '../../../src/blogs/dto/blog-input-model';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
-import { clearDb } from '../../utils/clear-db';
+import { createFirstBlog } from '../../utils/create.first.blog-test.utils';
 
 describe('DELETE blog checks', () => {
   const app = express();
@@ -13,37 +12,23 @@ describe('DELETE blog checks', () => {
 
   const adminToken = generateBasicAuthToken();
 
-  const correctBlogData: BlogInputDto = {
-    name: 'Tea blog',
-    description: 'About tea and tea culture',
-    websiteUrl: 'https://example.com/path',
-  };
 
-  let createdBlogId: string;
+  let blogId: string;
 
   beforeAll(async () => {
-    await clearDb(app);
-    const { body } = await request(app)
-      .post(BLOGS_PATH)
-      .set('Authorization', adminToken)
-      .send(correctBlogData)
-      .expect(HttpStatus.Created);
-
-    createdBlogId = body.id;
+    blogId = await createFirstBlog(app);
   });
 
-  afterAll(async () => {
-    await clearDb(app);
-  });
+
 
   it('✅ should delete blog with valid auth', async () => {
     await request(app)
-      .delete(`${BLOGS_PATH}/${createdBlogId}`)
+      .delete(`${BLOGS_PATH}/${blogId}`)
       .set('Authorization', adminToken)
-      .expect(HttpStatus.NoContent); 
+      .expect(HttpStatus.NoContent);
 
     await request(app)
-      .get(`${BLOGS_PATH}/${createdBlogId}`)
+      .get(`${BLOGS_PATH}/${blogId}`)
       .expect(HttpStatus.NotFound);
   });
 });

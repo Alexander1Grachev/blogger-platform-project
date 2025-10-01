@@ -7,6 +7,6 @@ export const idValidation = param('id')
   .isString()
   .withMessage('ID must be a string')
   .bail()
-  .isLength({ min: 1 })
-  .withMessage('ID must not be empty') 
-  
+  .isMongoId()
+  .withMessage('ID must not be empty')
+

@@ -5,21 +5,27 @@ import { Blog } from '../../types/blog';
 import { blogsReposytory } from '../../reposytories/blogs.reposytories';
 import { ValidationErrorType } from '../../../core/types/validationError';
 import { createErrorMessages } from '../../../core/utils/error.utils';
+import { BlogViewModel } from '../../types/blog-view-model';
+import { mapToBlogViewModel } from '../mappers/map-to-blog-view-model.util';
 
-export function updateBlogHandler(
+export async function updateBlogHandler(
   req: Request<{ id: string }, void, BlogInputDto>,
   res: Response<{ errorsMessages: ValidationErrorType[] } | void>,
 ) {
-  const id = req.params.id;
-  const blog = blogsReposytory.findById(id);
+  try {
+    const id = req.params.id;
+    const blog = await blogsReposytory.findById(id);
 
-  if (!blog) {
-    res
-      .status(HttpStatus.NotFound)
-      .send(createErrorMessages([{ message: 'Post not found', field: 'id' }]));
-    return;
+    if (!blog) {
+      res
+        .status(HttpStatus.NotFound)
+        .send(createErrorMessages([{ message: 'Post not found', field: 'id' }]));
+      return;
+    }
+    await blogsReposytory.update(id, req.body);
+
+    res.sendStatus(HttpStatus.NoContent)
+  } catch (e: unknown) {
+    res.sendStatus(HttpStatus.InternalServerError)
   }
-
-  blogsReposytory.update(id, req.body);
-  res.sendStatus(HttpStatus.NoContent);
 }

@@ -4,12 +4,10 @@ import { blogsRouter } from './blogs/routers/blogs.router';
 import { postsRouter } from './posts/routers/posts.router';
 
 import { testingClearRouter } from './testing/testing.clear.router';
-import { testingIdValidationRouter } from './testing/testing.id-validation.router';
 import {
   BLOGS_PATH,
   POSTS_PATH,
   TESTING_CLEAR_PATH,
-  TESTING_ID_PATH,
 } from './core/paths/paths';
 
 export const setupApp = (app: Express) => {
@@ -25,7 +23,5 @@ export const setupApp = (app: Express) => {
   app.use(POSTS_PATH, postsRouter);
 
   app.use(TESTING_CLEAR_PATH, testingClearRouter);
-  app.use(TESTING_ID_PATH, testingIdValidationRouter);
-
   return app;
 };

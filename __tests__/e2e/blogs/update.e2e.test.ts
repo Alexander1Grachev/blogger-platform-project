@@ -5,42 +5,26 @@ import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { BLOGS_PATH } from '../../../src/core/paths/paths';
 import { BlogInputDto } from '../../../src/blogs/dto/blog-input-model';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
-import { clearDb } from '../../utils/clear-db';
+import { createFirstBlog } from '../../utils/create.first.blog-test.utils';
+import { getBlogDto } from '../../utils/blogs/get-blog-dto';
+import { updateBlog } from '../../utils/blogs/update-blog';
 
 describe('UPDATE blog checks', () => {
   const app = express();
   setupApp(app);
 
   const adminToken = generateBasicAuthToken();
-
-  const correctBlogData: BlogInputDto = {
-    name: 'Tea blog',
-    description: 'About tea and tea culture',
-    websiteUrl: 'https://example.com/path',
-  };
-
-  let createdBlogId: string;
+  let blogId: string;
 
   beforeAll(async () => {
-
-    await clearDb(app); 
-// создаем новый объект для обновления
-    const { body } = await request(app)
-      .post(BLOGS_PATH)
-      .set('Authorization', adminToken)
-      .send(correctBlogData)
-      .expect(HttpStatus.Created);
-
-    createdBlogId = body.id;
+    blogId = await createFirstBlog(app)
   });
 
-  afterAll(async () => {
-    await clearDb(app); // чистим базу после всех тестов
-  });
+
 
   it('❌ should not update blog with invalid body', async () => {
     const invalidUpdate = await request(app)
-      .put(`${BLOGS_PATH}/${createdBlogId}`)
+      .put(`${BLOGS_PATH}/${blogId}`)
       .set('Authorization', adminToken)
       .send({
         name: '   ', // пустое имя
@@ -53,26 +37,25 @@ describe('UPDATE blog checks', () => {
   });
 
   it('✅ should update blog with valid data', async () => {
-    const updatedBlog: BlogInputDto = {
+
+    const updatedBlogData: BlogInputDto = {
       name: 'UpdatedBlog',
       description: 'New description',
       websiteUrl: 'https://updated.com',
     };
 
-    await request(app)
-      .put(`${BLOGS_PATH}/${createdBlogId}`)
-      .set('Authorization', adminToken)
-      .send(updatedBlog)
-      .expect(HttpStatus.NoContent); // 204 — успешное обновление
 
+    await updateBlog(app, blogId, updatedBlogData)
 
     // проверяем, что блог реально обновился
     const res = await request(app)
-      .get(`${BLOGS_PATH}/${createdBlogId}`)
+      .get(`${BLOGS_PATH}/${blogId}`)
       .expect(HttpStatus.Ok);
     expect(res.body).toMatchObject({
-      id: createdBlogId,
-      ...updatedBlog,
+      id: blogId,
+      ...updatedBlogData,
+      createdAt: expect.any(String),
+      isMembership: expect.any(Boolean), 
     });
   });
 });

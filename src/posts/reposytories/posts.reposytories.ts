@@ -1,37 +1,46 @@
 import { db } from '../../db/in-memory.db';
 import { Post } from '../types/post';
 import { PostInputDto } from '../dto/post-input-model';
+import { postCollection } from '../../db/mongo.db';
+import { ObjectId, WithId } from 'mongodb';
 
 export const postsReposytory = {
-  findAll(): Post[] {
-    return db.posts;
+  async findAll(): Promise<WithId<Post>[]> {
+    return postCollection.find().toArray();
   },
-  findById(id: string): Post | null {
-    return db.posts.find((p) => p.id === id) ?? null;
-  },
-  create(newPost: Post): Post {
-    db.posts.push(newPost);
-    return newPost;
-  },
-  update(id: string, input: PostInputDto): void {
-    const post = db.posts.find((p) => p.id === id) ?? null;
 
-    if (!post) {
+  async findById(id: string): Promise<WithId<Post> | null> {
+    return postCollection.findOne({ _id: new ObjectId(id) })
+  },
+
+  async create(newPost: Post): Promise<WithId<Post>> {
+    const insertResult = await postCollection.insertOne(newPost);
+    return { ...newPost, _id: insertResult.insertedId };;
+  },
+
+  async update(id: string, input: PostInputDto): Promise<void> {
+    const updateResult = await postCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          title: input.title,
+          shortDescription: input.shortDescription,
+          content: input.content,
+          blogId: new ObjectId(input.blogId)
+        }
+      },
+    );
+    if (updateResult.matchedCount < 1) {
       throw new Error('Post not exist');
     }
-    post.title = input.title;
-    post.shortDescription = input.shortDescription;
-    post.content = input.content;
-    post.blogId = input.blogId;
     return;
   },
 
-  delete(id: string): void {
-    const index = db.posts.findIndex((p) => p.id === id);
-    if (index === -1) {
+  async delete(id: string): Promise<void> {
+    const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(id) })
+    if (deleteResult.deletedCount < 1) {
       throw new Error('Post not exist');
     }
-    db.posts.splice(index, 1);
     return;
   },
 };
