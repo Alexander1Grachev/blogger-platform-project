@@ -5,19 +5,27 @@ import { Blog } from '../../types/blog';
 import { blogsReposytory } from '../../reposytories/blogs.reposytories';
 import { ValidationErrorType } from '../../../core/types/validationError';
 import { createErrorMessages } from '../../../core/utils/error.utils';
-export function getBlogHandler(
+import { BlogViewModel } from '../../types/blog-view-model';
+import { mapToBlogViewModel } from '../mappers/map-to-blog-view-model.util';
+
+
+export async function getBlogHandler(
   req: Request<{ id: string }>,
-  res: Response<Blog | { errorsMessages: ValidationErrorType[] }>,
+  res: Response<BlogViewModel | { errorsMessages: ValidationErrorType[] }>,
 ) {
-  const id = req.params.id;
-  const blog = blogsReposytory.findById(id);
+  try {
+    const id = req.params.id;
+    const blog = await blogsReposytory.findById(id);
+    if (!blog) {
+      res
+        .status(HttpStatus.NotFound)
+        .send(createErrorMessages([{ message: 'Post not found', field: 'id' }]));
+      return;
+    }
+    const blogViewModel = mapToBlogViewModel(blog)
 
-  if (!blog) {
-    res
-      .status(HttpStatus.NotFound)
-      .send(createErrorMessages([{ message: 'Post not found', field: 'id' }]));
-    return;
+    res.send(blogViewModel);
+  } catch (e: unknown) {
+    res.sendStatus(HttpStatus.InternalServerError)
   }
-
-  res.send(blog); // httpStatus по дефолту 200
 }

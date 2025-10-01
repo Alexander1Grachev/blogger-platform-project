@@ -4,45 +4,31 @@ import express from 'express';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { BLOGS_PATH } from '../../../src/core/paths/paths';
 import { BlogInputDto } from '../../../src/blogs/dto/blog-input-model';
-import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
-import { clearDb } from '../../utils/clear-db';
+import { getBlogDto } from '../../utils/blogs/get-blog-dto';
+import { createFirstBlog } from '../../utils/create.first.blog-test.utils';
+import { getBlogById } from '../../utils/blogs/get-blog-by-id';
 
 describe('READ blogs', () => {
   const app = express();
   setupApp(app);
 
-  const adminToken = generateBasicAuthToken();
+  const correctBlogData: BlogInputDto = getBlogDto()
 
-  const correctBlogData: BlogInputDto = {
-    name: 'Tea blog',
-    description: 'About tea and tea culture',
-    websiteUrl: 'https://example.com/path',
-  };
+  let blogId: string;
 
-  let createdBlogId: string;
   beforeAll(async () => {
-    await clearDb(app);
-    // создаем объект в
-    const { body } = await request(app) // ссылка на поянение после кода НИЖЕ
-      .post(BLOGS_PATH)
-      .set('Authorization', adminToken)
-      .send(correctBlogData)
-      .expect(HttpStatus.Created);
-    createdBlogId = body.id; // сохраняем id для последующих тестов
-  });
-  afterAll(async () => {
-    await clearDb(app); // чистим базу после всех тестов
+    blogId = await createFirstBlog(app)
   });
 
-  
+
   it('✅ should get blog by id', async () => {
-    const res = await request(app)
-      .get(`${BLOGS_PATH}/${createdBlogId}`) // GET /blogs/:id
-      .expect(HttpStatus.Ok);
-    expect(res.body).toMatchObject({
+    const blog = await getBlogById(app, blogId)
+    expect(blog).toMatchObject({
       // проверяем, что вернулся тот же блог
-      id: createdBlogId,
+      id: blogId,
       ...correctBlogData,
+      createdAt: expect.any(String),
+      isMembership: expect.any(Boolean),
     });
   });
 
@@ -53,7 +39,7 @@ describe('READ blogs', () => {
 
   it('❌ should return 404 if blog not found', async () => {
     await request(app)
-      .get(`${BLOGS_PATH}/non-existing-id`) // несуществующий id
+      .get(`${BLOGS_PATH}/68dd420a59b32c41bb039999`) // несуществующий id
       .expect(HttpStatus.NotFound);
   });
 });
