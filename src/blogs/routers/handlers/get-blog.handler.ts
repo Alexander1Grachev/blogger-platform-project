@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
-import { BlogInputDto } from '../../dto/blog-input-model';
-import { Blog } from '../../types/blog';
 import { blogsReposytory } from '../../reposytories/blogs.reposytories';
 import { ValidationErrorType } from '../../../core/types/validationError';
 import { createErrorMessages } from '../../../core/utils/error.utils';
