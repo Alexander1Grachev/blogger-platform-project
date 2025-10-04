@@ -4,7 +4,8 @@ let isDBRunning = false;
 
 export async function startTestDB(): Promise<void> {
     if (!isDBRunning) {
-        await runDB('mongodb://localhost:27017/blogger-platform-project');
+        const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/blogger-platform-project';
+        await runDB(mongoUrl);
         isDBRunning = true
     }
 }

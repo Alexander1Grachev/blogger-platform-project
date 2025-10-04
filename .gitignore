@@ -6,6 +6,8 @@ dist/
 *.log
 .env
 .DS_Store
+.env.local
+.env.production
 
 # IDE-шный мусор
 .vscode/
