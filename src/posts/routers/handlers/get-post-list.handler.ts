@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { PostInputDto } from '../../dto/post-input-model';
-import { Post } from '../../types/post';
 import { blogsReposytory } from '../../../blogs/reposytories/blogs.reposytories';
 import { postsReposytory } from '../../reposytories/posts.reposytories';
 import { mapToPostViewModel } from '../mappers/map-to-post-view-model.util';
