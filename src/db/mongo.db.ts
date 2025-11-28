@@ -1,6 +1,6 @@
 import { Collection, Db, MongoClient } from 'mongodb';
-import { Blog } from '../blogs/types/blog';
-import { Post } from '../posts/types/post';
+import { Blog } from '../blogs/domain/blog';
+import { Post } from '../posts/domain/post';
 import { SETTINGS } from '../core/settings/settings';
 
 const BLOG_COLLECTION_NAME = 'blogs';
@@ -12,42 +12,41 @@ export let postCollection: Collection<Post>;
 
 // Подключения к бд
 export async function runDB(url: string): Promise<void> {
-    console.log('🔗 Connecting to database:', url);
-    client = new MongoClient(url);
+  console.log('🔗 Connecting to database:', url);
+  client = new MongoClient(url);
 
+  try {
+    await client.connect(); // ПОДКЛЮЧЕНИЕ ПЕРВЫМ!
+    console.log('✅ MongoDB client connected');
 
-    try {
-        await client.connect(); // ПОДКЛЮЧЕНИЕ ПЕРВЫМ!
-        console.log('✅ MongoDB client connected');
+    const db: Db = client.db(SETTINGS.DB_NAME);
+    console.log('✅ Database instance created:', SETTINGS.DB_NAME);
 
-        const db: Db = client.db(SETTINGS.DB_NAME);
-        console.log('✅ Database instance created:', SETTINGS.DB_NAME);
+    // Инициализация коллекций
+    blogCollection = db.collection<Blog>(BLOG_COLLECTION_NAME);
+    postCollection = db.collection<Post>(POST_COLLECTION_NAME);
 
-        // Инициализация коллекций
-        blogCollection = db.collection<Blog>(BLOG_COLLECTION_NAME);
-        postCollection = db.collection<Post>(POST_COLLECTION_NAME);
+    console.log('✅ Collections initialized:', {
+      blogs: !!blogCollection,
+      posts: !!postCollection,
+    });
 
-        console.log('✅ Collections initialized:', {
-            drivers: !!blogCollection,
-            rides: !!postCollection
-        });
-
-        await db.command({ ping: 1 });
-        console.log('✅ Database ping successful');
-        console.log('✅ Connected to the database');
-    } catch (e) {
-        console.error('❌ Database connection error:', e);
-        await client.close();
-        throw new Error(`❌ Database not connected: ${e}`);
-    }
+    await db.command({ ping: 1 });
+    console.log('✅ Database ping successful');
+    console.log('✅ Connected to the database');
+  } catch (e) {
+    console.error('❌ Database connection error:', e);
+    await client.close();
+    throw new Error(`❌ Database not connected: ${e}`);
+  }
 }
 
 // для тестов
 export async function stopDb() {
-    if (!client) {
-        console.error('❌ No active client to stop');
-        throw new Error(`❌ No active client`);
-    }
-    await client.close();
-    console.log('✅ Database connection closed');
+  if (!client) {
+    console.error('❌ No active client to stop');
+    throw new Error(`❌ No active client`);
+  }
+  await client.close();
+  console.log('✅ Database connection closed');
 }

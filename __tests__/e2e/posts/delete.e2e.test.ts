@@ -1,41 +1,33 @@
 import request from 'supertest';
-import express from 'express';
-import { setupApp } from '../../../src/setup-app';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { POSTS_PATH } from '../../../src/core/paths/paths';
-import { PostInputDto } from '../../../src/posts/dto/post-input-model';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
 import { clearDb } from '../../utils/clear-db';
-import { createFirstBlog } from '../../utils/create.first.blog-test.utils';
 import { createPost } from '../../utils/posts/create-post';
-import { getPostById } from '../../utils/posts/get-post-by-id';
+import { getTestApp } from '../../setup/start-test-app';
 
 describe('DELETE post checks', () => {
-  const app = express();
-  setupApp(app);
+  const app = getTestApp();
 
   const adminToken = generateBasicAuthToken();
 
   let postId: string;
-  let blogId: string;
 
   beforeAll(async () => {
-
-    blogId = await createFirstBlog(app)
-    const createdPost = await createPost(app, blogId)
-
-    postId = createdPost.id;
+    await clearDb(app);
+    const post = await createPost(app);
+    postId = post.data.id;
   });
 
-
   it('✅ should delete post with valid auth', async () => {
-
     await request(app)
       .delete(`${POSTS_PATH}/${postId}`)
       .set('Authorization', adminToken)
       .expect(HttpStatus.NoContent);
 
-    await getPostById(app, postId, HttpStatus.NotFound)
-
+    // проверяем пост удалился
+    await request(app)
+      .get(`${POSTS_PATH}/${postId}`)
+      .expect(HttpStatus.NotFound);
   });
 });

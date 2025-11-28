@@ -1,3 +1,6 @@
+//Добавь файлы/папки, которые не нужно форматировать:
+
 node_modules/
 dist/
-yarn-lock.json
+pnpm-lock.yaml
+

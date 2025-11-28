@@ -1,30 +1,35 @@
 import { Express } from 'express';
 import request from 'supertest';
-import { HttpStatus } from "../../../src/core/consts/http-statuses";
-import { POSTS_PATH } from "../../../src/core/paths/paths";
-import { PostInputDto } from "../../../src/posts/dto/post-input-model";
-import { PostViewModel } from "../../../src/posts/types/post-view-model";
-import { generateBasicAuthToken } from "../generate-admin-auth-token";
+import { HttpStatus } from '../../../src/core/consts/http-statuses';
+import { POSTS_PATH } from '../../../src/core/paths/paths';
+import { generateBasicAuthToken } from '../generate-admin-auth-token';
 import { getPostDto } from './get-post-dto';
+import { PostAttributes } from '../../../src/posts/application/dtos/post-attributes';
 
-
-
+import { PostOutput } from '../../../src/posts/routers/output/post.output';
+import { createBlog } from '../blogs/create-blog';
+import { ResourceType } from '../../../src/core/consts/resource-type';
 
 export async function createPost(
-    app: Express,
-    blogId: string,
-    postDto?: PostInputDto,
-): Promise<PostViewModel> {
+  app: Express,
+  postDto?: PostAttributes,
+): Promise<PostOutput> {
+  const blog = await createBlog(app);
 
-    const defaultPostData = getPostDto(blogId)
+  const defaultPostAttributes = getPostDto(blog.data.id);
 
-    const testPostData = { ...defaultPostData, ...postDto }
+  const testPostData = {
+    data: {
+      type: ResourceType.Posts,
+      attributes: { ...defaultPostAttributes, ...postDto },
+    },
+  };
 
-    const createdPostResponse = await request(app)
-        .post(POSTS_PATH)
-        .set('Authorization', generateBasicAuthToken())
-        .send(testPostData)
-        .expect(HttpStatus.Created);
+  const createdPostResponse = await request(app)
+    .post(POSTS_PATH)
+    .set('Authorization', generateBasicAuthToken())
+    .send(testPostData)
+    .expect(HttpStatus.Created);
 
-    return createdPostResponse.body;
+  return createdPostResponse.body;
 }
