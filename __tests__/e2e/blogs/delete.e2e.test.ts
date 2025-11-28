@@ -12,14 +12,11 @@ describe('DELETE blog checks', () => {
 
   const adminToken = generateBasicAuthToken();
 
-
   let blogId: string;
 
   beforeAll(async () => {
     blogId = await createFirstBlog(app);
   });
-
-
 
   it('✅ should delete blog with valid auth', async () => {
     await request(app)

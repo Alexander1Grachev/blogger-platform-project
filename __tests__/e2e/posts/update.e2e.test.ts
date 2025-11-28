@@ -1,57 +1,47 @@
-import { setupApp } from '../../../src/setup-app';
-import express from 'express';
-import { PostInputDto } from '../../../src/posts/dto/post-input-model';
 import { updatePost } from '../../utils/posts/update-post';
-import { createFirstBlog } from '../../utils/create.first.blog-test.utils';
 import { createPost } from '../../utils/posts/create-post';
 import { getPostById } from '../../utils/posts/get-post-by-id';
+import { clearDb } from '../../utils/clear-db';
+import { PostAttributes } from '../../../src/posts/application/dtos/post-attributes';
+import { ResourceType } from '../../../src/core/consts/resource-type';
+import { getTestApp } from '../../setup/start-test-app';
 
 describe('UPDATE posts', () => {
-  const app = express();
-  setupApp(app);
+  const app = getTestApp();
 
   let postId: string;
   let blogId: string;
 
   beforeAll(async () => {
-    blogId = await createFirstBlog(app);
-    const createdPost = await createPost(app, blogId);
-    postId = createdPost.id;
-
-    console.log('🎯 TEST SETUP COMPLETE:', { postId, blogId });
+    await clearDb(app);
+    const post = await createPost(app);
+    postId = post.data.id;
+    blogId = post.data.attributes.blogId;
   });
 
   it('✅ should update post with valid data', async () => {
-    const updatedPostData: PostInputDto = {
-      title: 'Updated title',
-      shortDescription: 'Updated shortDescription',
-      content: 'Updated content',
+    const postUpdateData: PostAttributes = {
+      title: 'Updatedtitle',
+      shortDescription: 'UpdatedDescription',
+      content: 'UpdatedContent',
       blogId: blogId,
     };
 
-    console.log('🔄 BEFORE UPDATE TEST:', {
-      postId,
-      blogId,
-      updatedPostData
-    });
-
-    // Через утилиту
-    try {
-      await updatePost(app, postId, updatedPostData);
-      console.log('✅ UPDATE VIA UTILITY SUCCESS');
-    } catch {
-      console.log('❌ UPDATE VIA UTILITY FAILED');
-    }
+    await updatePost(app, postId, postUpdateData);
 
     // Проверяем результат
     const post = await getPostById(app, postId);
-    console.log('✅ UPDATED POST ID:', post.id);
 
     expect(post).toMatchObject({
-      id: postId,
-      ...updatedPostData,
-      blogName: expect.any(String),
-      createdAt: expect.any(String),
+      data: {
+        type: ResourceType.Posts,
+        id: postId,
+        attributes: {
+          ...postUpdateData,
+          blogName: expect.any(String),
+          createdAt: expect.any(String),
+        },
+      },
     });
   });
 });

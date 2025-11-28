@@ -6,11 +6,6 @@ dist/
 *.log
 .env
 .DS_Store
-.env.local
-.env.production
 
 # IDE-шный мусор
 .vscode/
-
-# Lock-файлы
-yarn.lock       

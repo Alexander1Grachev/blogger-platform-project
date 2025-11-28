@@ -3,35 +3,37 @@ import { Express } from 'express';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { POSTS_PATH } from '../../../src/core/paths/paths';
 import { generateBasicAuthToken } from '../generate-admin-auth-token';
-import { PostInputDto } from "../../../src/posts/dto/post-input-model";
+import { PostAttributes } from '../../../src/posts/application/dtos/post-attributes';
+import { ResourceType } from '../../../src/core/consts/resource-type';
+import { createBlog } from '../blogs/create-blog';
+import { PostUpdateInput } from '../../../src/posts/routers/input/post-update.input';
+import { getPostDto } from './get-post-dto';
 
 export async function updatePost(
-    app: Express,
-    postId: string,
-    postDto: PostInputDto,
+  app: Express,
+  postId: string,
+  postDto: PostAttributes,
 ): Promise<void> {
-    console.log('🛠️ UPDATE POST UTILITY:', {
-        postId,
-        postDto: {
-            ...postDto,
-            // Не логируем весь content если он большой
-            content: postDto.content?.length > 50 ?
-                postDto.content.substring(0, 50) + '...' :
-                postDto.content
-        }
-    });
+  const blog = await createBlog(app);
 
-    const response = await request(app)
-        .put(`${POSTS_PATH}/${postId}`)
-        .set('Authorization', generateBasicAuthToken())
-        .send(postDto);
+  const defaultPostAttributes = getPostDto(blog.data.id);
 
-    console.log('🛠️ UPDATE POST RESPONSE:', {
-        status: response.status,
-        body: response.body
-    });
+  const testPostData: PostUpdateInput = {
+    data: {
+      type: ResourceType.Posts,
+      id: postId,
+      attributes: {
+        ...defaultPostAttributes,
+        ...postDto,
+      },
+    },
+  };
 
-    if (response.status !== HttpStatus.NoContent) {
-        throw new Error(`Expected 204 but got ${response.status}: ${JSON.stringify(response.body)}`);
-    }
+  const updatedPostResponse = await request(app)
+    .put(`${POSTS_PATH}/${postId}`)
+    .set('Authorization', generateBasicAuthToken())
+    .send(testPostData)
+    .expect(HttpStatus.NoContent);
+
+  return updatedPostResponse.body;
 }

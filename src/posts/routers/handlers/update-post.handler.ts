@@ -1,28 +1,20 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
-import { PostInputDto } from '../../dto/post-input-model';
-import { postsReposytory } from '../../reposytories/posts.reposytories';
-import { ValidationErrorType } from '../../../core/types/validationError';
-import { createErrorMessages } from '../../../core/utils/error.utils';
+import { PostUpdateInput } from '../input/post-update.input';
+import { postsService } from '../../application/posts.service';
+import { errorsHandler } from '../../../core/errors/errors.handler';
 
 export async function updatePostHandler(
-  req: Request<{ id: string }, void, PostInputDto>,
-  res: Response<{ errorsMessages: ValidationErrorType[] } | void>,
+  req: Request<{ id: string }, void, PostUpdateInput>,
+  res: Response<void>,
 ) {
   try {
     const id = req.params.id;
-    const post = await postsReposytory.findById(id);
-    if (!post) {
-      res
-        .status(HttpStatus.NotFound)
-        .send(createErrorMessages([{ message: 'Post not found', field: 'id' }]));
-      return;
-    }
-    await postsReposytory.update(id, req.body)
-    
+
+    await postsService.update(id, req.body.data.attributes);
+
     res.sendStatus(HttpStatus.NoContent);
   } catch (e: unknown) {
-    res.sendStatus(HttpStatus.InternalServerError)
+    errorsHandler(e, res);
   }
 }
-

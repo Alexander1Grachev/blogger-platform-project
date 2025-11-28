@@ -1,33 +1,33 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
-import { PostInputDto } from '../../dto/post-input-model';
-import { blogsReposytory } from '../../../blogs/reposytories/blogs.reposytories';
-import { postsReposytory } from '../../reposytories/posts.reposytories';
-import { mapToPostViewModel } from '../mappers/map-to-post-view-model.util';
+import { errorsHandler } from '../../../core/errors/errors.handler';
+import { PostQueryInput } from '../input/post-query.input';
+import { postsService } from '../../application/posts.service';
+import { mapToPostListPaginatedOutput } from '../mappers/map-to-post-list-paginated-output.util';
+import { matchedData } from 'express-validator';
+import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
 
 export async function getPostListHandler(
-  req: Request<{}, unknown, {}, {}>,
-  res: Response<PostInputDto[]>,
+  req: Request<{}, {}, {}, PostQueryInput>,
+  res: Response,
 ) {
   try {
-    const posts = await postsReposytory.findAll();
+    const sanitizedQuery = matchedData<PostQueryInput>(req, {
+      locations: ['query'],
+      includeOptionals: true,
+    });
+    const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
 
-    const result = []
+    const { items, totalCount } = await postsService.findMany(queryInput);
 
-    for (const post of posts) {
-      const blog = await blogsReposytory.findById(post.blogId.toString());
-      if (!blog) {
-        console.warn(`Blog not found for post ${post._id}`);
-        continue; // не прерываем запрос
-      }
+    const postListOutput = mapToPostListPaginatedOutput(items, {
+      pageNumber: queryInput.pageNumber,
+      pageSize: queryInput.pageSize,
+      totalCount,
+    });
 
-      const postWithBlog = mapToPostViewModel(post, blog);
-      result.push(postWithBlog);
-    }
-
-    res.status(HttpStatus.Ok).send(result);
+    res.status(HttpStatus.Ok).send(postListOutput);
   } catch (e: unknown) {
-    res.sendStatus(HttpStatus.InternalServerError);
+    errorsHandler(e, res);
   }
-
 }

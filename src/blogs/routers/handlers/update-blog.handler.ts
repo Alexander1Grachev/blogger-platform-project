@@ -1,28 +1,19 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
-import { BlogInputDto } from '../../dto/blog-input-model';
-import { blogsReposytory } from '../../reposytories/blogs.reposytories';
-import { ValidationErrorType } from '../../../core/types/validationError';
-import { createErrorMessages } from '../../../core/utils/error.utils';
+import { blogsService } from '../../application/blogs.service';
+import { BlogUpdateInput } from '../input/blog-update.input';
+import { errorsHandler } from '../../../core/errors/errors.handler';
 
 export async function updateBlogHandler(
-  req: Request<{ id: string }, void, BlogInputDto>,
-  res: Response<{ errorsMessages: ValidationErrorType[] } | void>,
+  req: Request<{ id: string }, void, BlogUpdateInput>,
+  res: Response<void>,
 ) {
   try {
     const id = req.params.id;
-    const blog = await blogsReposytory.findById(id);
+    await blogsService.update(id, req.body.data.attributes);
 
-    if (!blog) {
-      res
-        .status(HttpStatus.NotFound)
-        .send(createErrorMessages([{ message: 'Post not found', field: 'id' }]));
-      return;
-    }
-    await blogsReposytory.update(id, req.body);
-
-    res.sendStatus(HttpStatus.NoContent)
+    res.sendStatus(HttpStatus.NoContent);
   } catch (e: unknown) {
-    res.sendStatus(HttpStatus.InternalServerError)
+    errorsHandler(e, res);
   }
 }
