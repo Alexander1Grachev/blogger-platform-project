@@ -1,5 +1,5 @@
-import { PaginationAndSorting } from '../types/pagination-and-sorting';
-import { SortDirection } from './sort-direction';
+import { PaginationAndSorting } from "../types/pagination-and-sorting";
+import { SortDirection } from "./sort-direction";
 
 // Дефолтные значения
 export const DEFAULT_PAGE_NUMBER = 1;

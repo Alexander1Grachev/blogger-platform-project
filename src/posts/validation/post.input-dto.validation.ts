@@ -1,9 +1,6 @@
 import { body } from 'express-validator';
-import { idValidation } from '../../core/middlewares/validation/params-id.validation-middleware';
-import { resourceTypeValidation } from '../../core/middlewares/validation/resource-type.validation-middleware';
-import { ResourceType } from '../../core/consts/resource-type';
 
-const titleValidation = body('data.attributes.title')
+const titleValidation = body('title')
   .exists()
   .withMessage('Title is required')
   .bail()
@@ -18,7 +15,7 @@ const titleValidation = body('data.attributes.title')
   .isLength({ max: 30 })
   .withMessage('Title must be fewer than 30 characters');
 
-const shortDescriptionValidation = body('data.attributes.shortDescription')
+const shortDescriptionValidation = body('shortDescription')
   .exists()
   .withMessage('ShortDescription is required')
   .bail()
@@ -32,7 +29,7 @@ const shortDescriptionValidation = body('data.attributes.shortDescription')
   .isLength({ max: 100 })
   .withMessage('ShortDescription must be fewer than 100 characters');
 
-const contentValidation = body('data.attributes.content')
+const contentValidation = body('content')
   .exists()
   .withMessage('Content is required')
   .bail()
@@ -46,26 +43,22 @@ const contentValidation = body('data.attributes.content')
   .isLength({ max: 1000 })
   .withMessage('Content must be fewer than 1000 characters');
 
-const blogIdValidation = body('data.attributes.blogId')
+const blogIdValidation = body('blogId')
   .exists()
   .withMessage('BlogId is required')
   .bail()
   .isString()
   .withMessage('BlogId should be string');
 
-export const postCreateInputValidation = [
-  resourceTypeValidation(ResourceType.Posts),
+export const postInputDtoValidation = [
   titleValidation,
   shortDescriptionValidation,
   contentValidation,
   blogIdValidation,
 ];
 
-export const postUpdateInputValidation = [
-  resourceTypeValidation(ResourceType.Posts),
-  idValidation,
+export const blogPostInputDtoValidation = [
   titleValidation,
   shortDescriptionValidation,
   contentValidation,
-  blogIdValidation,
 ];

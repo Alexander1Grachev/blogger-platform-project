@@ -1,4 +1,4 @@
-export type PostAttributes = {
+export type PostInputDto = {
   title: string;
   shortDescription: string;
   content: string;

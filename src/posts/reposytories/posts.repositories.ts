@@ -1,19 +1,22 @@
 import { Post } from '../domain/post';
-import { PostAttributes } from '../application/dtos/post-attributes';
+import { PostInputDto } from '../application/dtos/post-input-model';
 import { postCollection } from '../../db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
-import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 import { PostQueryInput } from '../routers/input/post-query.input';
+import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 
 export const postsRepository = {
   async findMany(
-    queryDto: PostQueryInput,
+    queryDto: PostQueryInput
   ): Promise<{ items: WithId<Post>[]; totalCount: number }> {
-    const { pageNumber, pageSize, sortBy, sortDirection } = queryDto;
-
+    const {
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection,
+    } = queryDto
     const skip = (pageNumber - 1) * pageSize;
-
-    const filter = {};
+    const filter: any = {};
 
     const [items, totalCount] = await Promise.all([
       postCollection
@@ -22,14 +25,13 @@ export const postsRepository = {
         .skip(skip)
         .limit(pageSize)
         .toArray(),
-      postCollection.countDocuments(filter),
+      postCollection.countDocuments(filter)
     ]);
     return { items, totalCount };
   },
 
   async findByIdOrFail(id: string): Promise<WithId<Post>> {
     const res = await postCollection.findOne({ _id: new ObjectId(id) });
-
     if (!res) {
       throw new RepositoryNotFoundError('Post not exist');
     }
@@ -39,11 +41,10 @@ export const postsRepository = {
 
   async create(newPost: Post): Promise<string> {
     const insertResult = await postCollection.insertOne(newPost);
-
     return insertResult.insertedId.toString();
   },
 
-  async update(id: string, input: PostAttributes): Promise<void> {
+  async update(id: string, input: PostInputDto): Promise<void> {
     const updateResult = await postCollection.updateOne(
       { _id: new ObjectId(id) },
       {
@@ -51,8 +52,8 @@ export const postsRepository = {
           title: input.title,
           shortDescription: input.shortDescription,
           content: input.content,
-          blogId: input.blogId,
-        },
+          blogId: input.blogId
+        }
       },
     );
     if (updateResult.matchedCount < 1) {
@@ -62,9 +63,7 @@ export const postsRepository = {
   },
 
   async delete(id: string): Promise<void> {
-    const deleteResult = await postCollection.deleteOne({
-      _id: new ObjectId(id),
-    });
+    const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(id) })
     if (deleteResult.deletedCount < 1) {
       throw new RepositoryNotFoundError('Post not exist');
     }
@@ -76,7 +75,7 @@ export const postsRepository = {
   ): Promise<{ items: WithId<Post>[]; totalCount: number }> {
     const { pageNumber, pageSize, sortBy, sortDirection } = queryDto;
     const skip = (pageNumber - 1) * pageSize;
-    const filter = { blogId };
+    const filter = { 'blogId': blogId };
 
     const [items, totalCount] = await Promise.all([
       postCollection

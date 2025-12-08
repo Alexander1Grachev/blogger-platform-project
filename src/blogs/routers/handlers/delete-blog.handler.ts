@@ -5,13 +5,14 @@ import { errorsHandler } from '../../../core/errors/errors.handler';
 
 export async function deleteBlogHandler(
   req: Request<{ id: string }, void>,
-  res: Response<void>,
+  res: Response,
 ) {
   try {
-    const id = req.params.id;
-    await blogsService.delete(id);
+    const blogId = req.params.id;
+    await blogsService.delete(blogId);
     res.sendStatus(HttpStatus.NoContent);
   } catch (e: unknown) {
     errorsHandler(e, res);
   }
 }
+

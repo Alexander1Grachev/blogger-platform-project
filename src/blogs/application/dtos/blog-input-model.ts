@@ -1,6 +1,6 @@
 // POST PUT
 
-export type BlogAttributes = {
+export type BlogInputDto = {
   name: string;
   description: string;
   websiteUrl: string;

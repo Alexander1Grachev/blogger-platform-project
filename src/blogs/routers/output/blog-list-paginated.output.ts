@@ -1,7 +1,11 @@
-import { BlogDataOutput } from './blog-data.output';
-import { PaginatedOutput } from '../../../core/types/paginated.output';
+import { BlogViewModel } from "./blog-view-model"
+
+
 
 export type BlogListPaginatedOutput = {
-  meta: PaginatedOutput;
-  data: BlogDataOutput[];
-};
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    items: BlogViewModel[]
+}

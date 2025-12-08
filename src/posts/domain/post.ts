@@ -1,3 +1,6 @@
+
+import { ObjectId } from 'mongodb';
+
 export type Post = {
   title: string;
   shortDescription: string;

@@ -1,21 +1,17 @@
 import { WithId } from 'mongodb';
 import { Post } from '../../domain/post';
-import { ResourceType } from '../../../core/consts/resource-type';
-import { PostOutput } from '../output/post.output';
+import { PostViewModel } from '../output/post-view-model';
 
-export function mapToPostOutput(post: WithId<Post>): PostOutput {
-  return {
-    data: {
-      type: ResourceType.Posts,
-      id: post._id.toString(),
-      attributes: {
+export function mapToPostOutput(
+    post: WithId<Post>,
+): PostViewModel {
+    return {
+        id: post._id.toString(),
         title: post.title,
         shortDescription: post.shortDescription,
         content: post.content,
-        blogId: post.blogId.toString(),
+        blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt.toISOString(),
-      },
-    },
-  };
+    };
 }

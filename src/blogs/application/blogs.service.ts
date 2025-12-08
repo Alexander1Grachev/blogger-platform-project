@@ -1,42 +1,40 @@
-import { WithId } from 'mongodb';
-import { Blog } from '../domain/blog';
-import { blogsRepository } from '../reposytories/blogs.reposytories';
-import { BlogAttributes } from './dtos/blog-attributes';
-import { BlogQueryInput } from '../routers/input/blog-query.input';
+import { WithId } from "mongodb";
+import { Blog } from "../domain/blog";
+import { blogsRepository } from "../repositories/blogs.repositories";
+import { BlogQueryInput } from "../routers/input/blog-query.input";
+import { BlogInputDto } from "./dtos/blog-input-model";
+import { PostInputDto } from "../../posts/application/dtos/post-input-model";
+import { Post } from "../../posts/domain/post";
+import { postsRepository } from "../../posts/reposytories/posts.repositories";
+import { PostQueryInput } from "../../posts/routers/input/post-query.input";
+
 
 export const blogsService = {
-  async create(dto: BlogAttributes): Promise<string> {
-    const newBlog: Blog = {
-      name: dto.name,
-      description: dto.description,
-      websiteUrl: dto.websiteUrl,
+    async create(dto: BlogInputDto): Promise<string> {
+        const newBlog: Blog = {
+            name: dto.name,
+            description: dto.description,
+            websiteUrl: dto.websiteUrl,
+            createdAt: new Date(),
+            isMembership: false,
+        }
+        return blogsRepository.create(newBlog);
+    },
+    async findByIdOrFail(id: string): Promise<WithId<Blog>> {
+        return blogsRepository.findByIdOrFail(id);
+    },
+    async update(id: string, dto: BlogInputDto): Promise<void> {
+        return blogsRepository.update(id, dto);
+    },
 
-      createdAt: new Date(),
-      isMembership: false,
-    };
-    const result = await blogsRepository.create(newBlog);
+    async findMany(
+        queryDto: BlogQueryInput,
+    ): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
+        return blogsRepository.findMany(queryDto);
+    },
 
-    return result;
-  }, //<---🟩
+    async delete(id: string): Promise<void> {
+        return blogsRepository.delete(id);
+    },
 
-  async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-    const result = await blogsRepository.findByIdOrFail(id);
-
-    return result;
-  }, //<---🟩
-  async update(id: string, dto: BlogAttributes): Promise<void> {
-    await blogsRepository.update(id, dto); // просто ждем завершения
-    return; //  возвращаем void
-  }, //<---🟩
-
-  async findMany(
-    queryDto: BlogQueryInput,
-  ): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
-    return blogsRepository.findMany(queryDto);
-  },
-
-  async delete(id: string): Promise<void> {
-    blogsRepository.delete(id);
-    return;
-  }, //<---🟩
-};
+}
