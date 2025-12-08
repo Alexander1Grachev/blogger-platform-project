@@ -1,10 +1,8 @@
-import { HttpStatus } from '../consts/http-statuses';
+//просто TypeScript-тип, который описывает 
+// форму JSON-ответа с ошибками валидации, которую  возвращаю 
+// из своего middleware inputValidationResultMiddleware
 
-type ValidationErrorOutput = {
-  status: HttpStatus;
-  detail: string;
-  source: { pointer: string };
-  code: string | null;
-};
 
-export type ValidationErrorListOutput = { errors: ValidationErrorOutput[] };
+import { ValidationErrorType } from './validationError';
+
+export type ValidationErrorDto = { errorsMessages: ValidationErrorType[] };
