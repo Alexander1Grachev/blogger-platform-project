@@ -3,6 +3,7 @@ import { RepositoryNotFoundError } from './repository-not-found.error';
 import { HttpStatus } from '../consts/http-statuses';
 import { createErrorMessages } from '../middlewares/validation/input-validtion-result.middleware';
 import { DomainError } from './domain.error';
+import { BadRequestError } from './bad-request.error';
 
 export function errorsHandler(error: unknown, res: Response): void {
 
@@ -31,6 +32,21 @@ export function errorsHandler(error: unknown, res: Response): void {
     );
 
     return;
+  }
+
+  if (error instanceof BadRequestError) {
+    const httpStatus = HttpStatus.BadRequest;
+    res.status(httpStatus).send(
+      createErrorMessages([
+        {
+          message: error.message,
+          field: error.message.includes('Login') ? 'login' : 'email',
+        },
+      ]),
+    );
+
+    return;
+
   }
   res.status(HttpStatus.InternalServerError);
   return;

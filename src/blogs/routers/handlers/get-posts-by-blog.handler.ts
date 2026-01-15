@@ -8,7 +8,6 @@ import { postsService } from '../../../posts/application/posts.service';
 import { mapToPostListPaginatedOutput } from '../../../posts/routers/mappers/map-to-post-list-paginated-output.util';
 import { PostListPaginatedOutput } from '../../../posts/routers/output/post-list-paginated.output';
 
-
 export async function getPostsByBlogHandler(
   req: Request<{ id: string }, {}, {}>,
   res: Response<PostListPaginatedOutput>,

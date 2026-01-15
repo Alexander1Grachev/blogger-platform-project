@@ -4,7 +4,6 @@ import { POSTS_PATH } from '../../../src/core/paths/paths';
 import { createPost } from '../../utils/posts/create-post';
 import { getPostById } from '../../utils/posts/get-post-by-id';
 import { clearDb } from '../../utils/clear-db';
-import { PostOutput } from '../../../src/posts/routers/output/post.output';
 import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_SIZE,
