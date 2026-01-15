@@ -1,17 +1,16 @@
 import { Blog } from '../domain/blog';
 import { BlogInputDto } from '../application/dtos/blog-input-model';
-import { blogCollection, postCollection } from '../../db/mongo.db';
+import { blogCollection } from '../../db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { BlogQueryInput } from '../routers/input/blog-query.input';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
-import { Post } from '../../posts/domain/post';
-import { PostQueryInput } from '../../posts/routers/input/post-query.input';
 
 export const blogsRepository = {
   async findMany(
     queryDto: BlogQueryInput
   ): Promise<{
-    items: WithId<Blog>[]; totalCount: number
+    items: WithId<Blog>[];
+    totalCount: number;
   }> {
     const {
       pageNumber,

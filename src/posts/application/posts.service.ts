@@ -1,7 +1,7 @@
 import { WithId } from "mongodb";
-import { blogsRepository } from "../../blogs/repositories/blogs.repositories";
+import { blogsRepository } from "../../blogs/repositories/blogs.repository";
 import { Post } from "../domain/post";
-import { postsRepository } from "../reposytories/posts.repositories";
+import { postsRepository } from "../reposytories/posts.repository";
 import { PostInputDto } from "./dtos/post-input-model";
 import { PostQueryInput } from "../routers/input/post-query.input";
 import { BlogPostInputDto } from "../../blogs/application/dtos/blog-post-input-model";

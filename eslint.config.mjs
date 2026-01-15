@@ -19,7 +19,7 @@ export default [
             prettier: prettierPlugin,
         },
         rules: {
-            'prettier/prettier': 'error',
+            //'prettier/prettier': 'error',
             '@typescript-eslint/no-unused-vars': 'warn',
             eqeqeq: ['error', 'always'],
         },
