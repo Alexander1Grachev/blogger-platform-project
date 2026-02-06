@@ -7,6 +7,7 @@ import { IUserDB } from "../models/user.db.interface";
 
 
 export const usersQueryRepository = {
+
   async findByIdOrFail(id: string): Promise<WithId<User>> {
     console.log('FIND BY ID:', id);
 

@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],// берем все файлы из папки для компеляции в жс
+  "include": ["src/**/*",
+  "src/core/types/index.d.ts"],
   "exclude": ["node_modules","dist", "__tests__"]//папки не нужны для прода
 }

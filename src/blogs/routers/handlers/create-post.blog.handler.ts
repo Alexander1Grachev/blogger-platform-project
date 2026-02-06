@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
-import { mapToBlogOutput } from '../mappers/map-to-blog-output.util';
-import { blogsService } from '../../application/blogs.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import { postsService } from '../../../posts/application/posts.service';
 import { BlogPostInputDto } from '../../application/dtos/blog-post-input-model';
-import { mapToPostOutput } from '../../../posts/routers/mappers/map-to-post-output.util';
+import { mapToPostOutput } from '../../../posts/application/mappers/map-to-post-output.util';
 
 export async function createPostForBlogHandler(
   req: Request<{ id: string }, {}, BlogPostInputDto>,

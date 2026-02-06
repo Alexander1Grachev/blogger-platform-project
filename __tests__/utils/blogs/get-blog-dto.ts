@@ -1,9 +1,8 @@
-import { BlogAttributes } from '../../../src/blogs/application/dtos/blog-attributes';
-import { BlogCreateInput } from '../../../src/blogs/routers/input/blog-create.input';
-import { ResourceType } from '../../../src/core/consts/resource-type';
+import { BlogInputDto } from '../../../src/blogs/application/dtos/blog-input-model';
+
 
 // Функция которая возвращает данные
-export function getBlogDto(): BlogAttributes {
+export function getBlogDto(): BlogInputDto {
   return {
     name: 'Tea Blog',
     description: 'All about tea and tea culture',
@@ -11,8 +10,8 @@ export function getBlogDto(): BlogAttributes {
   };
 }
 
-// Константа которая использует функцию
-export const correctTestBlogAttributes: BlogAttributes = getBlogDto();
+/* Константа которая использует функцию
+export const correctTestBlogAttributes: BlogInputDto = getBlogDto();
 
 // Использование в тестах
 export const correctTestBlogData: BlogCreateInput = {
@@ -21,3 +20,4 @@ export const correctTestBlogData: BlogCreateInput = {
     attributes: correctTestBlogAttributes, //  понятно что здесь
   },
 };
+*/

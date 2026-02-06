@@ -3,16 +3,21 @@ import { Blog } from '../blogs/domain/blog';
 import { Post } from '../posts/domain/post';
 import { SETTINGS } from '../core/settings/settings';
 import { IUserDB } from '../users/models/user.db.interface';
+import { Comment } from '../comments/domain/comments';
 
 const BLOG_COLLECTION_NAME = 'blogs';
 const POST_COLLECTION_NAME = 'posts';
 const USER_COLLECTION_NAME = 'users';
+const COMMENT_COLLECTION_NAME = 'comments';
+
 
 
 export let client: MongoClient;
 export let blogCollection: Collection<Blog>;
 export let postCollection: Collection<Post>;
 export let userCollection: Collection<IUserDB>;
+export let commentCollection: Collection<Comment>;
+
 
 // Подключения к бд
 export async function runDB(url: string): Promise<void> {
@@ -31,12 +36,16 @@ export async function runDB(url: string): Promise<void> {
     blogCollection = db.collection<Blog>(BLOG_COLLECTION_NAME);
     postCollection = db.collection<Post>(POST_COLLECTION_NAME);
     userCollection = db.collection<IUserDB>(USER_COLLECTION_NAME);
+    commentCollection = db.collection<Comment>(COMMENT_COLLECTION_NAME);
+
 
 
     console.log('✅ Collections initialized:', {
       blogs: !!blogCollection,
       posts: !!postCollection,
-      users: !!userCollection
+      users: !!userCollection,
+      comments: !!commentCollection,
+
     });
 
     await db.command({ ping: 1 });

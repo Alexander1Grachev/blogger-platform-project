@@ -5,8 +5,8 @@ import { HttpStatus } from '../../../core/consts/http-statuses';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import { PostQueryInput } from '../../../posts/routers/input/post-query.input';
 import { postsService } from '../../../posts/application/posts.service';
-import { mapToPostListPaginatedOutput } from '../../../posts/routers/mappers/map-to-post-list-paginated-output.util';
-import { PostListPaginatedOutput } from '../../../posts/routers/output/post-list-paginated.output';
+import { mapToPostListPaginatedOutput } from '../../../posts/application/mappers/map-to-post-list-paginated-output.util';
+import { PostListPaginatedOutput } from '../../../posts/application/output/post-list-paginated.output';
 
 export async function getPostsByBlogHandler(
   req: Request<{ id: string }, {}, {}>,

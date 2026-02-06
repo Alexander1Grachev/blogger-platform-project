@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { PostInputDto } from '../../application/dtos/post-input-model';
 import { postsService } from '../../application/posts.service';
-import { mapToPostOutput } from '../mappers/map-to-post-output.util';
+import { mapToPostOutput } from '../../application/mappers/map-to-post-output.util';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 
 export async function createPostHandler(
