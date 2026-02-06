@@ -3,7 +3,7 @@ import { Response, Request } from 'express'
 import { usersService } from "../../application/users.service";
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { errorsHandler } from "../../../core/errors/errors.handler";
-import { mapToUserOutput } from "../mappers/map-to-user-output.util";
+import { mapToUserOutput } from "../../application/mappers/map-to-user-output.util";
 export async function createUserHandler(
     req: Request<{}, {}, UserInputDto>,
     res: Response,

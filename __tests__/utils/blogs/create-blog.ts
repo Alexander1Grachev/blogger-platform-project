@@ -5,21 +5,16 @@ import { BLOGS_PATH } from '../../../src/core/paths/paths';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
 
 import { getBlogDto } from './get-blog-dto';
-import { BlogOutput } from '../../../src/blogs/routers/output/blog.output';
-import { BlogAttributes } from '../../../src/blogs/application/dtos/blog-attributes';
-import { BlogCreateInput } from '../../../src/blogs/routers/input/blog-create.input';
-import { ResourceType } from '../../../src/core/consts/resource-type';
+import { BlogInputDto } from '../../../src/blogs/application/dtos/blog-input-model';
+import { BlogViewModel } from '../../../src/blogs/application/output/blog-view-model';
 
 export async function createBlog(
   app: Express,
-  blogDto?: BlogAttributes,
-): Promise<BlogOutput> {
-  const testBlogData: BlogCreateInput = {
-    data: {
-      type: ResourceType.Blogs,
-      attributes: { ...getBlogDto(), ...blogDto },
-    },
-  };
+  blogDto?: BlogInputDto,
+): Promise<BlogViewModel> {
+
+  const testBlogData: BlogInputDto = { ...getBlogDto(), ...blogDto }
+
 
   const createBlogResponse = await request(app)
     .post(BLOGS_PATH)

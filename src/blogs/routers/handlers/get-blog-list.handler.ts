@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { matchedData } from 'express-validator';
 import { blogsService } from '../../application/blogs.service';
-import { mapToBlogListPaginatedOutput } from '../mappers/map-to-blog-list-paginated-output.util';
+import { mapToBlogListPaginatedOutput } from '../../application/mappers/map-to-blog-list-paginated-output.util';
 import { BlogQueryInput } from '../input/blog-query.input';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
 import { HttpStatus } from '../../../core/consts/http-statuses';

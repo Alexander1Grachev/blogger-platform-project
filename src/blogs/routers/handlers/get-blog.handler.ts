@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { mapToBlogOutput } from '../mappers/map-to-blog-output.util';
+import { mapToBlogOutput } from '../../application/mappers/map-to-blog-output.util';
 import { blogsService } from '../../application/blogs.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 

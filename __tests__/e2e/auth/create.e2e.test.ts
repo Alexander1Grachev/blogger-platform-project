@@ -6,7 +6,7 @@ import { AUTH_PATH } from "../../../src/core/paths/paths";
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 
 
-describe('CREATE user session',  () => {
+describe('CREATE user session', () => {
   const app = getTestApp();
 
   beforeAll(async () => {
@@ -33,9 +33,11 @@ describe('CREATE user session',  () => {
         loginOrEmail: 'NewUser2',
         password: '12345u'
       })
-      .expect(HttpStatus.NoContent);
+      .expect(HttpStatus.Ok);
 
-    expect(res.body).toEqual({});
+    expect(res.body).toHaveProperty('accessToken');
+    expect(typeof res.body.accessToken).toBe("string");
+    expect(res.body.accessToken.length).toBeGreaterThan(0);
   });
 
   it('✅ should login with correct credentials (email)', async () => {
@@ -45,10 +47,11 @@ describe('CREATE user session',  () => {
         loginOrEmail: 'new2user@mail.com',
         password: '12345u'
       })
-      .expect(HttpStatus.NoContent);
+      .expect(HttpStatus.Ok);
 
-    expect(res.body).toEqual({});
-
+    expect(res.body).toHaveProperty('accessToken');
+    expect(typeof res.body.accessToken).toBe("string");
+    expect(res.body.accessToken.length).toBeGreaterThan(0);
   });
 
 })

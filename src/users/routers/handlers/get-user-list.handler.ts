@@ -3,7 +3,7 @@ import { UserQueryInput } from "../input/user-query.input";
 import { matchedData } from 'express-validator';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
 import { usersService } from '../../application/users.service';
-import { mapToUserListPaginatedOutput } from '../mappers/map-to-user-list-paginated-output.util';
+import { mapToUserListPaginatedOutput } from '../../application/mappers/map-to-user-list-paginated-output.util';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 

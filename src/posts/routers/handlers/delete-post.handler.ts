@@ -1,9 +1,5 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
-import { PostInputDto } from '../../application/dtos/post-input-model';
-import { Post } from '../../domain/post';
-import { createErrorMessages } from '../../../core/utils/error.utils';
-import { ValidationErrorType } from '../../../core/types/validationError';
 import { postsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 

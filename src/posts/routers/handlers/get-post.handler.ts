@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
-import { mapToPostOutput } from '../mappers/map-to-post-output.util';
+import { mapToPostOutput } from '../../application/mappers/map-to-post-output.util';
 import { postsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 

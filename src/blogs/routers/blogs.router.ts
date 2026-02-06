@@ -10,7 +10,7 @@ import { getBlogHandler } from './handlers/get-blog.handler';
 import { getBlogListHandler } from './handlers/get-blog-list.handler';
 import { deleteBlogHandler } from './handlers/delete-blog.handler';
 import { createBlogHandler } from './handlers/create-blog.handler';
-import { blogPostInputDtoValidation, postInputDtoValidation } from '../../posts/validation/post.input-dto.validation';
+import { blogPostInputDtoValidation } from '../../posts/validation/post.input-dto.validation';
 import { createPostForBlogHandler } from './handlers/create-post.blog.handler';
 import { getPostsByBlogHandler } from './handlers/get-posts-by-blog.handler';
 import { paginationAndSortingValidation } from '../../core/middlewares/validation/query-pagination-sorting.validation-middleware';

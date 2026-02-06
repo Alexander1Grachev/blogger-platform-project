@@ -1,4 +1,4 @@
-import { bcryptService } from "../../auth/auth.service.ts/bcrypt.service";
+import { bcryptService } from "../../auth/adapters/bcrypt.service";
 import { BadRequestError } from "../../core/errors/bad-request.error";
 import { User } from "../domain/user";
 import { IUserDB } from "../models/user.db.interface";
