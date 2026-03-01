@@ -22,7 +22,7 @@ const password = body('password')
   .withMessage('Password must be between 6 and 20 characters')
 
 
-const email = body('email')
+export const email = body('email')
   .notEmpty().withMessage('Email cannot be empty')
   .bail()
   .isString().withMessage('Email must be a string')

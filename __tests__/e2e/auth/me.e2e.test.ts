@@ -2,10 +2,10 @@ import request from 'supertest';
 
 import { getTestApp } from "../../setup/start-test-app"
 import { clearDb } from '../../utils/clear-db';
-import { AUTH_PATH, USERS_PATH } from '../../../src/core/paths/paths';
+import { AUTH_PATH} from '../../../src/core/paths/paths';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
-import { createUserAndLogin } from '../../utils/create-user-n-login.token';
+import { createUserAndLogin } from '../../utils/users/create-user-n-login.token';
 
 
 

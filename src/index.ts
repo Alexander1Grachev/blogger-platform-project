@@ -25,6 +25,7 @@ const bootstrap = async () => {
         console.error('❌ MongoDB connection failed - check Docker container');
     }
     return { app, server };
+
 };
 
 bootstrap()
