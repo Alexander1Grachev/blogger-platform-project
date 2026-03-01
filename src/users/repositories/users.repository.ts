@@ -14,4 +14,32 @@ export const usersRepository = {
     const insertResult = await userCollection.insertOne(newUser);
     return insertResult.insertedId.toString();
   },
+
+  async confirmEmail(
+    userId: ObjectId,
+  ): Promise<void> {
+    await userCollection.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          'emailConfirmation.isConfirmed': true,
+        },
+      },
+    )
+  },
+  async updateEmailConfirmationCode(
+    userId: ObjectId,
+    newCode: string,
+    newDate: Date
+  ): Promise<void> {
+    await userCollection.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          'emailConfirmation.confirmationCode': newCode,
+          'emailConfirmation.expirationDate': newDate
+        },
+      },
+    )
+  }
 }

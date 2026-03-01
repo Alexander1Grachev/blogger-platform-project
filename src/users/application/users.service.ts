@@ -18,9 +18,9 @@ export const usersService = {
     const existing = await usersQueryRepository.findForRegistration(dto.login, dto.email);
     if (existing) {
       if (existing.login === dto.login) {
-        throw new BadRequestError('Login already exist')
+        throw new BadRequestError('Login already exist', 'login')
       } else {
-        throw new BadRequestError('Email already exist')
+        throw new BadRequestError('Email already exist', 'email')
       }
     };
     const passwordHash = await bcryptService.generateHash(dto.password)
@@ -32,7 +32,7 @@ export const usersService = {
     }
     return usersRepository.create(newUser);
   },
-  async findByIdOrFail(id: string): Promise<WithId<User>> {
+  async findByIdOrFail(id: string): Promise<WithId<IUserDB>> {
     return usersQueryRepository.findByIdOrFail(id);
   },
   async findMany(

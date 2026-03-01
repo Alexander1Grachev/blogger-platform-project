@@ -38,7 +38,7 @@ export function errorsHandler(error: unknown, res: Response): void {
     res.sendStatus(HttpStatus.Forbidden)
     return;
   }
-
-  res.status(HttpStatus.InternalServerError);
+  console.error(error);
+  res.sendStatus(HttpStatus.InternalServerError);
   return;
 }

@@ -4,11 +4,12 @@ import { User } from "../domain/user";
 import { userCollection } from "../../db/mongo.db";
 import { UserQueryInput } from "../routers/input/user-query.input";
 import { IUserDB } from "../models/user.db.interface";
+import { BadRequestError } from "../../core/errors/bad-request.error";
 
 
 export const usersQueryRepository = {
 
-  async findByIdOrFail(id: string): Promise<WithId<User>> {
+  async findByIdOrFail(id: string): Promise<WithId<IUserDB>> {
     console.log('FIND BY ID:', id);
 
     const res = await userCollection.findOne({ _id: new ObjectId(id) });
@@ -30,7 +31,21 @@ export const usersQueryRepository = {
     return userCollection.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
+
   },
+
+  async findByConfirmationCode(
+    confCode: string
+  ): Promise<WithId<IUserDB>> {
+    const user = await userCollection.findOne({
+      'emailConfirmation.confirmationCode': confCode,
+    })
+    if (!user) {
+      throw new BadRequestError('Invalid confirmation code', 'code');
+    }
+    return user
+  },
+
   async findMany(
     queryDto: UserQueryInput
   ): Promise<{ items: WithId<User>[]; totalCount: number }> {
