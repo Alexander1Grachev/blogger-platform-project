@@ -18,7 +18,6 @@ export const refreshTokenGuard = async (
     console.log('Guard verifyRefreshToken payload:', payload);
     if (!payload || !payload.userId) return res.sendStatus(HttpStatus.Unauthorized);
 
-    //req.refreshToken = refreshToken;
     next();
   } catch (e: unknown) {
     return errorsHandler(e, res)
