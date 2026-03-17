@@ -4,11 +4,13 @@ import { Post } from '../posts/domain/post';
 import { SETTINGS } from '../core/settings/settings';
 import { IUserDB } from '../users/models/user.db.interface';
 import { Comment } from '../comments/domain/comments';
+import { RefreshTokenDbModel } from '../auth/models/refresh-token.model';
 
 const BLOG_COLLECTION_NAME = 'blogs';
 const POST_COLLECTION_NAME = 'posts';
 const USER_COLLECTION_NAME = 'users';
 const COMMENT_COLLECTION_NAME = 'comments';
+const RefreshToken_COLLECTION_NAME = 'refreshToken';
 
 
 
@@ -17,6 +19,7 @@ export let blogCollection: Collection<Blog>;
 export let postCollection: Collection<Post>;
 export let userCollection: Collection<IUserDB>;
 export let commentCollection: Collection<Comment>;
+export let refreshTokenCollection: Collection<RefreshTokenDbModel>;
 
 
 // Подключения к бд
@@ -37,16 +40,12 @@ export async function runDB(url: string): Promise<void> {
     postCollection = db.collection<Post>(POST_COLLECTION_NAME);
     userCollection = db.collection<IUserDB>(USER_COLLECTION_NAME);
     commentCollection = db.collection<Comment>(COMMENT_COLLECTION_NAME);
+    refreshTokenCollection = db.collection<RefreshTokenDbModel>(RefreshToken_COLLECTION_NAME);
 
 
 
-    console.log('✅ Collections initialized:', {
-      blogs: !!blogCollection,
-      posts: !!postCollection,
-      users: !!userCollection,
-      comments: !!commentCollection,
 
-    });
+    console.log('✅ Collections initialized');
 
     await db.command({ ping: 1 });
     console.log('✅ Database ping successful');

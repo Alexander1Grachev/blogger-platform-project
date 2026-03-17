@@ -1,4 +1,6 @@
 import express, { Express } from 'express';
+import cookieParser from 'cookie-parser';
+
 
 import { blogsRouter } from './blogs/routers/blogs.router';
 import { postsRouter } from './posts/routers/posts.router';
@@ -18,7 +20,7 @@ import { commentsRouter } from './comments/routers/comments.router';
 
 export const setupApp = (app: Express) => {
   app.use(express.json()); // middleware для парсинга JSON в теле запроса
-
+  app.use(cookieParser()); // 👈 
 
   // Подключаем роуты
   app.use(BLOGS_PATH, blogsRouter);

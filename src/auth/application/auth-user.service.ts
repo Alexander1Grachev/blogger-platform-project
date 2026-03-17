@@ -11,23 +11,34 @@ import { BadRequestError } from "../../core/errors/bad-request.error";
 import { IUserDB } from "../../users/models/user.db.interface";
 import { usersRepository } from "../../users/repositories/users.repository";
 import { addHours } from 'date-fns';
+import { refreshTokenRepository } from "../repositories/refreshToken.repository";
+import { appConfig } from "../../core/config/config";
 
 export const authService = {
+
   async loginUser(
     loginOrEmail: string,
     password: string,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await usersQueryRepository.findForAuth(loginOrEmail);
     if (!user) {
       throw new UnauthorizedError('Wrong credentials');
     }
-
     const isPasswordValid = await bcryptService.checkPassword(password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedError('Wrong credentials')
     }
-    const accessToken = await jwtService.createToken(user._id.toString())
-    return { accessToken }
+    const accessToken = jwtService.createAccessToken(user._id.toString());
+    const refreshToken = jwtService.createRefreshToken(user._id.toString());
+
+    await refreshTokenRepository.createRefreshToken({
+      refreshToken: refreshToken,
+      userId: user._id.toString(),
+      expiresAt: new Date(Date.now() + Number(appConfig.RT_TIME) * 1000),
+      isRevoked: false,
+    });
+
+    return { accessToken, refreshToken }
   },
 
 
@@ -78,51 +89,5 @@ export const authService = {
       html
     );
   },
-
-
-
-
-  async resendEmail(
-    email: string,
-  ) {
-    const user = await usersQueryRepository.findForAuth(email);
-    if (!user) {
-      throw new BadRequestError('Invalid email', 'email');
-    }
-    if (user.emailConfirmation?.isConfirmed) {
-      throw new BadRequestError('Email already confirmed', 'email');
-    }
-
-    const newConfirmationCode = uuidv4();
-    await usersRepository.updateEmailConfirmationCode(
-      user._id,
-      newConfirmationCode,
-      addHours(new Date(), 1)
-    );
-    const html = emailExamples.registrationEmail(newConfirmationCode, user.login);
-    await nodemailerService.sendEmail(user.email, 'Registration', html);
-  },
-
-
-
-  async confirmEmail(
-    confCode: string,
-  ) {
-    const user = await usersQueryRepository.findByConfirmationCode(confCode);
-
-    if (user.emailConfirmation?.isConfirmed) {
-      throw new BadRequestError('Email already confirmed', 'code');
-    }
-
-    if (!user.emailConfirmation || user.emailConfirmation.expirationDate < new Date()) {
-      throw new BadRequestError('Email confirmation out of time', 'code');
-    }
-
-    await usersRepository.confirmEmail(
-      user._id,
-    )
-
-    return true
-  }
 };
 

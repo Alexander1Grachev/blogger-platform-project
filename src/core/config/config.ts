@@ -1,16 +1,30 @@
 import { config } from 'dotenv'
 
 config()
+function getEnvVar(key: string): string {
+    const value = process.env[key];
+    if (!value) {
+        throw new Error(`❌ Missing env variable: ${key}`);
+    }
+    return value;
+}
 
 export const appConfig = {
+    PORT: Number(process.env.PORT) || 5000,
 
-    PORT: process.env.PORT,
-    MONGO_URL: process.env.MONGO_URL as string,
-    DB_NAME: process.env.DB_NAME as string,
-    AC_SECRET: process.env.AC_SECRET as string,
-    AC_TIME: process.env.AC_TIME as string,
-    RT_SECRET: process.env.RT_SECRET,
-    DB_TYPE: process.env.DB_TYPE,
-    EMAIL: process.env.EMAIL as string,
-    EMAIL_PASS: process.env.EMAIL_PASS as string,
-}
+    MONGO_URL: getEnvVar('MONGO_URL'),
+    DB_NAME: getEnvVar('DB_NAME'),
+
+    AC_SECRET: getEnvVar('AC_SECRET'),
+    RT_SECRET: getEnvVar('RT_SECRET'),
+
+    AC_TIME: Number(getEnvVar('AC_TIME')),
+    RT_TIME: Number(getEnvVar('RT_TIME')),
+
+    DB_TYPE: process.env.DB_TYPE || 'dev',
+
+    EMAIL: getEnvVar('EMAIL'),
+    EMAIL_PASS: getEnvVar('EMAIL_PASS'),
+
+    NODE_ENV: process.env.NODE_ENV || 'development',
+};
