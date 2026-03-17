@@ -34,10 +34,14 @@ describe('CREATE user session', () => {
         password: '12345u'
       })
       .expect(HttpStatus.Ok);
-
+    // 1. проверяем accessToken
     expect(res.body).toHaveProperty('accessToken');
     expect(typeof res.body.accessToken).toBe("string");
     expect(res.body.accessToken.length).toBeGreaterThan(0);
+    // 2. проверяем refreshToken
+    const cookies = res.header['set-cookie'];
+    expect(cookies).toBeDefined();
+    expect(cookies[0]).toContain('refreshToken');
   });
 
   it('✅ should login with correct credentials (email)', async () => {
@@ -49,9 +53,14 @@ describe('CREATE user session', () => {
       })
       .expect(HttpStatus.Ok);
 
+    // 1. проверяем accessToken
     expect(res.body).toHaveProperty('accessToken');
     expect(typeof res.body.accessToken).toBe("string");
     expect(res.body.accessToken.length).toBeGreaterThan(0);
+    // 2. проверяем refreshToken
+    const cookies = res.header['set-cookie'];
+    expect(cookies).toBeDefined();
+    expect(cookies[0]).toContain('refreshToken');
   });
 
 })

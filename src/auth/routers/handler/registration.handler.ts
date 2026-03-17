@@ -2,7 +2,7 @@ import { Response, Request } from 'express'
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 import { UserInputDto } from '../../../users/application/dtos/user-input-dto';
-import { authService } from '../../application/auth.service';
+import { authService } from '../../application/auth-user.service';
 
 export async function registrationHandler(
   req: Request<{}, {}, UserInputDto>,

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/consts/http-statuses";
-import { authService } from "../../application/auth.service";
+import { authService } from "../../application/auth-user.service";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 
 export async function meHandler(

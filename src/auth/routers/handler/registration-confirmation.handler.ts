@@ -1,8 +1,8 @@
 import { Response, Request } from 'express'
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { RegistrationConfirmationInputDto } from "../../application/dtos/registration-confirmation-Input.model";
-import { authService } from '../../application/auth.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { emailService } from '../../application/auth-email.service ';
 
 
 export async function registrationConfirmHandler(
@@ -10,7 +10,7 @@ export async function registrationConfirmHandler(
   res: Response,
 ) {
   try {
-    await authService.confirmEmail(req.body.code)
+    await emailService.confirmEmail(req.body.code)
 
     res.sendStatus(HttpStatus.NoContent)
   } catch (e: unknown) {

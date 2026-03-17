@@ -3,7 +3,7 @@ import { commentsRepository } from "../repositories/comments.repository"
 import { Comment } from "../domain/comments";
 import { CommentInputDto } from "./dtos/comment-input.dto";
 import { postsService } from "../../posts/application/posts.service";
-import { authService } from "../../auth/application/auth.service";
+import { authService } from "../../auth/application/auth-user.service";
 import { CommentQueryInput } from "../routers/input/comment-query.input";
 import { ForbiddenError } from "../../core/errors/forbidden.error";
 

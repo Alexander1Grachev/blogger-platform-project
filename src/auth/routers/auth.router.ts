@@ -1,4 +1,4 @@
-import {  Router } from "express";
+import { Router } from "express";
 import { authInputDtoValidation } from "../middlewares/login.input-dto.validation";
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validtion-result.middleware";
 import { accessTokenGuard } from "../middlewares/access.token.guard";
@@ -9,35 +9,56 @@ import { email, userInputDtoValidation } from "../../users/validation/user.input
 import { registrationEmailResendingHandler } from "./handler/registration-email-resending.handler";
 import { loginHandler } from "./handler/login.handler";
 import { meHandler } from "./handler/me.handler";
+import { refreshTokenGuard } from "../middlewares/refresh.token.guard";
+import { logoutHandler } from "./handler/logout-token.handler ";
+import { refreshTokenHandler } from "./handler/refresh-token.handler";
 
 
 export const authRouter = Router();
 
 authRouter
-  .post('/login',
+  .post(
+    '/login',
     authInputDtoValidation,
     inputValidationResultMiddleware,
     loginHandler
   );
 
-authRouter.get('/me',
+authRouter.get(
+  '/me',
   accessTokenGuard,
   meHandler
-)
-authRouter.post('/registration-confirmation',
+);
+
+authRouter.post(
+  '/registration-confirmation',
   registrationConfirmationValidation,
   inputValidationResultMiddleware,
   registrationConfirmHandler
-)
+);
 
-authRouter.post('/registration',
+authRouter.post(
+  '/registration',
   userInputDtoValidation,
   inputValidationResultMiddleware,
   registrationHandler
-)
+);
 
-authRouter.post('/registration-email-resending',
+authRouter.post(
+  '/registration-email-resending',
   email, //userInputDtoValidation
   inputValidationResultMiddleware,
   registrationEmailResendingHandler
-)
+);
+
+authRouter.post(
+  '/refresh-token',
+  refreshTokenGuard,
+  refreshTokenHandler,
+);
+
+authRouter.post(
+  '/logout',
+  refreshTokenGuard,
+  logoutHandler,
+);
