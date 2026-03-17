@@ -18,7 +18,7 @@ export async function refreshTokenHandler(
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',// для тестов будет false
+      secure: true,
       maxAge: Number(appConfig.RT_TIME) * 1000,
     });
 
