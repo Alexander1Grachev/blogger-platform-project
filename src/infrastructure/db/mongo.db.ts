@@ -1,17 +1,18 @@
 import { Collection, Db, MongoClient } from 'mongodb';
-import { Blog } from '../blogs/domain/blog';
-import { Post } from '../posts/domain/post';
-import { SETTINGS } from '../core/settings/settings';
-import { IUserDB } from '../users/models/user.db.interface';
-import { Comment } from '../comments/domain/comments';
-import { RefreshTokenDbModel } from '../auth/models/refresh-token.model';
+import { Blog } from '../../blogs/repositories/models/blog.model';
+import { Post } from '../../posts/reposytories/models/post.model';
+import { SETTINGS } from '../../core/settings/settings';
+import { IUserDB } from '../../users/repositories/models/user.db.interface';
+import { Comment } from '../../comments/repositories/models/comments.model';
+import { Session } from '../../security-devices/repositories/models/session.model';
+import { RateLimitLog } from '../rate-limit/rate-limit.model';
 
 const BLOG_COLLECTION_NAME = 'blogs';
 const POST_COLLECTION_NAME = 'posts';
 const USER_COLLECTION_NAME = 'users';
 const COMMENT_COLLECTION_NAME = 'comments';
-const RefreshToken_COLLECTION_NAME = 'refreshToken';
-
+const SESSION_COLLECTION_NAME = 'session';
+const RAITE_LIMIT_NAME = 'rateLimit';
 
 
 export let client: MongoClient;
@@ -19,8 +20,8 @@ export let blogCollection: Collection<Blog>;
 export let postCollection: Collection<Post>;
 export let userCollection: Collection<IUserDB>;
 export let commentCollection: Collection<Comment>;
-export let refreshTokenCollection: Collection<RefreshTokenDbModel>;
-
+export let sessionCollection: Collection<Session>;
+export let rateLimitCollection: Collection<RateLimitLog>;
 
 // Подключения к бд
 export async function runDB(url: string): Promise<void> {
@@ -40,8 +41,8 @@ export async function runDB(url: string): Promise<void> {
     postCollection = db.collection<Post>(POST_COLLECTION_NAME);
     userCollection = db.collection<IUserDB>(USER_COLLECTION_NAME);
     commentCollection = db.collection<Comment>(COMMENT_COLLECTION_NAME);
-    refreshTokenCollection = db.collection<RefreshTokenDbModel>(RefreshToken_COLLECTION_NAME);
-
+    sessionCollection = db.collection<Session>(SESSION_COLLECTION_NAME);
+    rateLimitCollection = db.collection<RateLimitLog>(RAITE_LIMIT_NAME );
 
 
 

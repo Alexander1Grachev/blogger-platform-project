@@ -1,7 +1,7 @@
 import { WithId } from "mongodb";
-import { User } from "../../domain/user";
+import { User } from "../dtos/user.dto";
 import { UserListPaginatedOutput } from "../output/user-list-paginated.output";
-import { UserViewModel } from "../../application/dtos/user-view-model";
+import { UserViewModel } from "../output/user-view-model";
 
 export function mapToUserListPaginatedOutput(
     users: WithId<User>[],

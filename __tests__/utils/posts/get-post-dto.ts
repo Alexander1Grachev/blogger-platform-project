@@ -1,4 +1,4 @@
-import { PostInputDto } from '../../../src/posts/application/dtos/post-input-model';
+import { PostInputDto } from "../../../src/posts/application/dtos/post-input-dto";
 // функ. ожидает когда ей передадут blogId
 export function getPostDto(blogId: string): PostInputDto {
   return {

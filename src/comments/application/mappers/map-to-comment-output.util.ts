@@ -1,6 +1,6 @@
 import { WithId } from "mongodb";
 import { CommentViewModel } from "../output/comment-view-model";
-import { Comment } from "../../domain/comments";
+import { Comment } from "../../repositories/models/comments.model";
 
 
 

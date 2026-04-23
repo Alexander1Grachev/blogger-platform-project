@@ -12,7 +12,7 @@ describe('Auth logout', () => {
   const app = getTestApp();
   beforeAll(async () => {
     await clearDb(app);
-    await createUser(app);
+
   });
 
   it('❌should return 401 if cookies not exist ', async () => {
@@ -28,10 +28,10 @@ describe('Auth logout', () => {
       .expect(HttpStatus.Unauthorized)
   });
   it('✅should logout and invalidate refreshToken', async () => {
-    const cookie = await loginAndGetCookies(app);
-    await request(app)
+    const { login, password } = await createUser(app)
+    const cookie = await loginAndGetCookies(app, { login, password }); await request(app)
       .post(`${AUTH_PATH}/logout`)
-      .set('Cookie', cookie )
+      .set('Cookie', cookie)
       .expect(HttpStatus.NoContent)
 
     // пробуемобновить токены старым refreshToken

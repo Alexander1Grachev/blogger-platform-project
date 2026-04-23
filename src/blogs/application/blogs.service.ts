@@ -1,8 +1,8 @@
 import { WithId } from "mongodb";
-import { Blog } from "../domain/blog";
+import { Blog } from "../repositories/models/blog.model";
 import { blogsRepository } from "../repositories/blogs.repository";
 import { BlogQueryInput } from "../routers/input/blog-query.input";
-import { BlogInputDto } from "./dtos/blog-input-model";
+import { BlogInputDto } from "./dtos/blog-input-dto";
 
 export const blogsService = {
   async create(dto: BlogInputDto): Promise<string> {

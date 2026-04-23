@@ -2,19 +2,29 @@ import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 import { appConfig } from "../../../core/config/config";
-import { tokenService } from "../../application/auth-tokens.service ";
+import { sessionService } from "../../../security-devices/application/session.service";
+import { jwtService } from "../../adapters/jwt.service";
 
 export async function refreshTokenHandler(
   req: Request,
   res: Response<{ "accessToken": string }>,
 ) {
   try {
-    console.log("COOKIES:", req.cookies);
+    const { userId, deviceId } = req.user as {
+      userId: string;
+      deviceId: string;
+    };
 
-    const expiredRefreshToken = req.cookies?.refreshToken;
-    console.log('Handler received refreshToken:', expiredRefreshToken);
+    const accessToken = jwtService.createAccessToken(userId);
+    const refreshToken = jwtService.createRefreshToken(
+      userId,
+      deviceId,
+    );
 
-    const { accessToken, refreshToken } = await tokenService.updateTokens(expiredRefreshToken)
+    const payload = jwtService.decodeToken(refreshToken) as { iat: number }
+
+    await sessionService.updateLastActive(deviceId, payload.iat);
+
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,

@@ -1,6 +1,6 @@
 import { WithId } from "mongodb";
 import { commentsRepository } from "../repositories/comments.repository"
-import { Comment } from "../domain/comments";
+import { Comment } from "../repositories/models/comments.model";
 import { CommentInputDto } from "./dtos/comment-input.dto";
 import { postsService } from "../../posts/application/posts.service";
 import { authService } from "../../auth/application/auth-user.service";

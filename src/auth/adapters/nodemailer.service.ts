@@ -36,10 +36,10 @@ export const nodemailerService = {
         html,
       });
 
-      console.log("📨 Email sent:", info.messageId);
+      //console.log("📨 Email sent:", info.messageId);
       return !!info.messageId;
     } catch (error) {
-      console.error("❌ Email send failed:", error);
+      //console.error("❌ Email send failed:", error);
       return false;
     }
   },
@@ -57,10 +57,10 @@ export const nodemailerService = {
       });
 
       await transporter.verify();
-      console.log("✅ Gmail SMTP connection is OK");
+      // console.log("✅ Gmail SMTP connection is OK");
       return true;
     } catch (err) {
-      console.error("❌ SMTP connection failed:", err);
+      // console.error("❌ SMTP connection failed:", err);
       return false;
     }
   },

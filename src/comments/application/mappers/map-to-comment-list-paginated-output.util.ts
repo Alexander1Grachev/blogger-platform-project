@@ -1,5 +1,5 @@
 import { WithId } from "mongodb";
-import { Comment } from "../../domain/comments";
+import { Comment } from "../../repositories/models/comments.model";
 import { CommentListPaginatedOutput } from "../output/comment-list-paginated.output";
 import { CommentViewModel } from "../output/comment-view-model";
 

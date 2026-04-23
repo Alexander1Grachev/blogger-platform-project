@@ -1,6 +1,6 @@
 import { Response, Request } from 'express'
 import { HttpStatus } from "../../../core/consts/http-statuses";
-import { RegistrationConfirmationInputDto } from "../../application/dtos/registration-confirmation-Input.model";
+import { RegistrationConfirmationInputDto } from "../input/registration-confirmation-Input.model";
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import { emailService } from '../../application/auth-email.service ';
 

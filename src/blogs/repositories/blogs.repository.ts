@@ -1,6 +1,6 @@
-import { Blog } from '../domain/blog';
-import { BlogInputDto } from '../application/dtos/blog-input-model';
-import { blogCollection } from '../../db/mongo.db';
+import { Blog } from './models/blog.model';
+import { BlogInputDto } from '../application/dtos/blog-input-dto';
+import { blogCollection } from '../../infrastructure/db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { BlogQueryInput } from '../routers/input/blog-query.input';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';

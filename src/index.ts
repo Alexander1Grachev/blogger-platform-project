@@ -1,11 +1,15 @@
 import express from "express";
 import { setupApp } from "./setup-app";
 import { SETTINGS } from './core/settings/settings';
-import { runDB } from './db/mongo.db';
+import { runDB } from "./infrastructure/db/mongo.db";
 
 const bootstrap = async () => {
+ 
     // создание приложения
     const app = express();
+
+    app.set('trust proxy', true);
+
     setupApp(app);
     // порт приложения
     const PORT = process.env.PORT || 5001;

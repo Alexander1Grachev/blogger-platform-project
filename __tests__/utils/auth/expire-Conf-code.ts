@@ -1,4 +1,4 @@
-import { userCollection } from "../../../src/db/mongo.db";
+import { userCollection } from "../../../src/infrastructure/db/mongo.db";
 
 
 

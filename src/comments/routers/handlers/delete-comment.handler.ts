@@ -11,7 +11,7 @@ export async function deleteCommentHandler(
   res: Response,
 ) {
   try {
-    const userId = req.user!.id
+    const userId = req.user!.userId
     const commentId = req.params.id;
     await commentsService.delete(commentId, userId);
     res.sendStatus(HttpStatus.NoContent)

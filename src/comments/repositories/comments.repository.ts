@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from "mongodb";
-import { Comment } from "../domain/comments";
-import { commentCollection } from "../../db/mongo.db";
+import { Comment } from "./models/comments.model";
+import { commentCollection } from "../../infrastructure/db/mongo.db";
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
 import { CommentInputDto } from "../application/dtos/comment-input.dto";
 import { CommentQueryInput } from "../routers/input/comment-query.input";

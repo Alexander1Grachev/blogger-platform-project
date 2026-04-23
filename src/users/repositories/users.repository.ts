@@ -1,7 +1,7 @@
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
-import { userCollection } from "../../db/mongo.db"
+import { userCollection } from "../../infrastructure/db/mongo.db"; 
 import { ObjectId } from 'mongodb';
-import { IUserDB } from "../models/user.db.interface";
+import { IUserDB } from "./models/user.db.interface";
 
 export const usersRepository = {
   async delete(id: string): Promise<void> {

@@ -6,6 +6,7 @@ import { DomainError } from './domain.error';
 import { BadRequestError } from './bad-request.error';
 import { UnauthorizedError } from './unauthorized.error';
 import { ForbiddenError } from './forbidden.error';
+import { TooManyRequestsError } from './too-many-requests.error';
 
 export function errorsHandler(error: unknown, res: Response): void {
   if (error instanceof RepositoryNotFoundError) {
@@ -34,8 +35,14 @@ export function errorsHandler(error: unknown, res: Response): void {
     return;
   }
 
+  if (error instanceof TooManyRequestsError) {
+    console.log('🚫 TOO MANY REQUESTS TRIGGERED');
+    res.sendStatus(HttpStatus.TooManyRequests); // ← просто sendStatus без body
+    return;
+  }
+
   if (error instanceof ForbiddenError) {
-    res.sendStatus(HttpStatus.Forbidden)
+    res.sendStatus(HttpStatus.Forbidden);
     return;
   }
   console.error(error);

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authInputDtoValidation } from "../middlewares/login.input-dto.validation";
+import { authInputDtoValidation } from "../validation/login.input-dto.validation";
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validtion-result.middleware";
 import { accessTokenGuard } from "../middlewares/access.token.guard";
 import { registrationConfirmHandler } from "./handler/registration-confirmation.handler";
@@ -12,6 +12,7 @@ import { meHandler } from "./handler/me.handler";
 import { refreshTokenGuard } from "../middlewares/refresh.token.guard";
 import { logoutHandler } from "./handler/logout-token.handler ";
 import { refreshTokenHandler } from "./handler/refresh-token.handler";
+import { rateLimitMiddleware } from "../../core/middlewares/rate-limit.middleware";
 
 
 export const authRouter = Router();
@@ -19,6 +20,7 @@ export const authRouter = Router();
 authRouter
   .post(
     '/login',
+    rateLimitMiddleware,
     authInputDtoValidation,
     inputValidationResultMiddleware,
     loginHandler
@@ -32,6 +34,7 @@ authRouter.get(
 
 authRouter.post(
   '/registration-confirmation',
+  rateLimitMiddleware,
   registrationConfirmationValidation,
   inputValidationResultMiddleware,
   registrationConfirmHandler
@@ -39,6 +42,7 @@ authRouter.post(
 
 authRouter.post(
   '/registration',
+  rateLimitMiddleware,
   userInputDtoValidation,
   inputValidationResultMiddleware,
   registrationHandler
@@ -46,6 +50,7 @@ authRouter.post(
 
 authRouter.post(
   '/registration-email-resending',
+  rateLimitMiddleware,
   email, //userInputDtoValidation
   inputValidationResultMiddleware,
   registrationEmailResendingHandler

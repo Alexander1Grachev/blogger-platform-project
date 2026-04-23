@@ -1,6 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { HttpStatus } from '../core/consts/http-statuses';
-import { blogCollection, postCollection, userCollection } from '../db/mongo.db';
+import {
+  blogCollection,
+  commentCollection,
+  postCollection,
+  rateLimitCollection,
+  sessionCollection,
+  userCollection
+} from '../infrastructure/db/mongo.db';
 
 export const testingClearRouter = Router();
 
@@ -10,7 +17,9 @@ testingClearRouter.delete('/all-data', async (req: Request, res: Response) => {
     blogCollection.deleteMany(),
     postCollection.deleteMany(),
     userCollection.deleteMany(),
-
+    commentCollection.deleteMany(),
+    sessionCollection.deleteMany(),
+    rateLimitCollection.deleteMany(),
 
   ])
   res.sendStatus(HttpStatus.NoContent);

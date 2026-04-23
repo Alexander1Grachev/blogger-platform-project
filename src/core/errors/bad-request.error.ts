@@ -7,3 +7,4 @@ export class BadRequestError extends Error {
     super(message);
   }
 }
+

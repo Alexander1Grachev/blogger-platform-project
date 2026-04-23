@@ -1,11 +1,11 @@
 import { bcryptService } from "../../auth/adapters/bcrypt.service";
 import { BadRequestError } from "../../core/errors/bad-request.error";
-import { User } from "../domain/user";
-import { IUserDB } from "../models/user.db.interface";
+import { User } from "./dtos/user.dto";
+import { IUserDB } from "../repositories/models/user.db.interface";
 import { usersQueryRepository } from "../repositories/users.query.repository";
 import { usersRepository } from "../repositories/users.repository";
 import { UserQueryInput } from "../routers/input/user-query.input";
-import { UserInputDto } from "./dtos/user-input-dto";
+import { UserInputDto } from "../routers/input/user-input-dto";
 import {  WithId } from 'mongodb';
 
 

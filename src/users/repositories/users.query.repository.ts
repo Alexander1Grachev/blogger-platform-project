@@ -1,9 +1,9 @@
 import { ObjectId, WithId } from "mongodb";
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
-import { User } from "../domain/user";
-import { userCollection } from "../../db/mongo.db";
+import { User } from "../application/dtos/user.dto";
+import { userCollection } from "../../infrastructure/db/mongo.db";
 import { UserQueryInput } from "../routers/input/user-query.input";
-import { IUserDB } from "../models/user.db.interface";
+import { IUserDB } from "./models/user.db.interface";
 import { BadRequestError } from "../../core/errors/bad-request.error";
 
 

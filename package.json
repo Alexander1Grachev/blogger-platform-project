@@ -14,8 +14,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.19.0",
     "nanoid": "^5.1.5",
-    "nodemailer": "^8.0.1",
-    "uuid": "^9.0.1"
+    "nodemailer": "^8.0.1"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
