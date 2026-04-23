@@ -1,6 +1,6 @@
-import { Post } from '../domain/post';
-import { PostInputDto } from '../application/dtos/post-input-model';
-import { postCollection } from '../../db/mongo.db';
+import { Post } from './models/post.model';
+import { PostInputDto } from '../application/dtos/post-input-dto';
+import { postCollection } from '../../infrastructure/db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { PostQueryInput } from '../routers/input/post-query.input';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';

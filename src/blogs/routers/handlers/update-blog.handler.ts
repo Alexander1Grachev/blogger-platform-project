@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
-import { BlogInputDto } from '../../application/dtos/blog-input-model';
+import { BlogInputDto } from '../../application/dtos/blog-input-dto';
 import { blogsService } from '../../application/blogs.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 

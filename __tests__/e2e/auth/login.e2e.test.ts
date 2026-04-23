@@ -9,29 +9,39 @@ import { HttpStatus } from '../../../src/core/consts/http-statuses';
 describe('CREATE user session', () => {
   const app = getTestApp();
 
+
   beforeAll(async () => {
     await clearDb(app);
-    await createUser(app);
   });
 
-  it('❌ should return 401 with wrong password', async () => {
+  it('❌ should return 400 with incorrect values', async () => {
+
     const res = await request(app)
       .post(`${AUTH_PATH}/login`)
       .send({
-        loginOrEmail: 'nonexistent',
-        password: 'wrongpassword'
+        loginOrEmail: '',
+        password: ''
       })
-      .expect(HttpStatus.Unauthorized)
+      .expect(HttpStatus.BadRequest)
 
-    expect(res.body).toEqual({});
+    expect(res.body).toHaveProperty('errorsMessages');
+    expect(Array.isArray(res.body.errorsMessages)).toBe(true);
+    expect(res.body.errorsMessages.length).toBeGreaterThan(0);
+
+    const fields = res.body.errorsMessages.map((e: any) => e.field);
+    expect(fields).toContain('loginOrEmail');
+    expect(fields).toContain('password');
   });
+
 
   it('✅ should login with correct credentials (login)', async () => {
+    const { login, password } = await createUser(app)
+
     const res = await request(app)
       .post(`${AUTH_PATH}/login`)
       .send({
-        loginOrEmail: 'NewUser2',
-        password: '12345u'
+        loginOrEmail: login,
+        password: password,
       })
       .expect(HttpStatus.Ok);
     // 1. проверяем accessToken
@@ -45,11 +55,13 @@ describe('CREATE user session', () => {
   });
 
   it('✅ should login with correct credentials (email)', async () => {
+    const { email, password } = await createUser(app)
+
     const res = await request(app)
       .post(`${AUTH_PATH}/login`)
       .send({
-        loginOrEmail: 'new2user@mail.com',
-        password: '12345u'
+        loginOrEmail: email,
+        password: password,
       })
       .expect(HttpStatus.Ok);
 
@@ -63,4 +75,28 @@ describe('CREATE user session', () => {
     expect(cookies[0]).toContain('refreshToken');
   });
 
+  it('❌ should return 429 after too many login attempts', async () => {
+    // ❌ should return 401 with wrong password or login
+    await clearDb(app); // сбрасываем лимит и все сессии
+    for (let i = 0; i < 5; i++) {
+      await request(app)
+        .post(`${AUTH_PATH}/login`)
+        .send({
+          loginOrEmail: 'wrong',
+          password: 'wrong',
+        })
+        .expect(HttpStatus.Unauthorized);
+    }
+    // 6-я попытка -- 429
+    await request(app)
+      .post(`${AUTH_PATH}/login`)
+      .send({
+        loginOrEmail: 'wrong',
+        password: 'wrong',
+      })
+      .expect(HttpStatus.TooManyRequests);
+  });
+
+
 })
+

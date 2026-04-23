@@ -1,28 +1,40 @@
-import { UserInputDto } from "../../../src/users/application/dtos/user-input-dto"
+import { UserInputDto } from '../../../src/users/routers/input/user-input-dto';
 import request from 'supertest';
 import { Express } from 'express';
 import { USERS_PATH } from "../../../src/core/paths/paths";
 import { generateBasicAuthToken } from "../generate-admin-auth-token";
 import { HttpStatus } from "../../../src/core/consts/http-statuses";
-import { UserViewModel } from "../../../src/users/application/dtos/user-view-model";
 
 
 
 export async function createUser(
     app: Express,
-): Promise<UserViewModel> {
+) {
+    const unique = crypto.randomUUID().replace(/-/g, '').slice(0, 8);
+
+    const login = `u${unique}`;       // 7 символов
+    const password = `pass${unique}`;
+    const email = `${unique}@test.com`;
+
     const correctTestUserAttributes: UserInputDto = {
-        login: 'NewUser2',
-        password: '12345u',
-        email: 'new2user@mail.com',
+        login: login,
+        password: password,
+        email: email,
     }
-    const createUserResponse = await request(app)
+
+
+    const res = await request(app)
         .post(USERS_PATH)
         .set('Authorization', generateBasicAuthToken())
         .send(correctTestUserAttributes)
         .expect(HttpStatus.Created);
 
-    return createUserResponse.body;
+    return {
+        user: res.body,
+        login,
+        password,
+        email,
+    };
 }
 
 

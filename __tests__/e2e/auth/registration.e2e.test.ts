@@ -85,6 +85,8 @@ describe('POST /auth/registration', () => {
 
 
   it('✅ should register user and send confirmation email (204)', async () => {
+    await clearDb(app); // сбрасываем лимит и все сессии
+
     await request(app)
       .post(`${AUTH_PATH}/registration`)
       .send({
@@ -95,4 +97,22 @@ describe('POST /auth/registration', () => {
     const code = expect.getState().code; // вернёт undefined в случае провала 
     expect(code).toBeDefined(); // проверил на undefined  
   });
+
+
+  it('❌ should return 429 after too many registration attempts', async () => {
+    // 
+    await clearDb(app); // сбрасываем лимит и все сессии
+    for (let i = 0; i < 5; i++) {
+      await request(app)
+        .post(`${AUTH_PATH}/registration`)
+        .send({})
+        .expect(HttpStatus.BadRequest);
+    }
+    // 6-я попытка -- 429
+    await request(app)
+      .post(`${AUTH_PATH}/registration`)
+      .send({})
+      .expect(HttpStatus.TooManyRequests);
+  });
+
 })

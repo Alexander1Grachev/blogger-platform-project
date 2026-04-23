@@ -81,4 +81,24 @@ describe('POST /api/auth/registration-email-resending', () => {
     expect(secondCode).toBeDefined();
     expect(secondCode).not.toBe(firstCode); // новый код должен отличаться
   });
-});
+
+  it('❌ should return 429 after too many email-resending attempts', async () => {
+    // 
+    await clearDb(app); // сбрасываем лимит и все сессии
+
+    await registerAndGetCode(app, 'user2', 'example2@example.com');
+
+    for (let i = 0; i < 5; i++) {
+      await request(app)
+        .post(`${AUTH_PATH}/registration-email-resending`)
+        .send({ email: 'example2@example.com' })
+        .expect(HttpStatus.NoContent);
+    }
+    // 6-я попытка -- 429
+    await request(app)
+      .post(`${AUTH_PATH}/registration-email-resending`)
+      .send({ email: 'example2@example.com' })
+      .expect(HttpStatus.TooManyRequests);
+
+  });
+})

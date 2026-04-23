@@ -1,7 +1,7 @@
 import { usersQueryRepository } from "../../users/repositories/users.query.repository";
 import { nodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emails.templates";
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 import { BadRequestError } from "../../core/errors/bad-request.error";
 import { usersRepository } from "../../users/repositories/users.repository";
 import { addHours } from 'date-fns';
@@ -17,14 +17,14 @@ export const emailService = {
     if (user.emailConfirmation?.isConfirmed) {
       throw new BadRequestError('Email already confirmed', 'email');
     }
-    const newConfirmationCode = uuidv4();
+    const newConfirmationCode = crypto.randomUUID();
     await usersRepository.updateEmailConfirmationCode(
       user._id,
       newConfirmationCode,
       addHours(new Date(), 1)
     );
     const html = emailExamples.registrationEmail(newConfirmationCode, user.login);
-    await nodemailerService.sendEmail(user.email, 'Registration', html);
+    nodemailerService.sendEmail(user.email, 'Registration', html);
   },
 
 

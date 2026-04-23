@@ -15,7 +15,7 @@ describe('POST /api/auth/registration-confirmation', () => {
 
   beforeAll(async () => {
     await clearDb(app);
-    mockEmailService(); 
+    mockEmailService();
   })
 
   it('❌ should return 400 if body is invalid', async () => {
@@ -52,7 +52,7 @@ describe('POST /api/auth/registration-confirmation', () => {
       expect.arrayContaining([
         expect.objectContaining({
           message: expect.any(String),
-          field: 'emailConfirmation',
+          field: 'code',
         }),
       ])
     );
@@ -81,7 +81,7 @@ describe('POST /api/auth/registration-confirmation', () => {
       expect.arrayContaining([
         expect.objectContaining({
           message: expect.any(String),
-          field: 'emailConfirmation',
+          field: 'code',
         }),
       ])
     );
@@ -98,5 +98,27 @@ describe('POST /api/auth/registration-confirmation', () => {
       .post(`${AUTH_PATH}/registration-confirmation`)
       .send({ code })
       .expect(HttpStatus.NoContent);
+  });
+
+  it('❌ should return 429 after too many registration-confirmation attempts', async () => {
+    // 
+    await clearDb(app); // сбрасываем лимит и все сессии
+    for (let i = 0; i < 5; i++) {
+      await request(app)
+        .post(`${AUTH_PATH}/registration-confirmation`)
+        .send({})
+        .expect(HttpStatus.BadRequest);
+    }
+    // 6-я попытка -- 429
+    const code = await registerAndGetCode(
+      app,
+      'user3',
+      'example3@example.com'
+    );
+
+    await request(app)
+      .post(`${AUTH_PATH}/registration-confirmation`)
+      .send({ code })
+      .expect(HttpStatus.TooManyRequests);
   });
 });

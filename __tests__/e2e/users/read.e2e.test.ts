@@ -9,57 +9,55 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from "../../../src/core/consts
 
 
 
-
-describe('READ user ', () => {
+describe('READ user', () => {
   const app = getTestApp();
-  const adminToken = generateBasicAuthToken()
+  const adminToken = generateBasicAuthToken();
+
   beforeAll(async () => {
     await clearDb(app);
-    await createUser(app)
   });
+
   it('❌ should return 404 if user not found', async () => {
     await request(app)
       .get(`${USERS_PATH}/68dd420a59b32c41bb039999`)
       .expect(HttpStatus.NotFound);
   });
 
-  it(
-    '✅ should return users list with pagination and support filters',
-    async () => {
-      await request(app)
-        .post(USERS_PATH)
-        .set('Authorization', adminToken)
-        .send({ login: 'user1', password: '123456a', email: 'user1@mail.com' })
-        .expect(HttpStatus.Created);
+  it('✅ should return users list with pagination and support filters', async () => {
 
-      const resAll = await request(app)
-        .get(USERS_PATH)
-        .set('Authorization', adminToken)
-        .expect(HttpStatus.Ok);
+    // создаём 2 разных пользователя
+    const user1 = await createUser(app);
+    const user2 = await createUser(app);
 
-      expect(resAll.body.items).toHaveLength(2);
-      expect(resAll.body.totalCount).toBe(2);
-      expect(resAll.body.page).toBe(DEFAULT_PAGE_NUMBER);
-      expect(resAll.body.pageSize).toBe(DEFAULT_PAGE_SIZE);
-      expect(resAll.body.pagesCount).toBe(Math.ceil(2 / DEFAULT_PAGE_SIZE));
+    const resAll = await request(app)
+      .get(USERS_PATH)
+      .set('Authorization', adminToken)
+      .expect(HttpStatus.Ok);
 
-      const resLogin = await request(app)
-        .get(USERS_PATH)
-        .query({ searchLoginTerm: 'user1' })
-        .set('Authorization', adminToken)
-        .expect(HttpStatus.Ok);
+    expect(resAll.body.items).toHaveLength(2);
+    expect(resAll.body.totalCount).toBe(2);
+    expect(resAll.body.page).toBe(DEFAULT_PAGE_NUMBER);
+    expect(resAll.body.pageSize).toBe(DEFAULT_PAGE_SIZE);
+    expect(resAll.body.pagesCount).toBe(Math.ceil(2 / DEFAULT_PAGE_SIZE));
 
-      expect(resLogin.body.items).toHaveLength(1);
-      expect(resLogin.body.items[0].login).toBe('user1');
+    // фильтр по login
+    const resLogin = await request(app)
+      .get(USERS_PATH)
+      .query({ searchLoginTerm: user1.login })
+      .set('Authorization', adminToken)
+      .expect(HttpStatus.Ok);
 
-      const resEmail = await request(app)
-        .get(USERS_PATH)
-        .query({ searchEmailTerm: 'new2user@mail.com' })
-        .set('Authorization', adminToken)
-        .expect(HttpStatus.Ok);
+    expect(resLogin.body.items).toHaveLength(1);
+    expect(resLogin.body.items[0].login).toBe(user1.login);
 
-      expect(resEmail.body.items).toHaveLength(1);
-      expect(resEmail.body.items[0].email).toBe('new2user@mail.com');
-    },
-  );
-})
+    // фильтр по email
+    const resEmail = await request(app)
+      .get(USERS_PATH)
+      .query({ searchEmailTerm: user2.email })
+      .set('Authorization', adminToken)
+      .expect(HttpStatus.Ok);
+
+    expect(resEmail.body.items).toHaveLength(1);
+    expect(resEmail.body.items[0].email).toBe(user2.email);
+  });
+});

@@ -5,7 +5,7 @@ import { clearDb } from "../../utils/clear-db";
 import { getCommentDto } from '../../utils/comments/get-comment-dto';
 import { createComment } from '../../utils/comments/create-comment-in-post';
 import { getUserDto } from '../../utils/users/get-user-dto';
-import { createUserAndLogin } from '../../utils/create-user-n-login.token';
+import { createUserAndLogin } from '../../utils/users/create-user-n-login.token';
 import { AUTH_PATH, COMMENT_PATH } from '../../../src/core/paths/paths';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 

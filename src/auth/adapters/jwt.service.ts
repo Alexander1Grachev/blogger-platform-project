@@ -5,8 +5,8 @@ export const jwtService = {
   createAccessToken(userId: string): string {
     const expiresIn = appConfig.AC_TIME; // ожидаем число секунд
 
-    console.log("AC_TIME:", appConfig.AC_TIME);
-    console.log("expiresIn:", expiresIn);
+    //console.log("AC_TIME:", appConfig.AC_TIME);
+    //console.log("expiresIn:", expiresIn);
 
     return jwt.sign(
       { userId },
@@ -14,14 +14,14 @@ export const jwtService = {
       { expiresIn } as SignOptions
     );
   },
-  createRefreshToken(userId: string): string {
+  createRefreshToken(userId: string, deviceId: string): string {
     const expiresIn = appConfig.RT_TIME;
 
-    console.log("RT_TIME:", appConfig.RT_TIME);
-    console.log("expiresIn:", expiresIn);
+    //console.log("RT_TIME:", appConfig.RT_TIME);
+    //console.log("expiresIn:", expiresIn);
 
     return jwt.sign(
-      { userId, jti: crypto.randomUUID() }, // jti гарантирует уникальность
+      { userId, deviceId },
       appConfig.RT_SECRET,
       { expiresIn } as SignOptions,
     )
@@ -46,9 +46,9 @@ export const jwtService = {
     }
   },
 
-  verifyRefreshToken(token: string): { userId: string } | null {
+  verifyRefreshToken(token: string): { userId: string, deviceId: string, exp: number, iat: number } | null {
     try {
-      return jwt.verify(token, appConfig.RT_SECRET) as { userId: string, jti: string };
+      return jwt.verify(token, appConfig.RT_SECRET) as { userId: string, deviceId: string, exp: number, iat: number };
     } catch (e) {
       console.error("Token verification error", e);
       return null;

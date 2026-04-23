@@ -1,4 +1,4 @@
-import { UserViewModel } from "../../application/dtos/user-view-model"
+import { UserViewModel } from "./user-view-model"
 
 export type UserListPaginatedOutput = {
 

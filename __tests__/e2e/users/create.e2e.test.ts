@@ -2,11 +2,11 @@ import request from 'supertest';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
 import { clearDb } from '../../utils/clear-db';
-import { UserInputDto } from '../../../src/users/application/dtos/user-input-dto';
+import { UserInputDto } from '../../../src/users/routers/input/user-input-dto';
 import { USERS_PATH } from '../../../src/core/paths/paths';
 import { createUser } from '../../utils/users/create-user';
 import { getTestApp } from '../../setup/start-test-app';
-import { userCollection } from '../../../src/db/mongo.db';
+import { userCollection } from '../../../src/infrastructure/db/mongo.db';
 
 
 describe('CREATE user check', () => {
@@ -96,14 +96,13 @@ describe('CREATE user check', () => {
   });
 
   it('✅ should create user with valid data & auth', async () => {
-    const createdUser = await createUser(app);
+    const { user, login, email } = await createUser(app);
 
-    expect(createdUser).toEqual({
+    expect(user).toEqual({
       id: expect.any(String),
-      login: 'NewUser2',
-      email: 'new2user@mail.com',
+      login: login,
+      email: email,
       createdAt: expect.any(String),
     });
-  })
-
+  });
 })

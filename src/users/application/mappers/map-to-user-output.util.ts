@@ -1,6 +1,6 @@
 import { WithId } from "mongodb";
-import { UserViewModel } from "../../application/dtos/user-view-model";
-import { User } from "../../domain/user";
+import { UserViewModel } from "../output/user-view-model";
+import { User } from "../dtos/user.dto";
 
 export function mapToUserOutput(user: WithId<User>): UserViewModel {
     return {

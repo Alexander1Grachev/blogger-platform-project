@@ -1,10 +1,10 @@
 import { WithId } from "mongodb";
 import { blogsRepository } from "../../blogs/repositories/blogs.repository";
-import { Post } from "../domain/post";
+import { Post } from "../reposytories/models/post.model";
 import { postsRepository } from "../reposytories/posts.repository";
-import { PostInputDto } from "./dtos/post-input-model";
+import { PostInputDto } from "./dtos/post-input-dto";
 import { PostQueryInput } from "../routers/input/post-query.input";
-import { BlogPostInputDto } from "../../blogs/application/dtos/blog-post-input-model";
+import { BlogPostInputDto } from "../../blogs/application/dtos/blog-post-input-dto";
 
 export const postsService = {
     async findMany(

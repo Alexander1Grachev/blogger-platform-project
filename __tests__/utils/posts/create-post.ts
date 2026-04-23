@@ -6,7 +6,7 @@ import { generateBasicAuthToken } from '../generate-admin-auth-token';
 import { getPostDto } from './get-post-dto';
 
 import { createBlog } from '../blogs/create-blog';
-import { PostInputDto } from '../../../src/posts/application/dtos/post-input-model';
+import { PostInputDto } from '../../../src/posts/application/dtos/post-input-dto';
 import { PostViewModel } from '../../../src/posts/application/output/post-view-model';
 
 export async function createPost(

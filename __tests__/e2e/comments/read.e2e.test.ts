@@ -7,7 +7,7 @@ import { CommentViewModel } from '../../../src/comments/application/output/comme
 import { createComment } from '../../utils/comments/create-comment-in-post';
 import { getCommentDto } from '../../utils/comments/get-comment-dto';
 import { getUserDto } from '../../utils/users/get-user-dto';
-import { createUserAndLogin } from '../../utils/create-user-n-login.token';
+import { createUserAndLogin } from '../../utils/users/create-user-n-login.token';
 
 describe('GET comment by id', () => {
   const app = getTestApp();

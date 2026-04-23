@@ -1,4 +1,4 @@
-import { UserInputDto } from "../../application/dtos/user-input-dto";
+import { UserInputDto } from "../input/user-input-dto";
 import { Response, Request } from 'express'
 import { usersService } from "../../application/users.service";
 import { HttpStatus } from "../../../core/consts/http-statuses";

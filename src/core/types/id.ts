@@ -1,2 +1,2 @@
-export type IdType = { id: string }
+// export type IdType = { id: string } //пока не испоьзую 
 

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import { postsService } from '../../../posts/application/posts.service';
-import { BlogPostInputDto } from '../../application/dtos/blog-post-input-model';
+import { BlogPostInputDto } from '../../application/dtos/blog-post-input-dto';
 import { mapToPostOutput } from '../../../posts/application/mappers/map-to-post-output.util';
 
 export async function createPostForBlogHandler(

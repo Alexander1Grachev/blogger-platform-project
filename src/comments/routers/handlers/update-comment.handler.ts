@@ -12,7 +12,7 @@ export async function updateCommentHandler(
   res: Response<void>,
 ) {
   try {
-    const userId = req.user!.id
+    const userId = req.user!.userId;
     const commentId = req.params.id;
     await commentsService.update(commentId, userId, req.body);
     res.sendStatus(HttpStatus.NoContent)

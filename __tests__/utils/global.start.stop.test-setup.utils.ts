@@ -1,4 +1,4 @@
-import { runDB, stopDb } from '../../src/db/mongo.db';
+import { runDB, stopDb } from "../../src/infrastructure/db/mongo.db";
 
 let isDBRunning = false;
 

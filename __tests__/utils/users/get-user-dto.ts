@@ -1,4 +1,4 @@
-import { UserInputDto } from "../../../src/users/application/dtos/user-input-dto";
+import { UserInputDto } from "../../../src/users/routers/input/user-input-dto";
 
 
 export function getUserDto(): UserInputDto {

@@ -1,10 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
+
+import crypto from 'crypto';
 
 export function generateUserData() {
-  const unique = uuidv4().replace(/-/g, '').slice(0, 5);
+  const unique = crypto.randomUUID().replace(/-/g, '').slice(0, 5);
 
   return {
-    login: `usr${unique}`, 
+    login: `usr${unique}`,
     email: `e${unique}@test.com`,
     password: `Pass1234!`,
   };

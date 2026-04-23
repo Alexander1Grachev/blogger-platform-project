@@ -8,9 +8,7 @@ export async function meHandler(
   res: Response,
 ) {
   try {
-    const userId = req.user!.id
-    if (!userId)
-      return res.sendStatus(HttpStatus.Unauthorized);
+    const userId = req.user!.userId;
     const me = await authService.getMeView(userId)
     return res.status(HttpStatus.Ok).send(me)
   } catch (e: unknown) {

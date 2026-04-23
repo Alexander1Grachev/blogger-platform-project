@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express'
-import { EmailInputDto } from '../../application/dtos/email-input.model';
+import { EmailInputDto } from '../input/email-input.model';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { emailService } from '../../application/auth-email.service ';

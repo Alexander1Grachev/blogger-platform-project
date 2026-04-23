@@ -1,4 +1,4 @@
-import { CommentatorInfoView } from "../../domain/comments";
+import { CommentatorInfoView } from "../../repositories/models/comments.model";
 
 export type CommentViewModel = {
   id: string;
