@@ -1,33 +1,35 @@
 
 import { Router } from "express";
-import { getAllUserSessionsHandler } from "./handler/get-all-user-sessions.handler";
-import { deleteOtherUserSessionsHandler } from "./handler/delete-other-user-sessions.handler";
-import { refreshTokenGuard } from "../../auth/middlewares/refresh.token.guard";
-import { deleteDeviceSessionsHandler } from "./handler/delete-device-sessions.handler";
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validtion-result.middleware";
 import { validateDeviceIdParam } from "../validation/deviceId-param-validation";
 
 
+import {
+  deleteDeviceSessionsController,
+  getAllUserSessionsController,
+  deleteOtherUserSessionsController,
 
+  refreshTokenGuardMiddleware,
+} from "../../composition-root";
 
 export const securityDevicesRouter = Router();
 
 
 securityDevicesRouter.get('/',
-  refreshTokenGuard,
-  getAllUserSessionsHandler
+  refreshTokenGuardMiddleware,
+  getAllUserSessionsController.handle
 );
 
 securityDevicesRouter.delete('/',
-  refreshTokenGuard,
-  deleteOtherUserSessionsHandler
+  refreshTokenGuardMiddleware,
+  deleteOtherUserSessionsController.handle
 );
 
 
 securityDevicesRouter.delete('/:deviceId',
-  refreshTokenGuard,
+  refreshTokenGuardMiddleware,
   validateDeviceIdParam,
   inputValidationResultMiddleware,
-  deleteDeviceSessionsHandler
+  deleteDeviceSessionsController.handle
 );
 

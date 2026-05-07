@@ -1,19 +1,21 @@
 import { Router } from "express";
 import { authInputDtoValidation } from "../validation/login.input-dto.validation";
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validtion-result.middleware";
-import { accessTokenGuard } from "../middlewares/access.token.guard";
-import { registrationConfirmHandler } from "./handler/registration-confirmation.handler";
 import { registrationConfirmationValidation } from "../validation/registration-confirmation.validation";
-import { registrationHandler } from "./handler/registration.handler";
 import { email, userInputDtoValidation } from "../../users/validation/user.input-dto.validation";
-import { registrationEmailResendingHandler } from "./handler/registration-email-resending.handler";
-import { loginHandler } from "./handler/login.handler";
-import { meHandler } from "./handler/me.handler";
-import { refreshTokenGuard } from "../middlewares/refresh.token.guard";
-import { logoutHandler } from "./handler/logout-token.handler ";
-import { refreshTokenHandler } from "./handler/refresh-token.handler";
-import { rateLimitMiddleware } from "../../core/middlewares/rate-limit.middleware";
 
+import {
+  loginController,
+  meController,
+  registrationController,
+  registrationConfirmationController,
+  registrationEmailResendingController,
+  refreshTokenController,
+  logoutController,
+  accessTokenGuardMiddleware,
+  refreshTokenGuardMiddleware,
+  rateLimitMiddleware,
+} from "../../composition-root";
 
 export const authRouter = Router();
 
@@ -23,13 +25,13 @@ authRouter
     rateLimitMiddleware,
     authInputDtoValidation,
     inputValidationResultMiddleware,
-    loginHandler
+    loginController.handle
   );
 
 authRouter.get(
   '/me',
-  accessTokenGuard,
-  meHandler
+  accessTokenGuardMiddleware,
+  meController.handle
 );
 
 authRouter.post(
@@ -37,7 +39,7 @@ authRouter.post(
   rateLimitMiddleware,
   registrationConfirmationValidation,
   inputValidationResultMiddleware,
-  registrationConfirmHandler
+  registrationConfirmationController.handle
 );
 
 authRouter.post(
@@ -45,7 +47,7 @@ authRouter.post(
   rateLimitMiddleware,
   userInputDtoValidation,
   inputValidationResultMiddleware,
-  registrationHandler
+  registrationController.handle
 );
 
 authRouter.post(
@@ -53,17 +55,17 @@ authRouter.post(
   rateLimitMiddleware,
   email, //userInputDtoValidation
   inputValidationResultMiddleware,
-  registrationEmailResendingHandler
+  registrationEmailResendingController.handle
 );
 
 authRouter.post(
   '/refresh-token',
-  refreshTokenGuard,
-  refreshTokenHandler,
+  refreshTokenGuardMiddleware,
+  refreshTokenController.handle,
 );
 
 authRouter.post(
   '/logout',
-  refreshTokenGuard,
-  logoutHandler,
+  refreshTokenGuardMiddleware,
+  logoutController.handle,
 );

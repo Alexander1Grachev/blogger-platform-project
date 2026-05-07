@@ -3,17 +3,17 @@ import { userCollection } from "../../infrastructure/db/mongo.db";
 import { ObjectId } from 'mongodb';
 import { IUserDB } from "./models/user.db.interface";
 
-export const usersRepository = {
+export class UsersRepository  {
   async delete(id: string): Promise<void> {
     const deleteResult = await userCollection.deleteOne({ _id: new ObjectId(id) })
     if (deleteResult.deletedCount < 1) {
       throw new RepositoryNotFoundError('User not exist');
     }
-  },
+  }
   async create(newUser: IUserDB): Promise<string> {
     const insertResult = await userCollection.insertOne(newUser);
     return insertResult.insertedId.toString();
-  },
+  }
 
   async confirmEmail(
     userId: ObjectId,
@@ -26,7 +26,8 @@ export const usersRepository = {
         },
       },
     )
-  },
+  }
+  
   async updateEmailConfirmationCode(
     userId: ObjectId,
     newCode: string,

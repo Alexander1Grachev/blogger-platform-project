@@ -1,12 +1,14 @@
 import { TooManyRequestsError } from "../../core/errors/too-many-requests.error";
 import { RateLimitLog } from "./rate-limit.model";
-import { rateLimitRepository } from "./rate-limit.repository";
+import { RateLimitRepository } from "./rate-limit.repository";
 
 
 
-export const rateLimitService = {
+export class RateLimitService {
+  constructor(private readonly rateLimitRepository: RateLimitRepository) { };
+
   async checkAndLog(ip: string, url: string, maxRequests: number) {
-    const count = await rateLimitRepository.countRequests(ip, url);
+    const count = await this.rateLimitRepository.countRequests(ip, url);
 
     console.log(`[rateLimitService] 📊 Before save count: ${count}/${maxRequests}`);
 
@@ -20,6 +22,6 @@ export const rateLimitService = {
       date: new Date(),
     };
 
-    await rateLimitRepository.createRequest(newRateLimitLog);
+    await this.rateLimitRepository.createRequest(newRateLimitLog);
   }
 };

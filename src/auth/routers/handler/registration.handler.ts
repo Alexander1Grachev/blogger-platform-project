@@ -2,17 +2,21 @@ import { Response, Request } from 'express'
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 import { UserInputDto } from '../../../users/routers/input/user-input-dto';
-import { authService } from '../../application/auth-user.service';
+import { AuthService } from '../../application/auth-user.service';
 
-export async function registrationHandler(
-  req: Request<{}, {}, UserInputDto>,
-  res: Response,
-) {
-  try {
-    await authService.register(req.body);
-    res.sendStatus(HttpStatus.NoContent);
+export class RegistrationController {
+  constructor(private readonly authService: AuthService) { };
 
-  } catch (e: unknown) {
-    errorsHandler(e, res);
+  handle = async (
+    req: Request<{}, {}, UserInputDto>,
+    res: Response,
+  ) => {
+    try {
+      await this.authService.register(req.body);
+      res.sendStatus(HttpStatus.NoContent);
+
+    } catch (e: unknown) {
+      errorsHandler(e, res);
+    }
   }
 }

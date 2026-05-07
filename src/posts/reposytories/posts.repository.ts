@@ -5,7 +5,7 @@ import { ObjectId, WithId } from 'mongodb';
 import { PostQueryInput } from '../routers/input/post-query.input';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 
-export const postsRepository = {
+export class PostsRepository {
   async findMany(
     queryDto: PostQueryInput
   ): Promise<{ items: WithId<Post>[]; totalCount: number }> {
@@ -28,7 +28,7 @@ export const postsRepository = {
       postCollection.countDocuments(filter)
     ]);
     return { items, totalCount };
-  },
+  }
 
   async findByIdOrFail(id: string): Promise<WithId<Post>> {
     const res = await postCollection.findOne({ _id: new ObjectId(id) });
@@ -37,12 +37,12 @@ export const postsRepository = {
     }
 
     return res;
-  },
+  }
 
   async create(newPost: Post): Promise<string> {
     const insertResult = await postCollection.insertOne(newPost);
     return insertResult.insertedId.toString();
-  },
+  }
 
   async update(id: string, input: PostInputDto): Promise<void> {
     const updateResult = await postCollection.updateOne(
@@ -60,7 +60,7 @@ export const postsRepository = {
       throw new RepositoryNotFoundError('Post not exist');
     }
     return;
-  },
+  }
 
   async delete(id: string): Promise<void> {
     const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(id) })
@@ -68,7 +68,8 @@ export const postsRepository = {
       throw new RepositoryNotFoundError('Post not exist');
     }
     return;
-  },
+  }
+
   async getPostForBlog(
     blogId: string,
     queryDto: PostQueryInput,
@@ -87,5 +88,5 @@ export const postsRepository = {
       postCollection.countDocuments(filter),
     ]);
     return { items, totalCount };
-  },
+  }
 };

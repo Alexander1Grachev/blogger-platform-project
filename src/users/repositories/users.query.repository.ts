@@ -7,7 +7,7 @@ import { IUserDB } from "./models/user.db.interface";
 import { BadRequestError } from "../../core/errors/bad-request.error";
 
 
-export const usersQueryRepository = {
+export class UsersQueryRepository {
 
   async findByIdOrFail(id: string): Promise<WithId<IUserDB>> {
     console.log('FIND BY ID:', id);
@@ -19,12 +19,12 @@ export const usersQueryRepository = {
       throw new RepositoryNotFoundError('User not exist');
     }
     return res;
-  },
+  }
   async findForRegistration(login: string, email: string) {
     return userCollection.findOne({
       $or: [{ login: login }, { email: email }],
     });
-  },
+  }
   async findForAuth(
     loginOrEmail: string
   ): Promise<WithId<IUserDB> | null> {
@@ -32,7 +32,7 @@ export const usersQueryRepository = {
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
 
-  },
+  }
 
   async findByConfirmationCode(
     confCode: string
@@ -44,8 +44,8 @@ export const usersQueryRepository = {
       throw new BadRequestError('Invalid confirmation code', 'code');
     }
     return user
-  },
-
+  }
+  
   async findMany(
     queryDto: UserQueryInput
   ): Promise<{ items: WithId<User>[]; totalCount: number }> {

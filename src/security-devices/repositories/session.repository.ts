@@ -4,10 +4,10 @@ import { sessionCollection } from "../../infrastructure/db/mongo.db";
 import { Session } from "./models/session.model";
 
 
-export const sessionRepository = {
+export class SessionRepository {
   async createSession(newSession: Session): Promise<void> {
     await sessionCollection.insertOne(newSession);
-  },
+  }
 
   async findSessionByDeviceId(deviceId: string): Promise<Session> {
     const session = await sessionCollection.findOne({ deviceId });
@@ -15,11 +15,11 @@ export const sessionRepository = {
       throw new RepositoryNotFoundError('Session not exist');
     }
     return session
-  },
+  }
 
   async findSessionByDeviceIdAuth(deviceId: string): Promise<Session | null> {
     return await sessionCollection.findOne({ deviceId });
-  },
+  }
 
   async findUserSessions(userId: string): Promise<Session[]> {
     return await sessionCollection.find({
@@ -27,7 +27,7 @@ export const sessionRepository = {
       lastActiveAt: { $ne: new Date(0) }
     }).toArray();
     // не бросаем RepositoryNotFoundError --> вернуть пустой список валидно
-  },
+  }
 
   async updateLastActive(deviceId: string, actualTokenIatTime: Date): Promise<void> {
     await sessionCollection.updateOne(
@@ -38,7 +38,7 @@ export const sessionRepository = {
         },
       },
     )
-  },
+  }
 
   async deleteOtherUserSessions(userId: string, deviceId: string): Promise<void> {
     const deleteResult = await sessionCollection.deleteMany({
@@ -49,7 +49,7 @@ export const sessionRepository = {
       throw new RepositoryNotFoundError('Sessions not exist');
     }
     return;
-  },
+  }
 
   async deleteDeviceSessions(deviceId: string): Promise<void> {
     const deleteResult = await sessionCollection.deleteOne({ deviceId });

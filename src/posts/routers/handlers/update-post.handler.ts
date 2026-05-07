@@ -2,20 +2,23 @@ import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { PostInputDto } from '../../application/dtos/post-input-dto';
 import { ValidationErrorType } from '../../../core/types/validationError';
-import { postsService } from '../../application/posts.service';
+import { PostsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 
-export async function updatePostHandler(
-  req: Request<{ id: string }, void, PostInputDto>,
-  res: Response<{ errorsMessages: ValidationErrorType[] } | void>,
-) {
-  try {
-    const id = req.params.id;
-    await postsService.update(id, req.body)
+export class UpdatePostHController {
+  constructor(private readonly postsService: PostsService) { };
 
-    res.sendStatus(HttpStatus.NoContent);
-  } catch (e: unknown) {
-    errorsHandler(e, res);
+  handle = async (
+    req: Request<{ id: string }, void, PostInputDto>,
+    res: Response<{ errorsMessages: ValidationErrorType[] } | void>,
+  ) => {
+    try {
+      const id = req.params.id;
+      await this.postsService.update(id, req.body)
+
+      res.sendStatus(HttpStatus.NoContent);
+    } catch (e: unknown) {
+      errorsHandler(e, res);
+    }
   }
 }
-

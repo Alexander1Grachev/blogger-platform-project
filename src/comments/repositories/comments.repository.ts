@@ -5,7 +5,7 @@ import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.
 import { CommentInputDto } from "../application/dtos/comment-input.dto";
 import { CommentQueryInput } from "../routers/input/comment-query.input";
 
-export const commentsRepository = {
+export class CommentsRepository {
   async findMany(
     postId: string,
     queryDto: CommentQueryInput
@@ -30,14 +30,14 @@ export const commentsRepository = {
       commentCollection.countDocuments(filter)
     ]);
     return { items, totalCount };
-  },
+  }
   async findByIdOrFail(id: string): Promise<WithId<Comment>> {
     const res = await commentCollection.findOne({ _id: new ObjectId(id) });
     if (!res) {
       throw new RepositoryNotFoundError('Comment not exist')
     }
     return res;
-  },
+  }
   async delete(id: string): Promise<void> {
     const deleteResult = await commentCollection.deleteOne({ _id: new ObjectId(id) });
 
@@ -45,7 +45,7 @@ export const commentsRepository = {
       throw new RepositoryNotFoundError('Comment not exist');
     }
     return;
-  },
+  }
   async update(id: string, dto: CommentInputDto): Promise<void> {
     const updateResult = await commentCollection.updateOne(
       { _id: new ObjectId(id) },
@@ -59,7 +59,7 @@ export const commentsRepository = {
       throw new RepositoryNotFoundError('Comment not exist')
     }
     return;
-  },
+  }
   async create(newComment: Comment): Promise<string> {
     const insertResult = await commentCollection.insertOne(newComment);
     return insertResult.insertedId.toString();

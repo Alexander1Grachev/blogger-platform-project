@@ -1,10 +1,13 @@
 import { WithId } from "mongodb";
 import { Blog } from "../repositories/models/blog.model";
-import { blogsRepository } from "../repositories/blogs.repository";
+import { BlogsRepository } from "../repositories/blogs.repository";
 import { BlogQueryInput } from "../routers/input/blog-query.input";
 import { BlogInputDto } from "./dtos/blog-input-dto";
 
-export const blogsService = {
+export class BlogsService {
+  constructor(private readonly blogsRepository: BlogsRepository) { };
+
+
   async create(dto: BlogInputDto): Promise<string> {
     const newBlog: Blog = {
       name: dto.name,
@@ -13,23 +16,23 @@ export const blogsService = {
       createdAt: new Date(),
       isMembership: false,
     }
-    return blogsRepository.create(newBlog);
-  },
+    return this.blogsRepository.create(newBlog);
+  }
   async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-    return blogsRepository.findByIdOrFail(id);
-  },
+    return this.blogsRepository.findByIdOrFail(id);
+  }
   async update(id: string, dto: BlogInputDto): Promise<void> {
-    return blogsRepository.update(id, dto);
-  },
+    return this.blogsRepository.update(id, dto);
+  }
 
   async findMany(
     queryDto: BlogQueryInput,
   ): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
-    return blogsRepository.findMany(queryDto);
-  },
+    return this.blogsRepository.findMany(queryDto);
+  }
 
   async delete(id: string): Promise<void> {
-    return blogsRepository.delete(id);
-  },
+    return this.blogsRepository.delete(id);
+  }
 
 }

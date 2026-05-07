@@ -1,7 +1,7 @@
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 import { appConfig } from "../../core/config/config";
 
-export const jwtService = {
+export class JwtService {
   createAccessToken(userId: string): string {
     const expiresIn = appConfig.AC_TIME; // ожидаем число секунд
 
@@ -13,7 +13,8 @@ export const jwtService = {
       appConfig.AC_SECRET,
       { expiresIn } as SignOptions
     );
-  },
+  }
+
   createRefreshToken(userId: string, deviceId: string): string {
     const expiresIn = appConfig.RT_TIME;
 
@@ -25,7 +26,7 @@ export const jwtService = {
       appConfig.RT_SECRET,
       { expiresIn } as SignOptions,
     )
-  },
+  }
 
   decodeToken(token: string): JwtPayload | null {
     try {
@@ -35,7 +36,7 @@ export const jwtService = {
       console.error("Can't decode token", e);
       return null;
     }
-  },
+  }
 
   verifyAccessToken(token: string): { userId: string } | null {
     try {
@@ -44,7 +45,7 @@ export const jwtService = {
       console.error("Token verification error", e);
       return null;
     }
-  },
+  }
 
   verifyRefreshToken(token: string): { userId: string, deviceId: string, exp: number, iat: number } | null {
     try {

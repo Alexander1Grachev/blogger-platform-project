@@ -1,17 +1,17 @@
 import { ForbiddenError } from "../../core/errors/forbidden.error";
-import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
 import { Session } from "../../security-devices/repositories/models/session.model";
-import { sessionRepository } from "../repositories/session.repository";
+import { SessionRepository } from "../repositories/session.repository";
 import { CreateSessionDto } from "./dtos/create-session.dto";
 
 
-export const sessionService = {
+export class SessionService {
+  constructor(private readonly sessionRepository: SessionRepository) { };
 
   async findSessionByDeviceId(
     deviceId: string
   ): Promise<Session> {
-    return await sessionRepository.findSessionByDeviceId(deviceId);
-  },
+    return await this.sessionRepository.findSessionByDeviceId(deviceId);
+  }
 
   async createSession(dto: CreateSessionDto): Promise<void> {
     const newSession: Session = {
@@ -22,25 +22,25 @@ export const sessionService = {
       lastActiveAt: new Date(dto.iat * 1000),
       expiresAt: new Date(dto.exp * 1000)
     };
-    await sessionRepository.createSession(newSession);
-  },
+    await this.sessionRepository.createSession(newSession);
+  }
 
   async updateLastActive(deviceId: string, iat: number): Promise<void> {
     const iatDate = new Date(iat * 1000);// первож в дату
-    await sessionRepository.updateLastActive(deviceId, iatDate);
-  },
+    await this.sessionRepository.updateLastActive(deviceId, iatDate);
+  }
 
   async revokeSession(deviceId: string): Promise<void> {
-    await sessionRepository.deleteDeviceSessions(deviceId);
-  },
+    await this.sessionRepository.deleteDeviceSessions(deviceId);
+  }
 
   async findUserSessions(userId: string): Promise<Session[]> {
-    return await sessionRepository.findUserSessions(userId);
-  },
+    return await this.sessionRepository.findUserSessions(userId);
+  }
 
   async deleteOtherUserSessions(userId: string, deviceId: string): Promise<void> {
-    return sessionRepository.deleteOtherUserSessions(userId, deviceId);
-  },
+    return this.sessionRepository.deleteOtherUserSessions(userId, deviceId);
+  }
 
   async deleteDeviceSessions(userId: string, deviceId: string): Promise<void> {
     const session = await this.findSessionByDeviceId(deviceId);
@@ -51,7 +51,7 @@ export const sessionService = {
     }
 
     // удаляем
-    return sessionRepository.deleteDeviceSessions(session.deviceId);
+    return this.sessionRepository.deleteDeviceSessions(session.deviceId);
   }
 }
 
