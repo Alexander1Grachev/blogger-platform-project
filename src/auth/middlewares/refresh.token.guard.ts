@@ -1,14 +1,15 @@
+import { container } from "../../composition-root";
+
 import { NextFunction, Request, Response } from 'express';
 import { JwtService } from '../adapters/jwt.service';
 import { HttpStatus } from '../../core/consts/http-statuses';
 import { UnauthorizedError } from '../../core/errors/unauthorized.error';
 import { AuthService } from '../application/auth-user.service';
+const jwtService = container.get(JwtService);
+const authService = container.get(AuthService);
 
-export const refreshTokenGuard = (
-  jwtService: JwtService, 
-  authService: AuthService,
-) => {
-  return async (
+
+export const refreshTokenGuardMiddleware = async(
     req: Request,
     res: Response,
     next: NextFunction
@@ -59,7 +60,7 @@ export const refreshTokenGuard = (
     }
   };
 
-}
+
 
 
 

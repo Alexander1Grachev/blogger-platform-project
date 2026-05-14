@@ -2,8 +2,10 @@ import { ObjectId } from "mongodb";
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
 import { sessionCollection } from "../../infrastructure/db/mongo.db";
 import { Session } from "./models/session.model";
+import { injectable } from "inversify";
 
 
+@injectable()
 export class SessionRepository {
   async createSession(newSession: Session): Promise<void> {
     await sessionCollection.insertOne(newSession);

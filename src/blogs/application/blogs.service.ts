@@ -3,7 +3,9 @@ import { Blog } from "../repositories/models/blog.model";
 import { BlogsRepository } from "../repositories/blogs.repository";
 import { BlogQueryInput } from "../routers/input/blog-query.input";
 import { BlogInputDto } from "./dtos/blog-input-dto";
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class BlogsService {
   constructor(private readonly blogsRepository: BlogsRepository) { };
 

@@ -8,29 +8,27 @@ import { blogPostInputDtoValidation } from '../../posts/validation/post.input-dt
 import { paginationAndSortingValidation } from '../../core/middlewares/validation/query-pagination-sorting.validation-middleware';
 import { PostSortField } from '../../posts/routers/input/post-sort-field';
 import { BlogSortField } from './input/blog-sort-field';
+import { CreateBlogController } from './handlers/create-blog.handler';
+import { CreatePostForBlogController } from './handlers/create-post.blog.handler';
+import { DeleteBlogController } from './handlers/delete-blog.handler';
+import { GetBlogListController } from './handlers/get-blog-list.handler';
+import { GetBlogController } from './handlers/get-blog.handler';
+import { GetPostsByBlogController } from './handlers/get-posts-by-blog.handler';
+import { UpdateBlogController } from './handlers/update-blog.handler';
 
-
-import {
-  createBlogController,
-  createPostForBlogController,
-  deleteBlogController,
-  getBlogListController,
-  getBlogController,
-  getPostsByBlogController,
-  updateBlogController,
-} from "../../composition-root";
+import { container } from "../../composition-root";
 
 
 export const blogsRouter = Router();
 
 // Публичные
 blogsRouter
-  .get('/:id', idValidation, inputValidationResultMiddleware, getBlogController.handle)
+  .get('/:id', idValidation, inputValidationResultMiddleware, container.get(GetBlogController).handle)
   .get(
     '/',
     paginationAndSortingValidation(BlogSortField),
     inputValidationResultMiddleware,
-    getBlogListController.handle,
+    container.get(GetBlogListController).handle,
 
   )
   .get(
@@ -38,7 +36,7 @@ blogsRouter
     idValidation,
     paginationAndSortingValidation(PostSortField),
     inputValidationResultMiddleware,
-    getPostsByBlogController.handle,
+    container.get(GetPostsByBlogController).handle,
   )
   // Авторизация
   .post(
@@ -46,7 +44,7 @@ blogsRouter
     superAdminGuardMiddleware,
     blogInputDtoValidation,
     inputValidationResultMiddleware,
-    createBlogController.handle,
+    container.get(CreateBlogController).handle,
   )
   .post(
     '/:id/posts',
@@ -54,7 +52,7 @@ blogsRouter
     idValidation,
     blogPostInputDtoValidation,
     inputValidationResultMiddleware,
-    createPostForBlogController.handle,
+    container.get(CreatePostForBlogController).handle,
   )
   .put(
     '/:id',
@@ -62,12 +60,12 @@ blogsRouter
     idValidation,
     blogInputDtoValidation,
     inputValidationResultMiddleware,
-    updateBlogController.handle,
+    container.get(UpdateBlogController).handle,
   )
   .delete(
     '/:id',
     superAdminGuardMiddleware,
     idValidation,
     inputValidationResultMiddleware,
-    deleteBlogController.handle,
+    container.get(DeleteBlogController).handle,
   );

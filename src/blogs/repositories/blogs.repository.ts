@@ -4,7 +4,9 @@ import { blogCollection } from '../../infrastructure/db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { BlogQueryInput } from '../routers/input/blog-query.input';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class BlogsRepository {
   async findMany(
     queryDto: BlogQueryInput

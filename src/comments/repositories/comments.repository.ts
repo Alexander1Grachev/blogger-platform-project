@@ -4,7 +4,10 @@ import { commentCollection } from "../../infrastructure/db/mongo.db";
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
 import { CommentInputDto } from "../application/dtos/comment-input.dto";
 import { CommentQueryInput } from "../routers/input/comment-query.input";
+import { injectable} from "inversify";
 
+
+@injectable()
 export class CommentsRepository {
   async findMany(
     postId: string,

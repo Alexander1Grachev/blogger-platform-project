@@ -5,8 +5,10 @@ import { userCollection } from "../../infrastructure/db/mongo.db";
 import { UserQueryInput } from "../routers/input/user-query.input";
 import { IUserDB } from "./models/user.db.interface";
 import { BadRequestError } from "../../core/errors/bad-request.error";
+import { injectable } from "inversify";
 
 
+@injectable()
 export class UsersQueryRepository {
 
   async findByIdOrFail(id: string): Promise<WithId<IUserDB>> {
@@ -36,16 +38,23 @@ export class UsersQueryRepository {
 
   async findByConfirmationCode(
     confCode: string
-  ): Promise<WithId<IUserDB>> {
+  ): Promise<WithId<IUserDB> | null> {
     const user = await userCollection.findOne({
       'emailConfirmation.confirmationCode': confCode,
     })
-    if (!user) {
-      throw new BadRequestError('Invalid confirmation code', 'code');
-    }
     return user
   }
-  
+
+  async findByRecoveryCode(
+    recoveryCode: string
+  ): Promise<WithId<IUserDB> | null> {
+    const user = await userCollection.findOne({
+      'passwordRecovery.recoveryCode': recoveryCode,
+    })
+
+    return user
+  }
+
   async findMany(
     queryDto: UserQueryInput
   ): Promise<{ items: WithId<User>[]; totalCount: number }> {

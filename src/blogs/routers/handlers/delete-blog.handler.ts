@@ -2,10 +2,11 @@ import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { BlogsService } from '../../application/blogs.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { injectable, inject } from "inversify";
 
-
+@injectable()
 export class DeleteBlogController {
-  constructor(private readonly blogsService: BlogsService) { };
+  constructor(@inject(BlogsService) private readonly blogsService: BlogsService) { };
 
   handle = async (
     req: Request<{ id: string }, void>,

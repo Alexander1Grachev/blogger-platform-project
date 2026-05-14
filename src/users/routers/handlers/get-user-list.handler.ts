@@ -6,9 +6,12 @@ import { UsersService } from '../../application/users.service';
 import { mapToUserListPaginatedOutput } from '../../application/mappers/map-to-user-list-paginated-output.util';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class GetUserListController {
-  constructor(private readonly usersService: UsersService) { };
+  constructor(@inject(UsersService) private readonly usersService: UsersService) { };
 
   handle = async (
     req: Request,

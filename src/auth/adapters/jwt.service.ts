@@ -1,6 +1,8 @@
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 import { appConfig } from "../../core/config/config";
+import { injectable } from "inversify";
 
+@injectable()
 export class JwtService {
   createAccessToken(userId: string): string {
     const expiresIn = appConfig.AC_TIME; // ожидаем число секунд

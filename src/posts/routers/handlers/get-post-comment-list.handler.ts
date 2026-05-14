@@ -6,10 +6,12 @@ import { matchedData } from 'express-validator';
 import { CommentQueryInput } from '../../../comments/routers/input/comment-query.input';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
 import { mapToCommentListPaginatedOutput } from '../../../comments/application/mappers/map-to-comment-list-paginated-output.util';
+import { injectable, inject } from "inversify";
 
 
+@injectable()
 export class GetPostCommentsController {
-  constructor(private readonly commentsService: CommentsService) { };
+  constructor(@inject(CommentsService) private readonly commentsService: CommentsService) { };
 
   handle = async (
     req: Request<{ id: string }>,

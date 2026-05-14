@@ -2,9 +2,11 @@ import { Request, Response } from 'express';
 import { mapToBlogOutput } from '../../application/mappers/map-to-blog-output.util';
 import { BlogsService } from '../../application/blogs.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class GetBlogController {
-  constructor(private readonly blogsService: BlogsService) { };
+  constructor(@inject(BlogsService) private readonly blogsService: BlogsService) { };
 
   handle = async (
     req: Request<{ id: string }>,

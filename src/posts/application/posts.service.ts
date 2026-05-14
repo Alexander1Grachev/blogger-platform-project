@@ -5,11 +5,14 @@ import { PostsRepository } from "../reposytories/posts.repository";
 import { PostInputDto } from "./dtos/post-input-dto";
 import { PostQueryInput } from "../routers/input/post-query.input";
 import { BlogPostInputDto } from "../../blogs/application/dtos/blog-post-input-dto";
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class PostsService {
   constructor(
-    private readonly blogsRepository: BlogsRepository,
-    private readonly postsRepository: PostsRepository,
+    @inject(BlogsRepository) private readonly blogsRepository: BlogsRepository,
+    @inject(PostsRepository) private readonly postsRepository: PostsRepository,
 
   ) { };
   async findMany(

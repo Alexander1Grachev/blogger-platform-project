@@ -4,9 +4,13 @@ import { UsersService } from "../../application/users.service";
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 import { mapToUserOutput } from "../../application/mappers/map-to-user-output.util";
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class CreateUserController {
-  constructor(private readonly usersService: UsersService) { };
+  constructor(@inject(UsersService)
+  private readonly usersService: UsersService) { };
   handle = async (
     req: Request<{}, {}, UserInputDto>,
     res: Response,

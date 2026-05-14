@@ -1,3 +1,5 @@
+import { injectable, inject } from "inversify";
+
 import { Request, Response } from "express";
 import { LoginInputDto } from "../input/login-input.model";
 import { AuthService } from "../../application/auth-user.service";
@@ -7,8 +9,9 @@ import { appConfig } from "../../../core/config/config";
 
 
 
+@injectable()
 export class LoginController {
-  constructor(private readonly authService: AuthService) { };
+  constructor(@inject(AuthService) private readonly authService: AuthService) { };
 
   handle = async (
     req: Request<{}, {}, LoginInputDto>,

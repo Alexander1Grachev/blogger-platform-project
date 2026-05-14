@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 import { SessionService } from "../../../security-devices/application/session.service";
+import { injectable, inject } from "inversify";
 
-
+@injectable()
 export class LogoutController {
-  constructor(private readonly sessionService: SessionService) { };
+  constructor(@inject(SessionService) private readonly sessionService: SessionService) { };
 
   handle = async (
     req: Request,

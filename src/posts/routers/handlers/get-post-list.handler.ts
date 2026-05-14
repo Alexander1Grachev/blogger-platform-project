@@ -6,9 +6,12 @@ import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set
 import { PostsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import { mapToPostListPaginatedOutput } from '../../application/mappers/map-to-post-list-paginated-output.util';
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class GetPostListController {
-  constructor(private readonly postsService: PostsService) { };
+  constructor(@inject(PostsService) private readonly postsService: PostsService) { };
 
   handle = async (
     req: Request<{}, unknown, {}>,

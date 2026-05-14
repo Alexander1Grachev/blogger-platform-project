@@ -6,12 +6,15 @@ import { PostsService } from "../../posts/application/posts.service";
 import { AuthService } from "../../auth/application/auth-user.service";
 import { CommentQueryInput } from "../routers/input/comment-query.input";
 import { ForbiddenError } from "../../core/errors/forbidden.error";
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class CommentsService {
   constructor(
-    private readonly authService: AuthService,
-    private readonly postsService: PostsService,
-    private readonly commentsRepository: CommentsRepository,
+    @inject(AuthService) private readonly authService: AuthService,
+    @inject(PostsService) private readonly postsService: PostsService,
+    @inject(CommentsRepository) private readonly commentsRepository: CommentsRepository,
 
   ) { };
 

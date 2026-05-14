@@ -1,9 +1,12 @@
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
-import { userCollection } from "../../infrastructure/db/mongo.db"; 
+import { userCollection } from "../../infrastructure/db/mongo.db";
 import { ObjectId } from 'mongodb';
 import { IUserDB } from "./models/user.db.interface";
+import { injectable } from "inversify";
 
-export class UsersRepository  {
+
+@injectable()
+export class UsersRepository {
   async delete(id: string): Promise<void> {
     const deleteResult = await userCollection.deleteOne({ _id: new ObjectId(id) })
     if (deleteResult.deletedCount < 1) {
@@ -27,7 +30,7 @@ export class UsersRepository  {
       },
     )
   }
-  
+
   async updateEmailConfirmationCode(
     userId: ObjectId,
     newCode: string,
@@ -41,6 +44,34 @@ export class UsersRepository  {
           'emailConfirmation.expirationDate': newDate
         },
       },
+    )
+  }
+  async updatePasswordRecoveryCode(
+    userId: ObjectId,
+    newCode: string,
+    newDate: Date
+  ): Promise<void> {
+    await userCollection.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          'passwordRecovery.recoveryCode': newCode,
+          'passwordRecovery.expirationDate': newDate
+        },
+      },
+    )
+  }
+
+  async confirmPasswordRecovery(
+    userId: ObjectId,
+    newPasswordHash: string,
+  ): Promise<void> {
+    await userCollection.updateOne(
+      { _id: userId },
+      {
+        $set: { passwordHash: newPasswordHash },
+        $unset: { passwordRecovery: 1 }
+      }
     )
   }
 }

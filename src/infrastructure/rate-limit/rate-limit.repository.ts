@@ -1,9 +1,9 @@
 import { rateLimitCollection } from "../db/mongo.db"
 import { RateLimitLog } from "./rate-limit.model";
+import { injectable } from "inversify";
 
 
-
-
+@injectable()
 export class RateLimitRepository {
   async countRequests(ip: string, url: string): Promise<number> {
     const windowStart = new Date(Date.now() - 10_000)//10_000

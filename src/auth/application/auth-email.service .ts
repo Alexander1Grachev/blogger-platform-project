@@ -1,22 +1,26 @@
 import { UsersQueryRepository } from "../../users/repositories/users.query.repository";
-import { nodemailerService } from "../adapters/nodemailer.service";
+import { NodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emails.templates";
 import crypto from 'crypto';
 import { BadRequestError } from "../../core/errors/bad-request.error";
 import { UsersRepository } from "../../users/repositories/users.repository";
 import { addHours } from 'date-fns';
+import { injectable, inject } from "inversify";
 
+
+injectable
 export class EmailService {
-
   constructor(
-    private readonly usersQueryRepository: UsersQueryRepository,
-    private readonly usersRepository: UsersRepository,
+    @inject(UsersQueryRepository) private readonly usersQueryRepository: UsersQueryRepository,
+    @inject(UsersRepository) private readonly usersRepository: UsersRepository,
+    @inject(NodemailerService) private readonly nodemailerService: NodemailerService,
+
   ) { }
   //---------------------------------
 
   async resendEmail(
     email: string,
-  ) {
+  ): Promise<void> {
     const user = await this.usersQueryRepository.findForAuth(email);
     if (!user) {
       throw new BadRequestError('Invalid email', 'email');
@@ -31,14 +35,17 @@ export class EmailService {
       addHours(new Date(), 1)
     );
     const html = emailExamples.registrationEmail(newConfirmationCode, user.login);
-    nodemailerService.sendEmail(user.email, 'Registration', html);
+    this.nodemailerService.sendEmail(user.email, 'Registration', html);
   }
 
 
   async confirmEmail(
     confCode: string,
-  ) {
+  ): Promise<boolean> {
     const user = await this.usersQueryRepository.findByConfirmationCode(confCode);
+    if (!user) {
+      throw new BadRequestError('Invalid confirmation code', 'code');
+    }
     if (user.emailConfirmation?.isConfirmed) {
       throw new BadRequestError('Email already confirmed', 'code');
     }
@@ -49,6 +56,25 @@ export class EmailService {
       user._id,
     )
     return true
+  }
+
+  async sendPasswordRecovery(
+    email: string,
+  ): Promise<void> {
+    const user = await this.usersQueryRepository.findForAuth(email);
+    if (!user) return;
+    const newConfirmationCode = crypto.randomUUID();
+    await this.usersRepository.updatePasswordRecoveryCode(
+      user._id,
+      newConfirmationCode,
+      addHours(new Date(), 1)
+    );
+    const html = emailExamples.recoveryPasswordEmail(newConfirmationCode);
+    this.nodemailerService.sendEmail(
+      email,
+      'Password recovery',
+      html
+    )
   }
 };
 

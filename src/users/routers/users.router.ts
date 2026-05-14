@@ -4,11 +4,11 @@ import { inputValidationResultMiddleware } from "../../core/middlewares/validati
 import { paginationAndSortingValidation } from "../../core/middlewares/validation/query-pagination-sorting.validation-middleware";
 import { superAdminGuardMiddleware } from "../../auth/middlewares/super-admin.guard-middleware";
 import { userInputDtoValidation } from "../validation/user.input-dto.validation";
-import {
-  createUserController,
-  getUserListController,
-  deleteUseController,
-} from "../../composition-root";
+import { container } from "../../composition-root";
+
+import { CreateUserController } from "./handlers/create-user.handler";
+import { GetUserListController } from "./handlers/get-user-list.handler";
+import { DeleteUseController } from "./handlers/delete-user.handler";
 
 export const usersRouter = Router()
 
@@ -17,15 +17,15 @@ usersRouter
     superAdminGuardMiddleware,
     paginationAndSortingValidation(UserSortField),
     inputValidationResultMiddleware,
-    getUserListController.handle,
+    container.get(GetUserListController).handle,
   )
   .post('/',
     superAdminGuardMiddleware,
     userInputDtoValidation,
     inputValidationResultMiddleware,
-    createUserController.handle,
+    container.get(CreateUserController).handle,
   )
   .delete('/:id',
     superAdminGuardMiddleware,
-    deleteUseController.handle,
+    container.get(DeleteUseController).handle,
   )

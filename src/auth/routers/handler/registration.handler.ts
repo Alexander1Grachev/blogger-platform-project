@@ -3,9 +3,11 @@ import { HttpStatus } from "../../../core/consts/http-statuses";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 import { UserInputDto } from '../../../users/routers/input/user-input-dto';
 import { AuthService } from '../../application/auth-user.service';
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class RegistrationController {
-  constructor(private readonly authService: AuthService) { };
+  constructor(@inject(AuthService)private readonly authService: AuthService) { };
 
   handle = async (
     req: Request<{}, {}, UserInputDto>,

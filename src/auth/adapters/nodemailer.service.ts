@@ -1,18 +1,8 @@
 import nodemailer from "nodemailer";
 import { appConfig } from "../../core/config/config";
 
-/*
 
-export const nodemailerService = {
-  async sendEmail(email: string, subject: string, html: string): Promise<boolean> {
-    console.log(`Email would be sent to: ${email}`);
-    console.log(`Subject: ${subject}`);
-    console.log(`HTML: ${html}`);
-    return true; // письмо не уходит реально, но confirmation code уже есть в базе
-  },
-};
-*/
-export const nodemailerService = {
+export class NodemailerService {
   async sendEmail(
     email: string,
     subject: string,
@@ -42,7 +32,7 @@ export const nodemailerService = {
       //console.error("❌ Email send failed:", error);
       return false;
     }
-  },
+  }
 
   async verifyConnection(): Promise<boolean> {
     try {
@@ -63,5 +53,5 @@ export const nodemailerService = {
       // console.error("❌ SMTP connection failed:", err);
       return false;
     }
-  },
+  }
 };

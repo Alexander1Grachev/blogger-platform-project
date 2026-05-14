@@ -7,10 +7,11 @@ import { PostQueryInput } from '../../../posts/routers/input/post-query.input';
 import { PostsService } from '../../../posts/application/posts.service';
 import { mapToPostListPaginatedOutput } from '../../../posts/application/mappers/map-to-post-list-paginated-output.util';
 import { PostListPaginatedOutput } from '../../../posts/application/output/post-list-paginated.output';
+import { injectable, inject } from "inversify";
 
-
+@injectable()
 export class GetPostsByBlogController {
-  constructor(private readonly postsService: PostsService) { };
+  constructor(@inject(PostsService) private readonly postsService: PostsService) { };
   handle = async (
     req: Request<{ id: string }, {}, {}>,
     res: Response<PostListPaginatedOutput>,

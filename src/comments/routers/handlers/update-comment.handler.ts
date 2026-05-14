@@ -4,10 +4,12 @@ import { CommentInputDto } from "../../application/dtos/comment-input.dto";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 import { CommentsService } from "../../application/comments.service";
 import { HttpStatus } from "../../../core/consts/http-statuses";
+import { injectable, inject } from "inversify";
 
 
+@injectable()
 export class UpdateCommentController {
-  constructor(private readonly commentsService: CommentsService) { };
+  constructor(@inject(CommentsService) private readonly commentsService: CommentsService) { };
   handle = async (
     req: Request<{ id: string }, void, CommentInputDto>,
     res: Response<void>,

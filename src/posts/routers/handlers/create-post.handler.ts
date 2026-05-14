@@ -4,9 +4,12 @@ import { PostInputDto } from '../../application/dtos/post-input-dto';
 import { PostsService } from '../../application/posts.service';
 import { mapToPostOutput } from '../../application/mappers/map-to-post-output.util';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class CreatePostController {
-  constructor(private readonly postsService: PostsService) { };
+  constructor(@inject(PostsService) private readonly postsService: PostsService) { };
 
   handle = async (
     req: Request<{}, {}, PostInputDto>,

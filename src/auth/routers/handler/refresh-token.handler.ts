@@ -4,13 +4,15 @@ import { errorsHandler } from "../../../core/errors/errors.handler";
 import { appConfig } from "../../../core/config/config";
 import { SessionService } from "../../../security-devices/application/session.service";
 import { JwtService } from "../../adapters/jwt.service";
+import { injectable, inject } from "inversify";
 
 
 
+@injectable()
 export class RefreshTokenController {
   constructor(
-    private readonly sessionService: SessionService,
-    private readonly jwtService: JwtService
+    @inject(SessionService) private readonly sessionService: SessionService,
+    @inject(JwtService) private readonly jwtService: JwtService
   ) { };
 
   handle = async (

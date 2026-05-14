@@ -7,15 +7,16 @@ import { UsersRepository } from "../repositories/users.repository";
 import { UserQueryInput } from "../routers/input/user-query.input";
 import { UserInputDto } from "../routers/input/user-input-dto";
 import { WithId } from 'mongodb';
+import { injectable, inject } from "inversify";
 
 
-
+@injectable()
 export class UsersService {
   constructor(
-    private readonly bcryptService: BcryptService,
-    private readonly usersQueryRepository: UsersQueryRepository,
-    private readonly usersRepository: UsersRepository,
-  ) {}
+    @inject(BcryptService) private readonly bcryptService: BcryptService,
+    @inject(UsersQueryRepository) private readonly usersQueryRepository: UsersQueryRepository,
+    @inject(UsersRepository) private readonly usersRepository: UsersRepository,
+  ) { }
   //---------------------------------
   async delete(id: string): Promise<void> {
     return this.usersRepository.delete(id);

@@ -4,7 +4,7 @@ import { JwtService } from "../adapters/jwt.service";
 import { MeView } from "../../users/application/output/me.view.interface";
 import { UnauthorizedError } from "../../core/errors/unauthorized.error";
 import { UserInputDto } from "../../users/routers/input/user-input-dto";
-import { nodemailerService } from "../adapters/nodemailer.service";
+import { NodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emails.templates";
 import { BadRequestError } from "../../core/errors/bad-request.error";
 import { IUserDB } from "../../users/repositories/models/user.db.interface";
@@ -13,16 +13,20 @@ import { addHours } from 'date-fns';
 import { SessionService } from "../../security-devices/application/session.service";
 import crypto from 'crypto';
 import { SessionRepository } from "../../security-devices/repositories/session.repository";
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class AuthService {
   constructor(
-    private readonly bcryptService: BcryptService,
-    private readonly jwtService: JwtService,
-    private readonly sessionService: SessionService,
+    @inject(BcryptService) private readonly bcryptService: BcryptService,
+    @inject(JwtService) private readonly jwtService: JwtService,
+    @inject(SessionService) private readonly sessionService: SessionService,
+    @inject(NodemailerService) private readonly nodemailerService: NodemailerService,
 
-    private readonly sessionRepository: SessionRepository,
-    private readonly usersQueryRepository: UsersQueryRepository,
-    private readonly usersRepository: UsersRepository,
+    @inject(SessionRepository) private readonly sessionRepository: SessionRepository,
+    @inject(UsersQueryRepository) private readonly usersQueryRepository: UsersQueryRepository,
+    @inject(UsersRepository) private readonly usersRepository: UsersRepository,
   ) { }
   //-----------------------
   async sessionValidation(
@@ -116,10 +120,28 @@ export class AuthService {
       user.emailConfirmation!.confirmationCode,
       user.login
     );
-    nodemailerService.sendEmail(
+    this.nodemailerService.sendEmail(
       user.email,
       'Registration',
       html
+    );
+  }
+
+  async passwordRecovery(
+    newPassword: string,
+    recoveryCode: string,
+  ): Promise<void> {
+    const user = await this.usersQueryRepository.findByRecoveryCode(recoveryCode);
+    if (!user) {
+      throw new BadRequestError('Invalid recovery code', 'recoveryCode');
+    }
+    if (user.passwordRecovery!.expirationDate < new Date()) {
+      throw new BadRequestError('Recovery code expired', 'recoveryCode');
+    }
+    const passwordHash = await this.bcryptService.generateHash(newPassword);
+    await this.usersRepository.confirmPasswordRecovery(
+      user._id,
+      passwordHash
     );
   }
 };

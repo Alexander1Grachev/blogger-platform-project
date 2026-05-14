@@ -3,10 +3,12 @@ import { Request, Response } from 'express';
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { errorsHandler } from "../../../core/errors/errors.handler";
 import { CommentsService } from "../../application/comments.service";
+import { injectable, inject } from "inversify";
 
 
+@injectable()
 export class DeleteCommentController {
-  constructor(private readonly commentsService: CommentsService) { };
+  constructor(@inject(CommentsService) private readonly commentsService: CommentsService) { };
   handle = async (
     req: Request<{ id: string }>,
     res: Response,

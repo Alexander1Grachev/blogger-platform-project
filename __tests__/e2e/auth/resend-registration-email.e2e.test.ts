@@ -68,7 +68,7 @@ describe('POST /api/auth/registration-email-resending', () => {
       })
       .expect(HttpStatus.NoContent);
 
-    const firstCode = expect.getState().code;
+    const firstCode = expect.getState().confirmationCode;
     expect(firstCode).toBeDefined();
 
     // повторная отправка письма
@@ -77,7 +77,7 @@ describe('POST /api/auth/registration-email-resending', () => {
       .send({ email })
       .expect(HttpStatus.NoContent);
 
-    const secondCode = expect.getState().code;
+    const secondCode = expect.getState().confirmationCode;
     expect(secondCode).toBeDefined();
     expect(secondCode).not.toBe(firstCode); // новый код должен отличаться
   });

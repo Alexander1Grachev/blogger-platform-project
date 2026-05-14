@@ -2,10 +2,12 @@ import { ForbiddenError } from "../../core/errors/forbidden.error";
 import { Session } from "../../security-devices/repositories/models/session.model";
 import { SessionRepository } from "../repositories/session.repository";
 import { CreateSessionDto } from "./dtos/create-session.dto";
+import { injectable, inject } from "inversify";
 
 
+@injectable()
 export class SessionService {
-  constructor(private readonly sessionRepository: SessionRepository) { };
+  constructor(@inject(SessionRepository) private readonly sessionRepository: SessionRepository) { };
 
   async findSessionByDeviceId(
     deviceId: string

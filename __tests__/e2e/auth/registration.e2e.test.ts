@@ -94,8 +94,8 @@ describe('POST /auth/registration', () => {
       })
       .expect(HttpStatus.NoContent);
 
-    const code = expect.getState().code; // вернёт undefined в случае провала 
-    expect(code).toBeDefined(); // проверил на undefined  
+    const confirmationCode = expect.getState().confirmationCode; // вернёт undefined в случае провала 
+    expect(confirmationCode).toBeDefined(); // проверил на undefined  
   });
 
 

@@ -6,9 +6,11 @@ import { BlogQueryInput } from '../input/blog-query.input';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class GetBlogListController {
-  constructor(private readonly blogsService: BlogsService) { };
+  constructor(@inject(BlogsService) private readonly blogsService: BlogsService) { };
   handle = async (req: Request<{}, {}, {}>,
     res: Response,
   ) => {

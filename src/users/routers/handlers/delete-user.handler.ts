@@ -2,9 +2,12 @@ import { Request, Response } from 'express';
 import { UsersService } from '../../application/users.service';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class DeleteUseController {
-  constructor(private readonly usersService: UsersService) { };
+  constructor(@inject(UsersService) private readonly usersService: UsersService) { };
 
   handle = async (
     req: Request<{ id: string }>,

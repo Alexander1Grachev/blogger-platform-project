@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { AuthService } from "../../application/auth-user.service";
 import { errorsHandler } from "../../../core/errors/errors.handler";
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class MeController {
-  constructor(private readonly authService: AuthService) { };
+  constructor(@inject(AuthService) private readonly authService: AuthService) { };
   handle = async (
     req: Request,
     res: Response,

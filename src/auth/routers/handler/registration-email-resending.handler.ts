@@ -4,10 +4,12 @@ import { EmailInputDto } from '../input/email-input.model';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import { HttpStatus } from '../../../core/consts/http-statuses';
 import { EmailService } from '../../application/auth-email.service ';
+import { injectable, inject } from "inversify";
 
 
+@injectable()
 export class RegistrationEmailResendingController {
-    constructor(private readonly emailService: EmailService) { };
+    constructor(@inject(EmailService)private readonly emailService: EmailService) { };
 
     handle = async (
         req: Request<{}, {}, EmailInputDto>,

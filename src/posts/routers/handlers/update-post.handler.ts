@@ -4,9 +4,12 @@ import { PostInputDto } from '../../application/dtos/post-input-dto';
 import { ValidationErrorType } from '../../../core/types/validationError';
 import { PostsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class UpdatePostHController {
-  constructor(private readonly postsService: PostsService) { };
+  constructor(@inject(PostsService) private readonly postsService: PostsService) { };
 
   handle = async (
     req: Request<{ id: string }, void, PostInputDto>,

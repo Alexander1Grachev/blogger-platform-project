@@ -23,15 +23,8 @@ const password = body('password')
 
 
 export const email = body('email')
-  .notEmpty().withMessage('Email cannot be empty')
-  .bail()
-  .isString().withMessage('Email must be a string')
-  .bail()
   .trim()
   .isEmail().withMessage('Email must be a valid email address')
-  .bail()
-  .matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)
-  .withMessage('Email format is invalid')
 
 
 

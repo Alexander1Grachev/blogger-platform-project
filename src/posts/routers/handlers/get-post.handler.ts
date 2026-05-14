@@ -3,9 +3,12 @@ import { HttpStatus } from '../../../core/consts/http-statuses';
 import { mapToPostOutput } from '../../application/mappers/map-to-post-output.util';
 import { PostsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { injectable, inject } from "inversify";
 
+
+@injectable()
 export class GetPostController {
-  constructor(private readonly postsService: PostsService) { };
+  constructor(@inject(PostsService) private readonly postsService: PostsService) { };
 
   handle = async (
     req: Request<{ id: string }>,

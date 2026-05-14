@@ -4,10 +4,11 @@ import { errorsHandler } from '../../../core/errors/errors.handler';
 import { PostsService } from '../../../posts/application/posts.service';
 import { BlogPostInputDto } from '../../application/dtos/blog-post-input-dto';
 import { mapToPostOutput } from '../../../posts/application/mappers/map-to-post-output.util';
+import { injectable, inject } from "inversify";
 
-
+@injectable()
 export class CreatePostForBlogController {
-  constructor(private readonly postsService: PostsService) { };
+  constructor(@inject(PostsService) private readonly postsService: PostsService) { };
 
   handle = async (
     req: Request<{ id: string }, {}, BlogPostInputDto>,
