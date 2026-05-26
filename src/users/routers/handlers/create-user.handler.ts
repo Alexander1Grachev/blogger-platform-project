@@ -19,7 +19,7 @@ export class CreateUserController {
       const userId = await this.usersService.create(req.body);
       console.log('CREATED USER ID:', userId, typeof userId);
 
-      const createdUser = await this.usersService.findByIdOrFail(userId);
+      const createdUser = await this.usersService.findById(userId);
       const userOutput = mapToUserOutput(createdUser)
       res.status(HttpStatus.Created).send(userOutput);
     } catch (e: unknown) {

@@ -2,9 +2,8 @@ import { updatePost } from '../../utils/posts/update-post';
 import { createPost } from '../../utils/posts/create-post';
 import { getPostById } from '../../utils/posts/get-post-by-id';
 import { clearDb } from '../../utils/clear-db';
-import { PostAttributes } from '../../../src/posts/application/dtos/post-attributes';
-import { ResourceType } from '../../../src/core/consts/resource-type';
 import { getTestApp } from '../../setup/start-test-app';
+import { PostInputDto } from '../../../src/posts/application/dtos/post-input-dto';
 
 describe('UPDATE posts', () => {
   const app = getTestApp();
@@ -15,12 +14,12 @@ describe('UPDATE posts', () => {
   beforeAll(async () => {
     await clearDb(app);
     const post = await createPost(app);
-    postId = post.data.id;
-    blogId = post.data.attributes.blogId;
+    postId = post.id;
+    blogId = post.blogId;
   });
 
   it('✅ should update post with valid data', async () => {
-    const postUpdateData: PostAttributes = {
+    const postUpdateData: PostInputDto = {
       title: 'Updatedtitle',
       shortDescription: 'UpdatedDescription',
       content: 'UpdatedContent',
@@ -33,15 +32,10 @@ describe('UPDATE posts', () => {
     const post = await getPostById(app, postId);
 
     expect(post).toMatchObject({
-      data: {
-        type: ResourceType.Posts,
-        id: postId,
-        attributes: {
-          ...postUpdateData,
-          blogName: expect.any(String),
-          createdAt: expect.any(String),
-        },
-      },
+      id: postId,
+      ...postUpdateData,
+      blogName: expect.any(String),
+      createdAt: expect.any(String),
     });
   });
 });

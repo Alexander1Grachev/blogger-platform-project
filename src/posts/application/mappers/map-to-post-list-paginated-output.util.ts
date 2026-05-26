@@ -1,10 +1,10 @@
 import { WithId } from 'mongodb';
-import { Post } from '../../reposytories/models/post.model';
+import { IPost } from '../../reposytories/models/post.model';
 import { PostViewModel } from '../output/post-view-model';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
 
 export function mapToPostListPaginatedOutput(
-    posts: WithId<Post>[],
+    posts: WithId<IPost>[],
     meta: { pageNumber: number, pageSize: number, totalCount: number }
 ): PostListPaginatedOutput {
     return {

@@ -16,7 +16,7 @@ export class GetPostController {
   ) => {
     try {
       const id = req.params.id;
-      const post = await this.postsService.findByIdOrFail(id);
+      const post = await this.postsService.findById(id);
       const postOutput = mapToPostOutput(post)
       res.status(HttpStatus.Ok).send(postOutput);
     } catch (e: unknown) {

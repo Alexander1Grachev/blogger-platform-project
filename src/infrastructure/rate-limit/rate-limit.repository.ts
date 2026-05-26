@@ -1,5 +1,4 @@
-import { rateLimitCollection } from "../db/mongo.db"
-import { RateLimitLog } from "./rate-limit.model";
+import { IRateLimit, RateLimitModel } from "./rate-limit.model";
 import { injectable } from "inversify";
 
 
@@ -15,14 +14,13 @@ export class RateLimitRepository {
         $gte: windowStart
       }
     }
-    const count = await rateLimitCollection.countDocuments(filter);
-    console.log(`[rateLimitRepository] 📊  Count result: ${count} req in last 15s | IP: ${ip} | URL: ${url}`);
+    const count = await RateLimitModel.countDocuments(filter);
+    console.log(`[rateLimitRepository] 📊  Count result: ${count} req in last 10s | IP: ${ip} | URL: ${url}`);
     return count
   }
 
-  async createRequest(newRateLimitLog: RateLimitLog): Promise<void> {
+  async createRequest(newRateLimitLog: IRateLimit): Promise<void> {
 
-    await rateLimitCollection.insertOne(newRateLimitLog);
-
+    await RateLimitModel.create(newRateLimitLog);
   }
 }

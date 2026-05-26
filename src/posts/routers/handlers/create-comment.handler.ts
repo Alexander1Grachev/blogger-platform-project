@@ -21,7 +21,7 @@ export class CreateCommentController {
         return res.sendStatus(HttpStatus.Unauthorized);
       };
       const commentId = await this.commentsService.create(postId, userId, req.body);
-      const createdComment = await this.commentsService.findByIdOrFail(commentId);
+      const createdComment = await this.commentsService.findById(commentId);
       const commentOutput = mapToCommentOutput(createdComment);
       return res.status(HttpStatus.Created).send(commentOutput);
     } catch (e: unknown) {

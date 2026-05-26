@@ -16,7 +16,7 @@ export class GetCommentController {
   ) => {
     try {
       const commentId = req.params.id;
-      const comment = await this.commentsService.findByIdOrFail(commentId)
+      const comment = await this.commentsService.findById(commentId)
       const commentOutput = mapToCommentOutput(comment)
       res.status(HttpStatus.Ok).send(commentOutput)
     } catch (e: unknown) {

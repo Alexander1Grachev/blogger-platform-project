@@ -9,9 +9,7 @@ import { loginAndGetCookies } from '../../utils/auth/login-get-cookies';
 describe('Returns all devices with active sessions for current user', () => {
   const app = getTestApp();
 
-
   let sessions: { cookies: string[], userAgent: string }[];
-
 
   beforeAll(async () => {
     await clearDb(app);

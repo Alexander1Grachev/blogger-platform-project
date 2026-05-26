@@ -1,9 +1,9 @@
 import { WithId } from 'mongodb';
-import { Post } from '../../reposytories/models/post.model';
+import { IPost } from '../../reposytories/models/post.model';
 import { PostViewModel } from '../output/post-view-model';
 
 export function mapToPostOutput(
-    post: WithId<Post>,
+    post: WithId<IPost>,
 ): PostViewModel {
     return {
         id: post._id.toString(),

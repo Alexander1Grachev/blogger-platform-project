@@ -1,20 +1,23 @@
 import request from 'supertest';
-import { setupApp } from '../../../src/setup-app';
-import express from 'express';
+
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { createPostForBlog } from '../../utils/blogs/create-post-for-blog';
-import { createFirstBlog } from '../../utils/create.first.blog-test.utils';
 import { BLOGS_PATH, POSTS_PATH } from '../../../src/core/paths/paths';
-import { PostOutput } from '../../../src/posts/routers/output/post.output';
+import { createBlog } from '../../utils/blogs/create-blog';
+import { clearDb } from '../../utils/clear-db';
+import { PostViewModel } from '../../../src/posts/application/output/post-view-model';
+import { getTestApp } from '../../setup/start-test-app';
 
 describe('', () => {
-  const app = express();
-  setupApp(app);
+  const app = getTestApp();
+
   let blogId: string;
-  let createdPost: PostOutput;
+  let createdPost: PostViewModel;
 
   beforeAll(async () => {
-    blogId = await createFirstBlog(app);
+    await clearDb(app)
+    const blog = await createBlog(app);
+    blogId = blog.id
     createdPost = await createPostForBlog(app, blogId);
   });
 
@@ -23,8 +26,10 @@ describe('', () => {
       .get(`${BLOGS_PATH}/${blogId}${POSTS_PATH}`)
       .expect(HttpStatus.Ok);
 
-    expect(response.body.data).toHaveLength(1); // массив из 1 поста
-    expect(response.body.data[0]).toEqual(createdPost.data); // сравниваем первый пост
-    expect(response.body.meta).toBeDefined(); // проверяем пагинацию
+    expect(response.body.items).toHaveLength(1); // массив из 1 поста
+    expect(response.body.items[0]).toEqual(createdPost); // сравниваем первый пост
+    expect(response.body.totalCount).toBe(1); // проверяем общее количество
+    expect(response.body.page).toBe(1);
+    expect(response.body.pageSize).toBe(10);
   });
 });

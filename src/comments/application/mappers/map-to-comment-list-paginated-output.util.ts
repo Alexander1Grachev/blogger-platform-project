@@ -1,11 +1,11 @@
 import { WithId } from "mongodb";
-import { Comment } from "../../repositories/models/comments.model";
+import { IComment } from "../../repositories/models/comments.model";
 import { CommentListPaginatedOutput } from "../output/comment-list-paginated.output";
 import { CommentViewModel } from "../output/comment-view-model";
 
 
 export function mapToCommentListPaginatedOutput(
-    comments: WithId<Comment>[],
+    comments: WithId<IComment>[],
     meta: { pageNumber: number, pageSize: number, totalCount: number },
 ): CommentListPaginatedOutput {
     return {

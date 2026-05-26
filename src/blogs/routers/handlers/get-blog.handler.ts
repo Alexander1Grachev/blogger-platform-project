@@ -14,7 +14,7 @@ export class GetBlogController {
   ) => {
     try {
       const id = req.params.id;
-      const blog = await this.blogsService.findByIdOrFail(id);
+      const blog = await this.blogsService.findById(id);
 
       const blogOutput = mapToBlogOutput(blog)
 

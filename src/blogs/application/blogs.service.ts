@@ -1,40 +1,45 @@
 import { WithId } from "mongodb";
-import { Blog } from "../repositories/models/blog.model";
+import { IBlog } from "../repositories/models/blog.model";
+import { BlogModel } from "../repositories/models/blog.model";
+
 import { BlogsRepository } from "../repositories/blogs.repository";
+import { BlogsQueryRepository } from "../repositories/blogs.query.repository";
+
 import { BlogQueryInput } from "../routers/input/blog-query.input";
 import { BlogInputDto } from "./dtos/blog-input-dto";
-import { injectable, inject } from "inversify";
+import { inject, injectable } from "inversify";
 
 @injectable()
 export class BlogsService {
-  constructor(private readonly blogsRepository: BlogsRepository) { };
-
+  constructor(
+    @inject(BlogsRepository) private readonly blogsRepository: BlogsRepository,
+    @inject(BlogsQueryRepository) private readonly blogsQueryRepository: BlogsQueryRepository
+  ) { };
 
   async create(dto: BlogInputDto): Promise<string> {
-    const newBlog: Blog = {
-      name: dto.name,
-      description: dto.description,
-      websiteUrl: dto.websiteUrl,
-      createdAt: new Date(),
-      isMembership: false,
-    }
+    const newBlog = new BlogModel()
+    newBlog.name = dto.name
+    newBlog.description = dto.description
+    newBlog.websiteUrl = dto.websiteUrl
+    newBlog.createdAt = new Date()
+    newBlog.isMembership = false
+
     return this.blogsRepository.create(newBlog);
   }
-  async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-    return this.blogsRepository.findByIdOrFail(id);
+  async findById(id: string): Promise<WithId<IBlog>> {
+    return this.blogsQueryRepository.findByIdOrFail(id);
   }
   async update(id: string, dto: BlogInputDto): Promise<void> {
-    return this.blogsRepository.update(id, dto);
+    await this.blogsRepository.update(id, dto);
   }
 
   async findMany(
     queryDto: BlogQueryInput,
-  ): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
-    return this.blogsRepository.findMany(queryDto);
+  ): Promise<{ items: WithId<IBlog>[]; totalCount: number }> {
+    return this.blogsQueryRepository.findMany(queryDto);
   }
 
   async delete(id: string): Promise<void> {
-    return this.blogsRepository.delete(id);
+    await this.blogsRepository.delete(id);
   }
-
 }

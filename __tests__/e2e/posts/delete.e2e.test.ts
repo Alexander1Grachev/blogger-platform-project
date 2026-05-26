@@ -16,7 +16,7 @@ describe('DELETE post checks', () => {
   beforeAll(async () => {
     await clearDb(app);
     const post = await createPost(app);
-    postId = post.data.id;
+    postId = post.id;
   });
 
   it('✅ should delete post with valid auth', async () => {

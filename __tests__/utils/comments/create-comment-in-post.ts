@@ -12,11 +12,14 @@ export async function createComment(
   app: Express,
   accessToken: string,
   commentDto: CommentInputDto,
+  existingPostId?: string,
 ): Promise<CommentViewModel> {
-  const post = await createPost(app);
+  const postId = existingPostId || (await createPost(app)).id;
+  if (!postId) {
+    throw new Error('postId is undefined or empty!');
+  }
+  console.log('Creating comment with postId:', postId);
 
-  const postId = post.id;
-  
   const createdCommentRes = await request(app)
     .post(`${POSTS_PATH}/${postId}${COMMENT_PATH}`)
     .set('Authorization', `Bearer ${accessToken}`)

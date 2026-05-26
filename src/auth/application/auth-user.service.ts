@@ -7,13 +7,14 @@ import { UserInputDto } from "../../users/routers/input/user-input-dto";
 import { NodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emails.templates";
 import { BadRequestError } from "../../core/errors/bad-request.error";
-import { IUserDB } from "../../users/repositories/models/user.db.interface";
+import { IUser, UserModel } from "../../users/repositories/models/user.model";
 import { UsersRepository } from "../../users/repositories/users.repository";
 import { addHours } from 'date-fns';
 import { SessionService } from "../../security-devices/application/session.service";
 import crypto from 'crypto';
 import { SessionRepository } from "../../security-devices/repositories/session.repository";
 import { injectable, inject } from "inversify";
+import { SessionQueryRepository } from "../../security-devices/repositories/session..query.repository";
 
 
 @injectable()
@@ -24,6 +25,7 @@ export class AuthService {
     @inject(SessionService) private readonly sessionService: SessionService,
     @inject(NodemailerService) private readonly nodemailerService: NodemailerService,
 
+    @inject(SessionQueryRepository) private readonly sessionQueryRepository: SessionQueryRepository,
     @inject(SessionRepository) private readonly sessionRepository: SessionRepository,
     @inject(UsersQueryRepository) private readonly usersQueryRepository: UsersQueryRepository,
     @inject(UsersRepository) private readonly usersRepository: UsersRepository,
@@ -33,7 +35,7 @@ export class AuthService {
     deviceId: string,
     iat: number,
   ): Promise<void> {
-    const session = await this.sessionRepository.findSessionByDeviceIdAuth(deviceId);
+    const session = await this.sessionQueryRepository.findSessionByDeviceIdAuth(deviceId);
 
     if (!session ||
       iat !== Math.floor(session.lastActiveAt.getTime() / 1000)
@@ -92,19 +94,8 @@ export class AuthService {
   async register(dto: UserInputDto): Promise<void> {
     const confirmationCode = crypto.randomUUID();
     const passwordHash = await this.bcryptService.generateHash(dto.password)
-    const newUser: IUserDB = {
-      login: dto.login,
-      email: dto.email,
-      passwordHash,
-      createdAt: new Date(),
-      emailConfirmation: {
-        confirmationCode,
-        expirationDate: addHours(new Date(), 1),
-        isConfirmed: false,
-      },
-    };
-    const existingUser = await this.usersQueryRepository.findForRegistration(newUser.login, newUser.email);
 
+    const existingUser = await this.usersQueryRepository.findForRegistration(dto.login, dto.email);
     if (existingUser) {
       if (existingUser.login === dto.login) {
         throw new BadRequestError('Login is already in use', 'login');
@@ -113,6 +104,17 @@ export class AuthService {
         throw new BadRequestError('Email is already in use', 'email');
       }
     }
+
+    const newUser = new UserModel;
+    newUser.login = dto.login
+    newUser.email = dto.email
+    newUser.passwordHash = passwordHash
+    newUser.createdAt = new Date()
+    newUser.emailConfirmation = {
+      confirmationCode: confirmationCode,
+      expirationDate: addHours(new Date(), 1),
+      isConfirmed: false
+    };
     const userId = await this.usersRepository.create(newUser)
     const user = await this.usersQueryRepository.findByIdOrFail(userId);
 

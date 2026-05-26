@@ -1,57 +1,51 @@
-import { ObjectId, WithId } from "mongodb";
+import { WithId } from "mongodb";
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
 import { User } from "../application/dtos/user.dto";
-import { userCollection } from "../../infrastructure/db/mongo.db";
 import { UserQueryInput } from "../routers/input/user-query.input";
-import { IUserDB } from "./models/user.db.interface";
-import { BadRequestError } from "../../core/errors/bad-request.error";
+import { IUser, UserModel } from "./models/user.model";
 import { injectable } from "inversify";
 
 
 @injectable()
 export class UsersQueryRepository {
 
-  async findByIdOrFail(id: string): Promise<WithId<IUserDB>> {
-    console.log('FIND BY ID:', id);
+  async findByIdOrFail(id: string): Promise<WithId<IUser>> {
 
-    const res = await userCollection.findOne({ _id: new ObjectId(id) });
-    console.log('FOUND USER:', res);
-
+    const res = await UserModel.findOne({ _id: id }).lean();
     if (!res) {
-      throw new RepositoryNotFoundError('User not exist');
+      throw new RepositoryNotFoundError('User does not exist');
     }
     return res;
   }
   async findForRegistration(login: string, email: string) {
-    return userCollection.findOne({
+    return UserModel.findOne({
       $or: [{ login: login }, { email: email }],
-    });
+    }).lean();
   }
   async findForAuth(
     loginOrEmail: string
-  ): Promise<WithId<IUserDB> | null> {
-    return userCollection.findOne({
+  ): Promise<WithId<IUser> | null> {
+    return UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-    });
+    }).lean();
 
   }
 
   async findByConfirmationCode(
     confCode: string
-  ): Promise<WithId<IUserDB> | null> {
-    const user = await userCollection.findOne({
+  ): Promise<WithId<IUser> | null> {
+    const user = await UserModel.findOne({
       'emailConfirmation.confirmationCode': confCode,
-    })
+    }).lean();
     return user
   }
 
   async findByRecoveryCode(
     recoveryCode: string
-  ): Promise<WithId<IUserDB> | null> {
-    const user = await userCollection.findOne({
+  ): Promise<WithId<IUser> | null> {
+    const user = await UserModel.findOne({
       'passwordRecovery.recoveryCode': recoveryCode,
-    })
-
+    }).lean();
     return user
   }
 
@@ -83,13 +77,13 @@ export class UsersQueryRepository {
     }
 
     const [items, totalCount] = await Promise.all([
-      userCollection
+      UserModel
         .find(filter)
         .sort({ [sortBy]: sortDirection })
         .skip(skip)
         .limit(pageSize)
-        .toArray(),
-      userCollection.countDocuments(filter)
+        .lean(),
+      UserModel.countDocuments(filter)
     ]);
     return { items, totalCount }
   }

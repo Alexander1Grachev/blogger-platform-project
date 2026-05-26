@@ -8,33 +8,31 @@ import { HttpStatus } from "../../../src/core/consts/http-statuses";
 
 
 export async function createUser(
-    app: Express,
+  app: Express,
 ) {
-    const unique = crypto.randomUUID().replace(/-/g, '').slice(0, 8);
+  const unique = crypto.randomUUID().replace(/-/g, '').slice(0, 8);
 
-    const login = `u${unique}`;       // 7 символов
-    const password = `pass${unique}`;
-    const email = `${unique}@test.com`;
+  const login = `u${unique}`;       // 7 символов
+  const password = `pass${unique}`;
+  const email = `${unique}@test.com`;
 
-    const correctTestUserAttributes: UserInputDto = {
-        login: login,
-        password: password,
-        email: email,
-    }
+  const correctTestUserAttributes: UserInputDto = {
+    login: login,
+    password: password,
+    email: email,
+  }
 
 
-    const res = await request(app)
-        .post(USERS_PATH)
-        .set('Authorization', generateBasicAuthToken())
-        .send(correctTestUserAttributes)
-        .expect(HttpStatus.Created);
+  const res = await request(app)
+    .post(USERS_PATH)
+    .set('Authorization', generateBasicAuthToken())
+    .send(correctTestUserAttributes)
+    .expect(HttpStatus.Created);
 
-    return {
-        user: res.body,
-        login,
-        password,
-        email,
-    };
+  return {
+    user: res.body,
+    login,
+    password,
+    email,
+  };
 }
-
-

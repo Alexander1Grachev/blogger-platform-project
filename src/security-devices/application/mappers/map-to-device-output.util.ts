@@ -1,8 +1,8 @@
-import { Session } from "../../repositories/models/session.model";
+import { ISession } from "../../repositories/models/session.model";
 import { DeviceViewModel } from "../output/device-view-model";
 
 
-export function mapToDeviceViewModel(session: Session): DeviceViewModel {
+export function mapToDeviceViewModel(session: ISession): DeviceViewModel {
   return {
     ip: session.ip,
     title: session.deviceName,

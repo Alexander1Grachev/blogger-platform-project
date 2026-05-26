@@ -1,27 +1,26 @@
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
-import { userCollection } from "../../infrastructure/db/mongo.db";
 import { ObjectId } from 'mongodb';
-import { IUserDB } from "./models/user.db.interface";
+import { IUser, UserModel } from "./models/user.model";
 import { injectable } from "inversify";
 
 
 @injectable()
 export class UsersRepository {
   async delete(id: string): Promise<void> {
-    const deleteResult = await userCollection.deleteOne({ _id: new ObjectId(id) })
+    const deleteResult = await UserModel.deleteOne({ _id: id })
     if (deleteResult.deletedCount < 1) {
-      throw new RepositoryNotFoundError('User not exist');
+      throw new RepositoryNotFoundError('User does not exist');
     }
   }
-  async create(newUser: IUserDB): Promise<string> {
-    const insertResult = await userCollection.insertOne(newUser);
-    return insertResult.insertedId.toString();
+  async create(newUser: IUser): Promise<string> {
+    const result = await UserModel.insertOne(newUser);
+    return result._id.toString();
   }
 
   async confirmEmail(
     userId: ObjectId,
   ): Promise<void> {
-    await userCollection.updateOne(
+    await UserModel.updateOne(
       { _id: userId },
       {
         $set: {
@@ -36,7 +35,7 @@ export class UsersRepository {
     newCode: string,
     newDate: Date
   ): Promise<void> {
-    await userCollection.updateOne(
+    await UserModel.updateOne(
       { _id: userId },
       {
         $set: {
@@ -51,7 +50,7 @@ export class UsersRepository {
     newCode: string,
     newDate: Date
   ): Promise<void> {
-    await userCollection.updateOne(
+    await UserModel.updateOne(
       { _id: userId },
       {
         $set: {
@@ -66,7 +65,7 @@ export class UsersRepository {
     userId: ObjectId,
     newPasswordHash: string,
   ): Promise<void> {
-    await userCollection.updateOne(
+    await UserModel.updateOne(
       { _id: userId },
       {
         $set: { passwordHash: newPasswordHash },

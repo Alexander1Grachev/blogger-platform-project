@@ -4,7 +4,8 @@ import express from 'express';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { BLOGS_PATH } from '../../../src/core/paths/paths';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
-import { createFirstBlog } from '../../utils/create.first.blog-test.utils';
+import { clearDb } from "../../utils/clear-db";
+import { createBlog } from '../../utils/blogs/create-blog';
 
 describe('DELETE blog checks', () => {
   const app = express();
@@ -15,7 +16,9 @@ describe('DELETE blog checks', () => {
   let blogId: string;
 
   beforeAll(async () => {
-    blogId = await createFirstBlog(app);
+    await clearDb(app)
+    const blog = await createBlog(app);
+    blogId = blog.id
   });
 
   it('✅ should delete blog with valid auth', async () => {

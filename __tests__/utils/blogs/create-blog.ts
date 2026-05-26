@@ -2,10 +2,10 @@ import request from 'supertest';
 import { Express } from 'express';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { BLOGS_PATH } from '../../../src/core/paths/paths';
-import { generateBasicAuthToken } from '../auth/generate-admin-auth-token';
+import { generateBasicAuthToken } from '../generate-admin-auth-token';
 
 import { getBlogDto } from './get-blog-dto';
-import { BlogInputDto } from '../../../src/blogs/application/dtos/blog-input-model';
+import { BlogInputDto } from '../../../src/blogs/application/dtos/blog-input-dto';
 import { BlogViewModel } from '../../../src/blogs/application/output/blog-view-model';
 
 export async function createBlog(

@@ -1,10 +1,10 @@
 import { WithId } from "mongodb";
 import { CommentViewModel } from "../output/comment-view-model";
-import { Comment } from "../../repositories/models/comments.model";
+import { IComment } from "../../repositories/models/comments.model";
 
 
 
-export function mapToCommentOutput(comment: WithId<Comment>): CommentViewModel {
+export function mapToCommentOutput(comment: WithId<IComment>): CommentViewModel {
   return {
     id: comment._id.toString(),
     content: comment.content,

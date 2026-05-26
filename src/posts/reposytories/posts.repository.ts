@@ -1,55 +1,21 @@
-import { Post } from './models/post.model';
+import { IPost } from './models/post.model';
+import { PostModel } from './models/post.model';
+
 import { PostInputDto } from '../application/dtos/post-input-dto';
-import { postCollection } from '../../infrastructure/db/mongo.db';
-import { ObjectId, WithId } from 'mongodb';
-import { PostQueryInput } from '../routers/input/post-query.input';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 import { injectable } from "inversify";
 
 
 @injectable()
 export class PostsRepository {
-  async findMany(
-    queryDto: PostQueryInput
-  ): Promise<{ items: WithId<Post>[]; totalCount: number }> {
-    const {
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortDirection,
-    } = queryDto
-    const skip = (pageNumber - 1) * pageSize;
-    const filter: any = {};
-
-    const [items, totalCount] = await Promise.all([
-      postCollection
-        .find(filter)
-        .sort({ [sortBy]: sortDirection })
-        .skip(skip)
-        .limit(pageSize)
-        .toArray(),
-      postCollection.countDocuments(filter)
-    ]);
-    return { items, totalCount };
-  }
-
-  async findByIdOrFail(id: string): Promise<WithId<Post>> {
-    const res = await postCollection.findOne({ _id: new ObjectId(id) });
-    if (!res) {
-      throw new RepositoryNotFoundError('Post not exist');
-    }
-
-    return res;
-  }
-
-  async create(newPost: Post): Promise<string> {
-    const insertResult = await postCollection.insertOne(newPost);
-    return insertResult.insertedId.toString();
+  async create(newPost: IPost): Promise<string> {
+    const result = await PostModel.create(newPost);
+    return result._id.toString();
   }
 
   async update(id: string, input: PostInputDto): Promise<void> {
-    const updateResult = await postCollection.updateOne(
-      { _id: new ObjectId(id) },
+    const updateResult = await PostModel.updateOne(
+      { _id: id },
       {
         $set: {
           title: input.title,
@@ -60,36 +26,14 @@ export class PostsRepository {
       },
     );
     if (updateResult.matchedCount < 1) {
-      throw new RepositoryNotFoundError('Post not exist');
+      throw new RepositoryNotFoundError('Post does not exist');
     }
-    return;
   }
 
   async delete(id: string): Promise<void> {
-    const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(id) })
+    const deleteResult = await PostModel.deleteOne({ _id: id })
     if (deleteResult.deletedCount < 1) {
-      throw new RepositoryNotFoundError('Post not exist');
+      throw new RepositoryNotFoundError('Post does not exist');
     }
-    return;
-  }
-
-  async getPostForBlog(
-    blogId: string,
-    queryDto: PostQueryInput,
-  ): Promise<{ items: WithId<Post>[]; totalCount: number }> {
-    const { pageNumber, pageSize, sortBy, sortDirection } = queryDto;
-    const skip = (pageNumber - 1) * pageSize;
-    const filter = { 'blogId': blogId };
-
-    const [items, totalCount] = await Promise.all([
-      postCollection
-        .find(filter)
-        .sort({ [sortBy]: sortDirection })
-        .skip(skip)
-        .limit(pageSize)
-        .toArray(),
-      postCollection.countDocuments(filter),
-    ]);
-    return { items, totalCount };
   }
 };

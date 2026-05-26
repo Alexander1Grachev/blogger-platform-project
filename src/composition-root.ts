@@ -43,9 +43,14 @@ import { UpdatePostHController } from "./posts/routers/handlers/update-post.hand
 import { CreateCommentController } from "./posts/routers/handlers/create-comment.handler";
 
 import { PostsRepository } from "./posts/reposytories/posts.repository";
+import { PostsQueryRepository } from "./posts/reposytories/posts.query.repository";
+
+import { BlogsQueryRepository } from "./blogs/repositories/blogs.query.repository";
 import { BlogsRepository } from "./blogs/repositories/blogs.repository";
+import { CommentsQueryRepository } from "./comments/repositories/comments.query.repository";
 import { CommentsRepository } from "./comments/repositories/comments.repository";
 import { SessionService } from "./security-devices/application/session.service";
+import { SessionQueryRepository } from "./security-devices/repositories/session..query.repository";
 import { SessionRepository } from "./security-devices/repositories/session.repository";
 import { UsersRepository } from "./users/repositories/users.repository";
 import { UsersQueryRepository } from "./users/repositories/users.query.repository";
@@ -60,13 +65,17 @@ import { UsersService } from "./users/application/users.service";
 import { RateLimitService } from "./infrastructure/rate-limit/rate-limit-service";
 import { NodemailerService } from "./auth/adapters/nodemailer.service";
 
-export const container = new Container();
+export const container = new Container({ defaultScope: 'Singleton' });
 
 container.bind(CommentsRepository).to(CommentsRepository);
+container.bind(CommentsQueryRepository).to(CommentsQueryRepository);
 container.bind(SessionRepository).to(SessionRepository);
+container.bind(SessionQueryRepository).to(SessionQueryRepository);
 container.bind(UsersRepository).to(UsersRepository);
 container.bind(UsersQueryRepository).to(UsersQueryRepository);
 container.bind(BlogsRepository).to(BlogsRepository);
+container.bind(BlogsQueryRepository).to(BlogsQueryRepository);
+container.bind(PostsQueryRepository).to(PostsQueryRepository);
 container.bind(PostsRepository).to(PostsRepository);
 container.bind(RateLimitRepository).to(RateLimitRepository);
 

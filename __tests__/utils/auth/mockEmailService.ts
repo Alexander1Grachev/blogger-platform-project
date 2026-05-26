@@ -1,7 +1,12 @@
-import { nodemailerService } from "../../../src/auth/adapters/nodemailer.service";
+
+import { NodemailerService } from "../../../src/auth/adapters/nodemailer.service";
+import { container } from "../../../src/composition-root";
+
+const emailService = container.get(NodemailerService);
 
 export const mockEmailService = () => {
-  jest.spyOn(nodemailerService, 'sendEmail')
+
+  jest.spyOn(emailService, 'sendEmail')
     .mockImplementation(async (_email, _subject, html) => {
       const confirmMatch = html.match(/confirm-email\?code=([a-zA-Z0-9-]+)/);
       const recoveryMatch = html.match(/password-recovery\?recoveryCode=([a-zA-Z0-9-]+)/);

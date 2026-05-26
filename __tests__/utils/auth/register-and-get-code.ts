@@ -16,6 +16,6 @@ export async function registerAndGetCode(
         .send({ login, password, email })
         .expect(HttpStatus.NoContent);
 
-    const code = expect.getState().code;
+    const code = expect.getState().confirmationCode;
     return code;
 }

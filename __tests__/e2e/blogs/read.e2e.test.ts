@@ -1,37 +1,33 @@
 import request from 'supertest';
-import { setupApp } from '../../../src/setup-app';
-import express from 'express';
+
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { BLOGS_PATH } from '../../../src/core/paths/paths';
-import { createFirstBlog } from '../../utils/create.first.blog-test.utils';
 import { getBlogById } from '../../utils/blogs/get-blog-by-id';
-import { ResourceType } from '../../../src/core/consts/resource-type';
+import { clearDb } from "../../utils/clear-db";
 import { createBlog } from '../../utils/blogs/create-blog';
-import { correctTestBlogAttributes } from '../../utils/blogs/get-blog-dto';
+import { getBlogDto } from '../../utils/blogs/get-blog-dto';
+import { getTestApp } from '../../setup/start-test-app';
 
 describe('READ blogs', () => {
-  const app = express();
-  setupApp(app);
+  const app = getTestApp();
+
 
   let blogId: string;
 
   beforeAll(async () => {
-    blogId = await createFirstBlog(app);
+    await clearDb(app);
+
+    const blog = await createBlog(app);
+    blogId = blog.id
   });
 
   it('✅ should get blog by id', async () => {
     const blog = await getBlogById(app, blogId);
     expect(blog).toMatchObject({
       // проверяем, что вернулся тот же блог
-      data: {
-        type: ResourceType.Blogs,
-        id: blogId,
-        attributes: {
-          ...correctTestBlogAttributes,
-          createdAt: expect.any(String),
-          isMembership: expect.any(Boolean),
-        },
-      },
+      ...getBlogDto(),
+      createdAt: expect.any(String),
+      isMembership: expect.any(Boolean),
     });
   });
 
@@ -39,7 +35,7 @@ describe('READ blogs', () => {
     await createBlog(app);
     const res = await request(app).get(BLOGS_PATH).expect(HttpStatus.Ok);
 
-    expect(res.body.data.length).toBeGreaterThanOrEqual(2); // список должен содержать хотя бы 2 блога
+    expect(res.body.items.length).toBeGreaterThanOrEqual(2); // список должен содержать хотя бы 2 блога
   });
 
   it('❌ should return 404 if blog not found', async () => {

@@ -1,5 +1,5 @@
 import { TooManyRequestsError } from "../../core/errors/too-many-requests.error";
-import { RateLimitLog } from "./rate-limit.model";
+import { RateLimitModel } from "./rate-limit.model";
 import { RateLimitRepository } from "./rate-limit.repository";
 import { injectable, inject } from "inversify";
 
@@ -17,12 +17,12 @@ export class RateLimitService {
       throw new TooManyRequestsError('Too many requests');
     }
 
-    const newRateLimitLog: RateLimitLog = {
-      IP: ip,
-      URL: url,
-      date: new Date(),
-    };
+    const newRateLimit = new RateLimitModel;
+    newRateLimit.IP = ip
+    newRateLimit.URL = url
+    newRateLimit.date = new Date()
 
-    await this.rateLimitRepository.createRequest(newRateLimitLog);
+
+    await this.rateLimitRepository.createRequest(newRateLimit);
   }
 };

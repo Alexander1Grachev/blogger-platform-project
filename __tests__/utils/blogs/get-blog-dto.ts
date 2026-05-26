@@ -1,4 +1,4 @@
-import { BlogInputDto } from '../../../src/blogs/application/dtos/blog-input-model';
+import { BlogInputDto } from "../../../src/blogs/application/dtos/blog-input-dto";
 
 
 // Функция которая возвращает данные
@@ -21,3 +21,4 @@ export const correctTestBlogData: BlogCreateInput = {
   },
 };
 */
+

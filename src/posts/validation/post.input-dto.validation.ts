@@ -48,7 +48,14 @@ const blogIdValidation = body('blogId')
   .withMessage('BlogId is required')
   .bail()
   .isString()
-  .withMessage('BlogId should be string');
+  .withMessage('BlogId should be string')
+  .bail()
+  .trim()
+  .notEmpty()
+  .withMessage('BlogId must not be empty')
+  .bail()
+  .isMongoId()
+  .withMessage('BlogId must be a valid MongoId');
 
 export const postInputDtoValidation = [
   titleValidation,

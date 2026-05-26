@@ -6,7 +6,7 @@ import { UserInputDto } from '../../../src/users/routers/input/user-input-dto';
 import { USERS_PATH } from '../../../src/core/paths/paths';
 import { createUser } from '../../utils/users/create-user';
 import { getTestApp } from '../../setup/start-test-app';
-import { userCollection } from '../../../src/infrastructure/db/mongo.db';
+import { UserModel } from '../../../src/users/repositories/models/user.model';
 
 
 describe('CREATE user check', () => {
@@ -66,7 +66,7 @@ describe('CREATE user check', () => {
     }
 
     // <-- вот сюда
-    console.log('🧹 USERS IN DB BEFORE CREATE:', await userCollection.find().toArray());
+    console.log('🧹 USERS IN DB BEFORE CREATE:', await UserModel.find().lean());
 
     // 1. Создаем первого
     const firstResponse = await request(app)

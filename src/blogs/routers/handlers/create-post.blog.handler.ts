@@ -17,7 +17,7 @@ export class CreatePostForBlogController {
     try {
       const blogId = req.params.id
       const createdPostId = await this.postsService.createPostForBlog(blogId, req.body,);
-      const createdPost = await this.postsService.findByIdOrFail(createdPostId);
+      const createdPost = await this.postsService.findById(createdPostId);
       const postOutput = mapToPostOutput(createdPost);
       res.status(HttpStatus.Created).send(postOutput)
     } catch (e: unknown) {

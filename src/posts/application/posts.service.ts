@@ -1,7 +1,11 @@
+
+
+
 import { WithId } from "mongodb";
-import { BlogsRepository } from "../../blogs/repositories/blogs.repository";
-import { Post } from "../reposytories/models/post.model";
+import { BlogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
+import { IPost, PostModel } from "../reposytories/models/post.model";
 import { PostsRepository } from "../reposytories/posts.repository";
+import { PostsQueryRepository } from "../reposytories/posts.query.repository";
 import { PostInputDto } from "./dtos/post-input-dto";
 import { PostQueryInput } from "../routers/input/post-query.input";
 import { BlogPostInputDto } from "../../blogs/application/dtos/blog-post-input-dto";
@@ -11,56 +15,56 @@ import { injectable, inject } from "inversify";
 @injectable()
 export class PostsService {
   constructor(
-    @inject(BlogsRepository) private readonly blogsRepository: BlogsRepository,
+    @inject(BlogsQueryRepository) private readonly blogsQueryRepository: BlogsQueryRepository,
     @inject(PostsRepository) private readonly postsRepository: PostsRepository,
-
+    @inject(PostsQueryRepository) private readonly postsQueryRepository: PostsQueryRepository,
   ) { };
   async findMany(
     queryDto: PostQueryInput
-  ): Promise<{ items: WithId<Post>[]; totalCount: number }> {
-    return this.postsRepository.findMany(queryDto);
+  ): Promise<{ items: WithId<IPost>[]; totalCount: number }> {
+    return this.postsQueryRepository.findMany(queryDto);
   }
   async create(dto: PostInputDto): Promise<string> {
-    const blog = await this.blogsRepository.findByIdOrFail(dto.blogId)
-    const newPost: Post = {
-      title: dto.title,
-      shortDescription: dto.shortDescription,
-      content: dto.content,
-      blogId: dto.blogId,
-      blogName: blog.name,
-      createdAt: new Date(),
-    };
+    const blog = await this.blogsQueryRepository.findByIdOrFail(dto.blogId)
+    const newPost = new PostModel;
+    newPost.title = dto.title
+    newPost.shortDescription = dto.shortDescription
+    newPost.content = dto.content
+    newPost.blogId = dto.blogId
+    newPost.blogName = blog.name
+    newPost.createdAt = new Date()
+
     return this.postsRepository.create(newPost)
   }
-  async findByIdOrFail(id: string): Promise<WithId<Post>> {
-    return this.postsRepository.findByIdOrFail(id);
+  async findById(id: string): Promise<WithId<IPost>> {
+    return this.postsQueryRepository.findByIdOrFail(id);
   }
   async update(
     id: string,
     dto: PostInputDto
   ): Promise<void> {
-    return this.postsRepository.update(id, dto);
+    await this.postsRepository.update(id, dto);
   }
   async delete(id: string): Promise<void> {
-    return this.postsRepository.delete(id);
+    await this.postsRepository.delete(id);
   }
   async createPostForBlog(blogId: string, dto: BlogPostInputDto): Promise<string> {
-    const blog = await this.blogsRepository.findByIdOrFail(blogId)
-    const newPost: Post = {
-      title: dto.title,
-      shortDescription: dto.shortDescription,
-      content: dto.content,
-      blogId: blogId,
-      blogName: blog.name,
-      createdAt: new Date(),
-    };
+    const blog = await this.blogsQueryRepository.findByIdOrFail(blogId)
+    const newPost = new PostModel;
+    newPost.title = dto.title
+    newPost.shortDescription = dto.shortDescription
+    newPost.content = dto.content
+    newPost.blogId = blogId
+    newPost.blogName = blog.name
+    newPost.createdAt = new Date()
+
     return this.postsRepository.create(newPost);
   }
   async getPostForBlog(
     blogId: string,
     queryDto: PostQueryInput,
-  ): Promise<{ items: WithId<Post>[]; totalCount: number }> {
-    await this.blogsRepository.findByIdOrFail(blogId)
-    return this.postsRepository.getPostForBlog(blogId, queryDto);
+  ): Promise<{ items: WithId<IPost>[]; totalCount: number }> {
+    await this.blogsQueryRepository.findByIdOrFail(blogId)
+    return this.postsQueryRepository.getPostForBlog(blogId, queryDto);
   }
 }

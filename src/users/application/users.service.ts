@@ -1,7 +1,7 @@
 import { BcryptService } from "../../auth/adapters/bcrypt.service";
 import { BadRequestError } from "../../core/errors/bad-request.error";
 import { User } from "./dtos/user.dto";
-import { IUserDB } from "../repositories/models/user.db.interface";
+import { IUser, UserModel } from "../repositories/models/user.model";
 import { UsersQueryRepository } from "../repositories/users.query.repository";
 import { UsersRepository } from "../repositories/users.repository";
 import { UserQueryInput } from "../routers/input/user-query.input";
@@ -19,7 +19,7 @@ export class UsersService {
   ) { }
   //---------------------------------
   async delete(id: string): Promise<void> {
-    return this.usersRepository.delete(id);
+    await this.usersRepository.delete(id);
   }
   async create(dto: UserInputDto): Promise<string> {
     const existing = await this.usersQueryRepository.findForRegistration(dto.login, dto.email);
@@ -31,15 +31,15 @@ export class UsersService {
       }
     };
     const passwordHash = await this.bcryptService.generateHash(dto.password)
-    const newUser: IUserDB = {
-      login: dto.login,
-      email: dto.email,
-      passwordHash: passwordHash,
-      createdAt: new Date(),
-    }
+    const newUser = new UserModel
+    newUser.login = dto.login
+    newUser.email = dto.email
+    newUser.passwordHash = passwordHash
+    newUser.createdAt = new Date()
+
     return this.usersRepository.create(newUser);
   }
-  async findByIdOrFail(id: string): Promise<WithId<IUserDB>> {
+  async findById(id: string): Promise<WithId<IUser>> {
     return this.usersQueryRepository.findByIdOrFail(id);
   }
   async findMany(

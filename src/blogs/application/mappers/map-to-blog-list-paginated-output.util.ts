@@ -1,10 +1,10 @@
 import { WithId } from 'mongodb';
-import { Blog } from '../../repositories/models/blog.model';
+import { IBlog } from '../../repositories/models/blog.model';
 import { BlogViewModel } from '../output/blog-view-model';
 import { BlogListPaginatedOutput } from '../output/blog-list-paginated.output';
 
 export function mapToBlogListPaginatedOutput(
-    blogs: WithId<Blog>[],
+    blogs: WithId<IBlog>[],
     meta: { pageNumber: number, pageSize: number, totalCount: number }
 ): BlogListPaginatedOutput{
     return {
