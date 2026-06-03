@@ -10,6 +10,8 @@ import { CommentQueryInput } from "../routers/input/comment-query.input";
 import { ForbiddenError } from "../../core/errors/forbidden.error";
 import { injectable, inject } from "inversify";
 import { PostsQueryRepository } from "../../posts/reposytories/posts.query.repository";
+import { LikesQueryRepository } from "../../infrastructure/likes/likes.query.repository";
+import { LikeStatus } from "../../core/consts/like-statuses";
 
 
 @injectable()
@@ -20,18 +22,37 @@ export class CommentsService {
     @inject(PostsQueryRepository) private readonly postsQueryRepository: PostsQueryRepository,
     @inject(CommentsRepository) private readonly commentsRepository: CommentsRepository,
     @inject(CommentsQueryRepository) private readonly commentsQueryRepository: CommentsQueryRepository,
+    @inject(LikesQueryRepository) private readonly likesQueryRepository: LikesQueryRepository,
+
   ) { };
 
-  async findById(id: string): Promise<WithId<IComment>> {
-    return this.commentsQueryRepository.findByIdOrFail(id);
+  async findById(commentId: string, userId: string | null): Promise<{ comment: WithId<IComment>, myStatus: LikeStatus }> {
+    const myStatus = userId
+      ? await this.likesQueryRepository.getUserLikeStatus(commentId, userId)
+      : LikeStatus.None;
+
+    const comment = await this.commentsQueryRepository.findByIdOrFail(commentId);
+    return { comment, myStatus }
   }
   async findManyPostComments(
     postId: string,
-    queryDto: CommentQueryInput
-  ): Promise<{ items: WithId<IComment>[]; totalCount: number }> {
-    await this.postsService.findById(postId);
+    queryDto: CommentQueryInput,
+    userId: string | null,
+  ): Promise<{ items: { comment: WithId<IComment>, myStatus: LikeStatus }[], totalCount: number }> {
 
-    return this.commentsQueryRepository.findMany(postId, queryDto);
+
+    await this.postsService.findById(postId);
+    const { items, totalCount } = await this.commentsQueryRepository.findMany(postId, queryDto);
+
+    const itemsWithStatus = await Promise.all(items.map(async (comment) => {
+      const myStatus = userId
+        ? await this.likesQueryRepository.getUserLikeStatus(comment._id.toString(), userId)
+        : LikeStatus.None;
+      return { comment, myStatus };
+    }))
+
+
+    return { items: itemsWithStatus, totalCount }
   }
 
   async delete(commentId: string, userId: string): Promise<void> {
@@ -48,6 +69,7 @@ export class CommentsService {
     }
     this.commentsRepository.update(commentId, dto)
   }
+
   async create(postId: string, userId: string, dto: CommentInputDto): Promise<string> {
     await this.postsQueryRepository.findByIdOrFail(postId);
 
@@ -60,7 +82,10 @@ export class CommentsService {
       userLogin: me.login
     }
     newComment.postId = postId
-    newComment.createdAt = new Date()
+    newComment.likesInfo = {   
+      likesCount: 0,
+      dislikesCount: 0,
+    }
 
     return this.commentsRepository.create(newComment)
   }

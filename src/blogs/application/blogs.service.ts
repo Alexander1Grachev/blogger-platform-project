@@ -21,7 +21,6 @@ export class BlogsService {
     newBlog.name = dto.name
     newBlog.description = dto.description
     newBlog.websiteUrl = dto.websiteUrl
-    newBlog.createdAt = new Date()
     newBlog.isMembership = false
 
     return this.blogsRepository.create(newBlog);

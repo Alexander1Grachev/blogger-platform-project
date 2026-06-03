@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { superAdminGuardMiddleware } from '../../auth/middlewares/super-admin.guard-middleware';
 
-import { idValidation } from '../../core/middlewares/validation/params-id.validation-middleware';
+import { idValidation } from '../../core/middlewares/validation/params-id-validation.middleware';
 import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validtion-result.middleware';
 import { postInputDtoValidation } from '../validation/post.input-dto.validation';
 
-import { paginationAndSortingValidation } from '../../core/middlewares/validation/query-pagination-sorting.validation-middleware';
+import { paginationAndSortingValidation } from '../../core/middlewares/validation/query-pagination-sorting-validation.middleware';
 import { PostSortField } from './input/post-sort-field';
 import { CommentSortField } from '../../comments/routers/input/comment-sort-field';
 import { COMMENT_PATH } from '../../core/paths/paths';
@@ -20,6 +20,7 @@ import { GetPostListController } from './handlers/get-post-list.handler';
 import { GetPostController } from './handlers/get-post.handler';
 import { UpdatePostHController } from './handlers/update-post.handler';
 import { container } from "../../composition-root";
+import { likeStatusMiddleware } from '../../core/middlewares/like-status.middleware';
 
 
 export const postsRouter = Router();
@@ -33,6 +34,7 @@ postsRouter
     container.get(GetPostListController).handle,
   )
   .get(`/:id${COMMENT_PATH}`,
+    likeStatusMiddleware,
     idValidation,
     paginationAndSortingValidation(CommentSortField),
     inputValidationResultMiddleware,

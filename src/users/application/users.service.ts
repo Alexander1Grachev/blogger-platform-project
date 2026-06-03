@@ -35,7 +35,6 @@ export class UsersService {
     newUser.login = dto.login
     newUser.email = dto.email
     newUser.passwordHash = passwordHash
-    newUser.createdAt = new Date()
 
     return this.usersRepository.create(newUser);
   }

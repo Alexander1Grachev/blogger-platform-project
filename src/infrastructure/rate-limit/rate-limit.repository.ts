@@ -15,7 +15,7 @@ export class RateLimitRepository {
       }
     }
     const count = await RateLimitModel.countDocuments(filter);
-    console.log(`[rateLimitRepository] 📊  Count result: ${count} req in last 10s | IP: ${ip} | URL: ${url}`);
+    // console.log(`[rateLimitRepository] 📊  Count result: ${count} req in last 10s | IP: ${ip} | URL: ${url}`);
     return count
   }
 

@@ -16,8 +16,10 @@ export class GetCommentController {
   ) => {
     try {
       const commentId = req.params.id;
-      const comment = await this.commentsService.findById(commentId)
-      const commentOutput = mapToCommentOutput(comment)
+      const userId = req.user?.userId ?? null;
+
+      const { comment, myStatus } = await this.commentsService.findById(commentId, userId);
+      const commentOutput = mapToCommentOutput(comment, myStatus)
       res.status(HttpStatus.Ok).send(commentOutput)
     } catch (e: unknown) {
       errorsHandler(e, res);

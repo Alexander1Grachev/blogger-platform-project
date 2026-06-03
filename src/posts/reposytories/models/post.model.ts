@@ -8,6 +8,7 @@ export interface IPost {
   blogId: string;
   blogName: string;
   createdAt: Date;
+  updatedAt: Date;
 };
 
 
@@ -18,9 +19,11 @@ const PostSchema = new mongoose.Schema<IPost, PostModel>({
   title: { type: String, required: true, trim: true },
   shortDescription: { type: String, required: true },
   content: { type: String, required: true },
-  createdAt: { type: Date, required: true },
   blogId: { type: String, required: true },
   blogName: { type: String, required: true },
+}, {
+  timestamps: true
 })
+
 
 export const PostModel: PostModel = model<IPost, PostModel>('Post', PostSchema)

@@ -16,13 +16,13 @@ export const rateLimitMiddleware = async (
     const url = req.originalUrl.split('?')[0];
     const MAX_REQUESTS = 5;
 
-    console.log(`[rateLimitMiddleware] 📥: | IP: ${userIp} | URL: ${url}`);
+    //console.log(`[rateLimitMiddleware] 📥: | IP: ${userIp} | URL: ${url}`);
 
     await rateLimitService.checkAndLog(userIp, url, MAX_REQUESTS);
 
     next();
   } catch (e: unknown) {
-    console.log('[rateLimitMiddleware] 🚫 ERROR:', e);
+    // console.log('[rateLimitMiddleware] 🚫 ERROR:', e);
     if (e instanceof TooManyRequestsError) {
       res.sendStatus(HttpStatus.TooManyRequests);
       return;

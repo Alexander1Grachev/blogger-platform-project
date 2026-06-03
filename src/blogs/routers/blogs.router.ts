@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { superAdminGuardMiddleware } from '../../auth/middlewares/super-admin.guard-middleware';
 
-import { idValidation } from '../../core/middlewares/validation/params-id.validation-middleware';
+import { idValidation } from '../../core/middlewares/validation/params-id-validation.middleware';
 import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validtion-result.middleware';
 import { blogInputDtoValidation } from '../validation/blog.input-dto.validation';
 import { blogPostInputDtoValidation } from '../../posts/validation/post.input-dto.validation';
-import { paginationAndSortingValidation } from '../../core/middlewares/validation/query-pagination-sorting.validation-middleware';
+import { paginationAndSortingValidation } from '../../core/middlewares/validation/query-pagination-sorting-validation.middleware';
 import { PostSortField } from '../../posts/routers/input/post-sort-field';
 import { BlogSortField } from './input/blog-sort-field';
 import { CreateBlogController } from './handlers/create-blog.handler';

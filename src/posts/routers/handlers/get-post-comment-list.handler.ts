@@ -20,6 +20,7 @@ export class GetPostCommentsController {
     try {
 
       const postId = req.params.id;
+      const userId = req.user?.userId ?? null;
 
       const sanitizedQuery = matchedData<CommentQueryInput>(
         req, {
@@ -28,7 +29,8 @@ export class GetPostCommentsController {
       });
 
       const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
-      const { items, totalCount } = await this.commentsService.findManyPostComments(postId, queryInput)
+      const { items, totalCount, } = await this.commentsService.findManyPostComments(postId, queryInput, userId)
+      
       const commentOutput = mapToCommentListPaginatedOutput(
         items,
         {

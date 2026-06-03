@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { idValidation } from '../../core/middlewares/validation/params-id.validation-middleware';
+import { idValidation } from '../../core/middlewares/validation/params-id-validation.middleware';
 import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validtion-result.middleware';
 import { accessTokenGuardMiddleware } from '../../auth/middlewares/access.token.guard';
 
@@ -11,6 +11,9 @@ import { UpdateCommentController } from './handlers/update-comment.handler';
 import { GetCommentController } from './handlers/get-comment.handler';
 
 import { container } from "../../composition-root";
+import { likeStatusMiddleware } from '../../core/middlewares/like-status.middleware';
+import { likeStatusValidation } from '../../core/middlewares/validation/input-like-status-validtion.middleware';
+import { UpdateCommentLikeStatusController } from './handlers/update-comment-like-status.handler';
 
 
 
@@ -18,6 +21,7 @@ export const commentsRouter = Router();
 
 commentsRouter
   .get('/:id',
+    likeStatusMiddleware,
     idValidation,
     inputValidationResultMiddleware,
     container.get(GetCommentController).handle,
@@ -37,3 +41,12 @@ commentsRouter
     inputValidationResultMiddleware,
     container.get(DeleteCommentController).handle,
   )
+  .put('/:id/like-status',
+    likeStatusMiddleware,
+    idValidation,
+    likeStatusValidation,
+    inputValidationResultMiddleware,
+    container.get(UpdateCommentLikeStatusController).handle,
+  )
+
+

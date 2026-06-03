@@ -109,7 +109,6 @@ export class AuthService {
     newUser.login = dto.login
     newUser.email = dto.email
     newUser.passwordHash = passwordHash
-    newUser.createdAt = new Date()
     newUser.emailConfirmation = {
       confirmationCode: confirmationCode,
       expirationDate: addHours(new Date(), 1),

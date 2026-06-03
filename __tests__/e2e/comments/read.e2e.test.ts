@@ -38,6 +38,11 @@ describe('GET comment by id', () => {
         userLogin: comment.commentatorInfo.userLogin,
       },
       createdAt: expect.any(String),
+      likesInfo: {
+        dislikesCount: comment.likesInfo.dislikesCount,
+        likesCount: comment.likesInfo.likesCount,
+        myStatus: 'None',
+      },
     });
   });
 

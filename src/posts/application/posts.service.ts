@@ -32,7 +32,6 @@ export class PostsService {
     newPost.content = dto.content
     newPost.blogId = dto.blogId
     newPost.blogName = blog.name
-    newPost.createdAt = new Date()
 
     return this.postsRepository.create(newPost)
   }
@@ -56,7 +55,6 @@ export class PostsService {
     newPost.content = dto.content
     newPost.blogId = blogId
     newPost.blogName = blog.name
-    newPost.createdAt = new Date()
 
     return this.postsRepository.create(newPost);
   }

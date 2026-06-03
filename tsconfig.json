@@ -1,9 +1,9 @@
+// tsconfig.json — для VS Code и тестов
 {
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
-    "outDir": "./dist", // компилятор папка
-    "rootDir": "./src", // оснавная директория на ТС
+    "outDir": "./dist",
     "strict": true,
     "noImplicitReturns": true,
     "esModuleInterop": true,
@@ -13,14 +13,16 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "types": [
-      "node"
+      "node",
+      "jest"
     ]
   },
   "include": [
     "src/**/*",
+    "__tests__/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist",
-  ], 
+    "dist"
+  ]
 }

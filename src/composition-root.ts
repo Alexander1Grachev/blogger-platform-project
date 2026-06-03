@@ -64,6 +64,10 @@ import { EmailService } from "./auth/application/auth-email.service ";
 import { UsersService } from "./users/application/users.service";
 import { RateLimitService } from "./infrastructure/rate-limit/rate-limit-service";
 import { NodemailerService } from "./auth/adapters/nodemailer.service";
+import { LikesService } from "./infrastructure/likes/likes.service";
+import { LikesRepository } from "./infrastructure/likes/likes.repository";
+import { UpdateCommentLikeStatusController } from "./comments/routers/handlers/update-comment-like-status.handler";
+import { LikesQueryRepository } from "./infrastructure/likes/likes.query.repository";
 
 export const container = new Container({ defaultScope: 'Singleton' });
 
@@ -78,6 +82,10 @@ container.bind(BlogsQueryRepository).to(BlogsQueryRepository);
 container.bind(PostsQueryRepository).to(PostsQueryRepository);
 container.bind(PostsRepository).to(PostsRepository);
 container.bind(RateLimitRepository).to(RateLimitRepository);
+container.bind(LikesRepository).to(LikesRepository);
+container.bind(LikesQueryRepository).to(LikesQueryRepository);
+
+
 
 container.bind(NodemailerService).to(NodemailerService);
 container.bind(BcryptService).to(BcryptService);
@@ -90,6 +98,8 @@ container.bind(AuthService).to(AuthService);
 container.bind(PostsService).to(PostsService);
 container.bind(BlogsService).to(BlogsService);
 container.bind(CommentsService).to(CommentsService);
+container.bind(LikesService).to(LikesService);
+
 
 
 container.bind(MeController).to(MeController);
@@ -124,3 +134,4 @@ container.bind(GetPostController).to(GetPostController);
 container.bind(UpdatePostHController).to(UpdatePostHController);
 container.bind(PasswordRecoveryController).to(PasswordRecoveryController);
 container.bind(NewPasswordController).to(NewPasswordController);
+container.bind(UpdateCommentLikeStatusController).to(UpdateCommentLikeStatusController);

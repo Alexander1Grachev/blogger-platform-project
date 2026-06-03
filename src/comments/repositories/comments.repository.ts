@@ -17,10 +17,9 @@ export class CommentsRepository {
     const updateResult = await CommentModel.updateOne(
       { _id: id },
       {
-        $set: {
-          content: dto.content,
-        }
-      });
+        $set: { content: dto.content },
+      },
+    );
 
     if (updateResult.matchedCount < 1) {
       throw new RepositoryNotFoundError('Comment does not exist')

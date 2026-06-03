@@ -11,7 +11,7 @@ export class RateLimitService {
   async checkAndLog(ip: string, url: string, maxRequests: number) {
     const count = await this.rateLimitRepository.countRequests(ip, url);
 
-    console.log(`[rateLimitService] 📊 Before save count: ${count}/${maxRequests}`);
+   // console.log(`[rateLimitService] 📊 Before save count: ${count}/${maxRequests}`);
 
     if (count >= maxRequests) {
       throw new TooManyRequestsError('Too many requests');
