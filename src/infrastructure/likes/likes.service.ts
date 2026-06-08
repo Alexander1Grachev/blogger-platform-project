@@ -15,14 +15,17 @@ export class LikesService {
 
 
     ) { };
-    async updateLikeStatus(commentId: string, userId: string | null, statusDto: LikeStatus): Promise<void> {
-        if (!userId) return;
-        await this.commentsQueryRepository.findByIdOrFail(commentId);
-        if (statusDto === LikeStatus.None) return; // ничего не делаем
+ async updateLikeStatus(commentId: string, userId: string | null, statusDto: LikeStatus): Promise<void> {
+  if (!userId) return;
+  await this.commentsQueryRepository.findByIdOrFail(commentId);
 
-        await this.likesRepository.updateLikeStatus(userId, commentId, statusDto);
+  if (statusDto === LikeStatus.None) {
+    await this.likesRepository.deleteLike(userId, commentId);
+  } else {
+    await this.likesRepository.updateLikeStatus(userId, commentId, statusDto);
+  }
 
-        const { likesCount, dislikesCount } = await this.likesQueryRepository.countLikes(commentId);
-        await this.likesRepository.updateLikeInfo(commentId, likesCount, dislikesCount)
-    }
+  const { likesCount, dislikesCount } = await this.likesQueryRepository.countLikes(commentId);
+  await this.likesRepository.updateLikeInfo(commentId, likesCount, dislikesCount);
+}
 }

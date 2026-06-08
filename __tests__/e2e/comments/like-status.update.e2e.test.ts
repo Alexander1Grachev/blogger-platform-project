@@ -38,6 +38,12 @@ describe('UPDATE comment like-status', () => {
       .set('Authorization', `Bearer invalidtoken123`)
       .send({ likeStatus: "Like" })
       .expect(HttpStatus.Unauthorized)
+
+        // вход без авторизации
+    await request(app)
+      .put(`${COMMENT_PATH}/${commentId}/like-status`)
+      .send({ likeStatus: "Dislike" })
+      .expect(HttpStatus.Unauthorized)
   });
 
   it('❌ should return 404 if comment does not exist', async () => {
@@ -72,13 +78,6 @@ describe('UPDATE comment like-status', () => {
     expect(res.body.likesInfo.myStatus).toBe('Dislike')
   })
 
-  it('✅ should return 204 if not authenticated (no action)', async () => {
-    // вход без авторизации
-    await request(app)
-      .put(`${COMMENT_PATH}/${commentId}/like-status`)
-      .send({ likeStatus: "Dislike" })
-      .expect(HttpStatus.NoContent)
-  })
 
   it('✅ should increment likesInfo two users like same comment', async () => {
 

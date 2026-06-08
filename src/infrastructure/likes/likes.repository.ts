@@ -8,6 +8,16 @@ import { CommentModel } from "../../comments/repositories/models/comments.model"
 
 @injectable()
 export class LikesRepository {
+
+async deleteLike(userId: string, commentId: string):Promise<void>{
+  await LikeModel.deleteOne(
+    {
+       commentId: new Types.ObjectId(commentId),
+        userId: new Types.ObjectId(userId)
+    }
+  )
+}
+
   async updateLikeStatus(userId: string, commentId: string, statusDto: LikeStatus): Promise<void> {
     await LikeModel.updateOne(
       {

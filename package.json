@@ -17,6 +17,7 @@
     "mongoose": "^9.6.2",
     "nanoid": "^5.1.5",
     "nodemailer": "^8.0.1",
+    "pnpm": "^11.5.2",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
@@ -53,5 +54,6 @@
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "format": "prettier . --write",
     "clean": "rimraf dist"
-  }
+  },
+  "packageManager": "pnpm@9.0.0"
 }

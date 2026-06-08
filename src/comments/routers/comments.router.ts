@@ -42,7 +42,7 @@ commentsRouter
     container.get(DeleteCommentController).handle,
   )
   .put('/:id/like-status',
-    likeStatusMiddleware,
+    accessTokenGuardMiddleware,
     idValidation,
     likeStatusValidation,
     inputValidationResultMiddleware,
