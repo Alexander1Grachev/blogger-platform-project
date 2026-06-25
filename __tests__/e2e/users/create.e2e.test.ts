@@ -6,7 +6,7 @@ import { UserInputDto } from '../../../src/users/routers/input/user-input-dto';
 import { USERS_PATH } from '../../../src/core/paths/paths';
 import { createUser } from '../../utils/users/create-user';
 import { getTestApp } from '../../setup/start-test-app';
-import { UserModel } from '../../../src/users/repositories/models/user.model';
+import { UserModel } from '../../../src/users/domain/user.entity';
 
 
 describe('CREATE user check', () => {

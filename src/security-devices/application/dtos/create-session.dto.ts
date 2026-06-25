@@ -1,7 +1,8 @@
 import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export interface CreateSessionDto {
-  userId: ObjectId;
+  userId: mongoose.Types.ObjectId;
   ip: string;
   deviceName: string;
   deviceId: string;

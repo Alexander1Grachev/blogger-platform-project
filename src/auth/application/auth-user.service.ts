@@ -7,14 +7,14 @@ import { UserInputDto } from "../../users/routers/input/user-input-dto";
 import { NodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emails.templates";
 import { BadRequestError } from "../../core/errors/bad-request.error";
-import { IUser, UserModel } from "../../users/repositories/models/user.model";
 import { UsersRepository } from "../../users/repositories/users.repository";
-import { addHours } from 'date-fns';
 import { SessionService } from "../../security-devices/application/session.service";
 import crypto from 'crypto';
 import { SessionRepository } from "../../security-devices/repositories/session.repository";
 import { injectable, inject } from "inversify";
 import { SessionQueryRepository } from "../../security-devices/repositories/session..query.repository";
+import { UserModel } from "../../users/domain/user.entity";
+import { SessionModel } from "../../security-devices/domain/session.entity";
 
 
 @injectable()
@@ -68,7 +68,7 @@ export class AuthService {
     const accessToken = this.jwtService.createAccessToken(user._id.toString());
     //создаем сессию 
 
-    await this.sessionService.createSession(
+    const newSession = SessionModel.createSession(
       {
         userId: user._id,
         ip,
@@ -77,6 +77,7 @@ export class AuthService {
         iat: payload.iat,
         exp: payload.exp,
       });
+    await this.sessionRepository.save(newSession);
     return { accessToken, refreshToken }
   }
 
@@ -92,7 +93,6 @@ export class AuthService {
   }
 
   async register(dto: UserInputDto): Promise<void> {
-    const confirmationCode = crypto.randomUUID();
     const passwordHash = await this.bcryptService.generateHash(dto.password)
 
     const existingUser = await this.usersQueryRepository.findForRegistration(dto.login, dto.email);
@@ -104,17 +104,8 @@ export class AuthService {
         throw new BadRequestError('Email is already in use', 'email');
       }
     }
-
-    const newUser = new UserModel;
-    newUser.login = dto.login
-    newUser.email = dto.email
-    newUser.passwordHash = passwordHash
-    newUser.emailConfirmation = {
-      confirmationCode: confirmationCode,
-      expirationDate: addHours(new Date(), 1),
-      isConfirmed: false
-    };
-    const userId = await this.usersRepository.create(newUser)
+    const newUser = UserModel.registerUser(passwordHash, dto)
+    const userId = await this.usersRepository.save(newUser)
     const user = await this.usersQueryRepository.findByIdOrFail(userId);
 
     const html = emailExamples.registrationEmail(
@@ -140,10 +131,7 @@ export class AuthService {
       throw new BadRequestError('Recovery code expired', 'recoveryCode');
     }
     const passwordHash = await this.bcryptService.generateHash(newPassword);
-    await this.usersRepository.confirmPasswordRecovery(
-      user._id,
-      passwordHash
-    );
-  }
-};
-
+    user.confirmPasswordRecovery(passwordHash);
+    await this.usersRepository.save(user);
+  };
+}

@@ -1,36 +1,20 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
-import { ISession, SessionModel } from "./models/session.model";
 import { injectable } from "inversify";
+import { SessionDocument, SessionModel } from "../domain/session.entity";
 
 
 @injectable()
 export class SessionRepository {
-  async createSession(newSession: ISession): Promise<void> {
-    await SessionModel.create(newSession);
-  }
-
-  async updateLastActive(deviceId: string, actualTokenIatTime: Date): Promise<void> {
-    await SessionModel.updateOne(
-      { deviceId },
-      {
-        $set: {
-          'lastActiveAt': actualTokenIatTime,
-        },
-      },
-    )
+  async save(newSession: SessionDocument): Promise<void> {
+    await newSession.save();
   }
 
   async deleteOtherUserSessions(userId: string, deviceId: string): Promise<void> {
     const deleteResult = await SessionModel.deleteMany({
-      userId: new Types.ObjectId(userId),
+      userId: new mongoose.Types.ObjectId(userId),
       deviceId: { $ne: deviceId }
     });
-    /*
-   if (deleteResult.deletedCount < 1) {
-     throw new RepositoryNotFoundError('Sessions does not exist');
-   }
-     */
   }
 
   async deleteDeviceSessions(deviceId: string): Promise<void> {

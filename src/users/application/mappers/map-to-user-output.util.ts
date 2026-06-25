@@ -1,12 +1,11 @@
-import { WithId } from "mongodb";
+import { UserDocument } from "../../domain/user.entity";
 import { UserViewModel } from "../output/user-view-model";
-import { User } from "../dtos/user.dto";
 
-export function mapToUserOutput(user: WithId<User>): UserViewModel {
-    return {
-        id: user._id.toString(),
-        login: user.login,
-        email: user.email,
-        createdAt: user.createdAt.toISOString(),
-    };
+export function mapToUserOutput(user: UserDocument): UserViewModel {
+  return {
+    id: user._id.toString(),
+    login: user.login,
+    email: user.email,
+    createdAt: user.createdAt.toISOString(),
+  };
 }

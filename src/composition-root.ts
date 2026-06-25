@@ -64,10 +64,10 @@ import { EmailService } from "./auth/application/auth-email.service ";
 import { UsersService } from "./users/application/users.service";
 import { RateLimitService } from "./infrastructure/rate-limit/rate-limit-service";
 import { NodemailerService } from "./auth/adapters/nodemailer.service";
-import { LikesService } from "./infrastructure/likes/likes.service";
-import { LikesRepository } from "./infrastructure/likes/likes.repository";
+import { LikesService } from "./likes/application/likes.service";
+import { LikesRepository } from "./likes/repositories/likes.repository";
 import { UpdateCommentLikeStatusController } from "./comments/routers/handlers/update-comment-like-status.handler";
-import { LikesQueryRepository } from "./infrastructure/likes/likes.query.repository";
+import { LikesQueryRepository } from "./likes/repositories/likes.query.repository";
 
 export const container = new Container({ defaultScope: 'Singleton' });
 

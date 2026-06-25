@@ -1,17 +1,16 @@
 import { WithId } from "mongodb";
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
-import { User } from "../application/dtos/user.dto";
 import { UserQueryInput } from "../routers/input/user-query.input";
-import { IUser, UserModel } from "./models/user.model";
 import { injectable } from "inversify";
+import { UserDocument, UserModel } from "../domain/user.entity";
 
 
 @injectable()
 export class UsersQueryRepository {
 
-  async findByIdOrFail(id: string): Promise<WithId<IUser>> {
+  async findByIdOrFail(id: string): Promise<UserDocument> {
 
-    const res = await UserModel.findOne({ _id: id }).lean();
+    const res = await UserModel.findOne({ _id: id });
     if (!res) {
       throw new RepositoryNotFoundError('User does not exist');
     }
@@ -20,38 +19,38 @@ export class UsersQueryRepository {
   async findForRegistration(login: string, email: string) {
     return UserModel.findOne({
       $or: [{ login: login }, { email: email }],
-    }).lean();
+    });
   }
   async findForAuth(
     loginOrEmail: string
-  ): Promise<WithId<IUser> | null> {
+  ): Promise<UserDocument | null> {
     return UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-    }).lean();
+    });
 
   }
 
   async findByConfirmationCode(
     confCode: string
-  ): Promise<WithId<IUser> | null> {
+  ): Promise<UserDocument | null> {
     const user = await UserModel.findOne({
       'emailConfirmation.confirmationCode': confCode,
-    }).lean();
+    });
     return user
   }
 
   async findByRecoveryCode(
     recoveryCode: string
-  ): Promise<WithId<IUser> | null> {
+  ): Promise<UserDocument | null> {
     const user = await UserModel.findOne({
       'passwordRecovery.recoveryCode': recoveryCode,
-    }).lean();
+    });
     return user
   }
 
   async findMany(
     queryDto: UserQueryInput
-  ): Promise<{ items: WithId<User>[]; totalCount: number }> {
+  ): Promise<{ items: UserDocument[]; totalCount: number }> {
     const {
       pageNumber,
       pageSize,
@@ -81,8 +80,7 @@ export class UsersQueryRepository {
         .find(filter)
         .sort({ [sortBy]: sortDirection })
         .skip(skip)
-        .limit(pageSize)
-        .lean(),
+        .limit(pageSize),
       UserModel.countDocuments(filter)
     ]);
     return { items, totalCount }

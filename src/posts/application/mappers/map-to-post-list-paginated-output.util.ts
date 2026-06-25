@@ -1,25 +1,25 @@
-import { WithId } from 'mongodb';
-import { IPost } from '../../reposytories/models/post.model';
+
 import { PostViewModel } from '../output/post-view-model';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
+import { PostDocument } from '../../domain/post.entity';
 
 export function mapToPostListPaginatedOutput(
-    posts: WithId<IPost>[],
-    meta: { pageNumber: number, pageSize: number, totalCount: number }
+  posts: PostDocument[],
+  meta: { pageNumber: number, pageSize: number, totalCount: number }
 ): PostListPaginatedOutput {
-    return {
-        page: meta.pageNumber,
-        pageSize: meta.pageSize,
-        pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
-        totalCount: meta.totalCount,
-        items: posts.map((post): PostViewModel => ({
-            id: post._id.toString(),
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: post.blogName,
-            createdAt: post.createdAt.toISOString(),
-        }))
-    };
+  return {
+    page: meta.pageNumber,
+    pageSize: meta.pageSize,
+    pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
+    totalCount: meta.totalCount,
+    items: posts.map((post): PostViewModel => ({
+      id: post._id.toString(),
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: post.blogName,
+      createdAt: post.createdAt.toISOString(),
+    }))
+  };
 }

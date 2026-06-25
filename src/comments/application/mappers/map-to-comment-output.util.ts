@@ -1,11 +1,10 @@
-import { WithId } from "mongodb";
 import { CommentViewModel } from "../output/comment-view-model";
-import { IComment } from "../../repositories/models/comments.model";
 import { LikeStatus } from "../../../core/consts/like-statuses";
+import { CommentDocument } from "../../domain/comment.entity";
 
 
 
-export function mapToCommentOutput(comment: WithId<IComment>, myStatus: LikeStatus): CommentViewModel {
+export function mapToCommentOutput(comment: CommentDocument, myStatus: LikeStatus): CommentViewModel {
   return {
     id: comment._id.toString(),
     content: comment.content,

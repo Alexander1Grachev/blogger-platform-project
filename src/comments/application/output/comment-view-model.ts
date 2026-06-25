@@ -1,5 +1,5 @@
 import { LikeStatus } from "../../../core/consts/like-statuses";
-import { CommentatorInfoView } from "../../repositories/models/comments.model";
+import { CommentatorInfoView } from "../../domain/comment.entity";
 
 export type CommentViewModel = {
   id: string;

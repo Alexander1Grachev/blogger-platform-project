@@ -1,4 +1,4 @@
-import { UserModel } from "../../../src/users/repositories/models/user.model";
+import { UserModel } from "../../../src/users/domain/user.entity";
 
 
 export async function expireConfirmationCode(code: string): Promise<void> {

@@ -1,11 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { HttpStatus } from '../core/consts/http-statuses';
-import { UserModel } from '../users/repositories/models/user.model';
-import { BlogModel } from '../blogs/repositories/models/blog.model';
-import { PostModel } from '../posts/reposytories/models/post.model';
-import { CommentModel } from '../comments/repositories/models/comments.model';
-import { SessionModel } from '../security-devices/repositories/models/session.model';
+
 import { RateLimitModel } from '../infrastructure/rate-limit/rate-limit.model';
+import { BlogModel } from '../blogs/domain/blog.entity';
+import { PostModel } from '../posts/domain/post.entity';
+import { UserModel } from '../users/domain/user.entity';
+import { CommentModel } from '../comments/domain/comment.entity';
+import { SessionModel } from '../security-devices/domain/session.entity';
+import { LikeModel } from '../likes/domain/like.entity';
 export const testingClearRouter = Router();
 
 testingClearRouter.delete('/all-data', async (req: Request, res: Response) => {
@@ -16,6 +18,7 @@ testingClearRouter.delete('/all-data', async (req: Request, res: Response) => {
     UserModel.deleteMany(),
     CommentModel.deleteMany(),
     SessionModel.deleteMany(),
+    LikeModel.deleteMany(),
     RateLimitModel.deleteMany(),
   ])
   res.sendStatus(HttpStatus.NoContent);

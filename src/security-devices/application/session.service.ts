@@ -1,10 +1,10 @@
 import { ForbiddenError } from "../../core/errors/forbidden.error";
-import { ISession, SessionModel } from "../../security-devices/repositories/models/session.model";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionQueryRepository } from "../repositories/session..query.repository";
 
 import { CreateSessionDto } from "./dtos/create-session.dto";
 import { injectable, inject } from "inversify";
+import { SessionDocument, SessionModel } from "../domain/session.entity";
 
 
 @injectable()
@@ -16,32 +16,28 @@ export class SessionService {
 
   async findSessionByDeviceId(
     deviceId: string
-  ): Promise<ISession> {
-    return await this.sessionQueryRepository.findSessionByDeviceId(deviceId);
+  ): Promise<SessionDocument> {
+    return await this.sessionQueryRepository.findSessionByDeviceIdOrFail(deviceId);
   }
 
   async createSession(dto: CreateSessionDto): Promise<void> {
-    const newSession = new SessionModel;
-    newSession.userId = dto.userId
-    newSession.deviceId = dto.deviceId
-    newSession.deviceName = dto.deviceName
-    newSession.ip = dto.ip
-    newSession.lastActiveAt = new Date(dto.iat * 1000)
-    newSession.expiresAt = new Date(dto.exp * 1000)
 
-    await this.sessionRepository.createSession(newSession);
+    const newSession = SessionModel.createSession(dto);
+    await this.sessionRepository.save(newSession);
   }
 
   async updateLastActive(deviceId: string, iat: number): Promise<void> {
-    const iatDate = new Date(iat * 1000);// первож в дату
-    await this.sessionRepository.updateLastActive(deviceId, iatDate);
+    const session = await this.sessionQueryRepository.findSessionByDeviceIdOrFail(deviceId)
+
+    session.updateLastActive(iat);
+    await this.sessionRepository.save(session);
   }
 
   async revokeSession(deviceId: string): Promise<void> {
     await this.sessionRepository.deleteDeviceSessions(deviceId);
   }
 
-  async findUserSessions(userId: string): Promise<ISession[]> {
+  async findUserSessions(userId: string): Promise<SessionDocument[]> {
     return await this.sessionQueryRepository.findUserSessions(userId);
   }
 
@@ -50,7 +46,7 @@ export class SessionService {
   }
 
   async deleteDeviceSessions(userId: string, deviceId: string): Promise<void> {
-    const session = await this.findSessionByDeviceId(deviceId);
+    const session = await this.sessionQueryRepository.findSessionByDeviceIdOrFail(deviceId);
 
     // если не твой device — 403
     if (session.userId.toString() !== userId) {

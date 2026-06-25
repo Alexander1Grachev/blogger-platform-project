@@ -1,6 +1,5 @@
 import { WithId } from "mongodb";
-import { IBlog } from "../repositories/models/blog.model";
-import { BlogModel } from "../repositories/models/blog.model";
+
 
 import { BlogsRepository } from "../repositories/blogs.repository";
 import { BlogsQueryRepository } from "../repositories/blogs.query.repository";
@@ -8,6 +7,7 @@ import { BlogsQueryRepository } from "../repositories/blogs.query.repository";
 import { BlogQueryInput } from "../routers/input/blog-query.input";
 import { BlogInputDto } from "./dtos/blog-input-dto";
 import { inject, injectable } from "inversify";
+import { BlogDocument, BlogModel } from "../domain/blog.entity";
 
 @injectable()
 export class BlogsService {
@@ -17,24 +17,22 @@ export class BlogsService {
   ) { };
 
   async create(dto: BlogInputDto): Promise<string> {
-    const newBlog = new BlogModel()
-    newBlog.name = dto.name
-    newBlog.description = dto.description
-    newBlog.websiteUrl = dto.websiteUrl
-    newBlog.isMembership = false
+    const newBlog = BlogModel.createBlog(dto)
 
-    return this.blogsRepository.create(newBlog);
+    return this.blogsRepository.save(newBlog);
   }
-  async findById(id: string): Promise<WithId<IBlog>> {
+  async findById(id: string): Promise<BlogDocument> {
     return this.blogsQueryRepository.findByIdOrFail(id);
   }
   async update(id: string, dto: BlogInputDto): Promise<void> {
-    await this.blogsRepository.update(id, dto);
+    const blog = await this.blogsQueryRepository.findByIdOrFail(id);
+    blog.updateBlog(dto);
+    await this.blogsRepository.save(blog);
   }
 
   async findMany(
     queryDto: BlogQueryInput,
-  ): Promise<{ items: WithId<IBlog>[]; totalCount: number }> {
+  ): Promise<{ items: BlogDocument[]; totalCount: number }> {
     return this.blogsQueryRepository.findMany(queryDto);
   }
 

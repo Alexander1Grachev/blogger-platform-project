@@ -4,7 +4,7 @@ import { errorsHandler } from "../../../core/errors/errors.handler";
 import { HttpStatus } from "../../../core/consts/http-statuses";
 import { injectable, inject } from "inversify";
 import { LikeStatusInputDto } from '../../../core/types/like-status-input.dto';
-import { LikesService } from '../../../infrastructure/likes/likes.service';
+import { LikesService } from '../../../likes/application/likes.service';
 
 
 @injectable()

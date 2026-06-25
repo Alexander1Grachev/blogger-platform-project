@@ -1,10 +1,8 @@
 import { UsersQueryRepository } from "../../users/repositories/users.query.repository";
 import { NodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emails.templates";
-import crypto from 'crypto';
 import { BadRequestError } from "../../core/errors/bad-request.error";
 import { UsersRepository } from "../../users/repositories/users.repository";
-import { addHours } from 'date-fns';
 import { injectable, inject } from "inversify";
 
 
@@ -28,12 +26,9 @@ export class EmailService {
     if (user.emailConfirmation?.isConfirmed) {
       throw new BadRequestError('Email already confirmed', 'email');
     }
-    const newConfirmationCode = crypto.randomUUID();
-    await this.usersRepository.updateEmailConfirmationCode(
-      user._id,
-      newConfirmationCode,
-      addHours(new Date(), 1)
-    );
+    const newConfirmationCode = user.updateEmailConfirmationCode();
+    await this.usersRepository.save(user);
+
     const html = emailExamples.registrationEmail(newConfirmationCode, user.login);
     this.nodemailerService.sendEmail(user.email, 'Registration', html);
   }
@@ -52,9 +47,9 @@ export class EmailService {
     if (!user.emailConfirmation || user.emailConfirmation.expirationDate < new Date()) {
       throw new BadRequestError('Email confirmation out of time', 'code');
     }
-    await this.usersRepository.confirmEmail(
-      user._id,
-    )
+
+    user.confirmEmail()
+    await this.usersRepository.save(user);
     return true
   }
 
@@ -63,12 +58,10 @@ export class EmailService {
   ): Promise<void> {
     const user = await this.usersQueryRepository.findForAuth(email);
     if (!user) return;
-    const newConfirmationCode = crypto.randomUUID();
-    await this.usersRepository.updatePasswordRecoveryCode(
-      user._id,
-      newConfirmationCode,
-      addHours(new Date(), 1)
-    );
+
+    const newConfirmationCode = user.updatePasswordRecoveryCode();
+    await this.usersRepository.save(user);
+
     const html = emailExamples.recoveryPasswordEmail(newConfirmationCode);
     this.nodemailerService.sendEmail(
       email,

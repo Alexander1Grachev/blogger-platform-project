@@ -1,8 +1,8 @@
 import { WithId } from "mongodb";
-import { IComment, CommentModel } from "./models/comments.model";
 import { RepositoryNotFoundError } from "../../core/errors/repository-not-found.error";
 import { CommentQueryInput } from "../routers/input/comment-query.input";
 import { injectable } from "inversify";
+import { CommentDocument, CommentModel } from "../domain/comment.entity";
 
 
 @injectable()
@@ -10,7 +10,7 @@ export class CommentsQueryRepository {
   async findMany(
     postId: string,
     queryDto: CommentQueryInput
-  ): Promise<{ items: WithId<IComment>[]; totalCount: number }> {
+  ): Promise<{ items: CommentDocument[]; totalCount: number }> {
     const {
       pageNumber,
       pageSize,
@@ -26,14 +26,13 @@ export class CommentsQueryRepository {
         .find(filter)
         .sort({ [sortBy]: sortDirection })
         .skip(skip)
-        .limit(pageSize)
-        .lean(),
+        .limit(pageSize),
       CommentModel.countDocuments(filter)
     ]);
     return { items, totalCount };
   }
-  async findByIdOrFail(id: string): Promise<WithId<IComment>> {
-    const res = await CommentModel.findOne({ _id: id }).lean();
+  async findByIdOrFail(id: string): Promise<CommentDocument> {
+    const res = await CommentModel.findOne({ _id: id });
     if (!res) {
       throw new RepositoryNotFoundError('Comment does not exist')
     }
