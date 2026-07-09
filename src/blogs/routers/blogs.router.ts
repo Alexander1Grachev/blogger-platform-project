@@ -17,6 +17,7 @@ import { GetPostsByBlogController } from './handlers/get-posts-by-blog.handler';
 import { UpdateBlogController } from './handlers/update-blog.handler';
 
 import { container } from "../../composition-root";
+import { likeStatusMiddleware } from '../../core/middlewares/like-status.middleware';
 
 
 export const blogsRouter = Router();
@@ -29,10 +30,10 @@ blogsRouter
     paginationAndSortingValidation(BlogSortField),
     inputValidationResultMiddleware,
     container.get(GetBlogListController).handle,
-
   )
   .get(
     '/:id/posts',
+    likeStatusMiddleware,
     idValidation,
     paginationAndSortingValidation(PostSortField),
     inputValidationResultMiddleware,

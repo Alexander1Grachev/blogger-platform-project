@@ -50,6 +50,7 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node ./dist/index.js",
     "test": "jest",
+    "test:unit": "jest --config jest.unit.config.js --",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "format": "prettier . --write",

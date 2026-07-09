@@ -5,7 +5,7 @@ import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { BLOGS_PATH } from '../../../src/core/paths/paths';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
 import { clearDb } from "../../utils/clear-db";
-import { createBlog } from '../../utils/blogs/create-blog';
+import { createBlogAsAdmin } from '../../utils/blogs/create-blog.admin';
 
 describe('DELETE blog checks', () => {
   const app = express();
@@ -17,7 +17,7 @@ describe('DELETE blog checks', () => {
 
   beforeAll(async () => {
     await clearDb(app)
-    const blog = await createBlog(app);
+    const blog = await createBlogAsAdmin(app);
     blogId = blog.id
   });
 

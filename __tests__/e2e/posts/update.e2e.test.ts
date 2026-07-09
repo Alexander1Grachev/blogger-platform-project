@@ -1,5 +1,5 @@
 import { updatePost } from '../../utils/posts/update-post';
-import { createPost } from '../../utils/posts/create-post';
+import { createPostAsAdmin } from '../../utils/posts/create-post.admin';
 import { getPostById } from '../../utils/posts/get-post-by-id';
 import { clearDb } from '../../utils/clear-db';
 import { getTestApp } from '../../setup/start-test-app';
@@ -13,7 +13,7 @@ describe('UPDATE posts', () => {
 
   beforeAll(async () => {
     await clearDb(app);
-    const post = await createPost(app);
+    const post = await createPostAsAdmin(app);
     postId = post.id;
     blogId = post.blogId;
   });

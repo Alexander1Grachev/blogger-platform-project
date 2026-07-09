@@ -3,7 +3,7 @@ import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { POSTS_PATH } from '../../../src/core/paths/paths';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
 import { clearDb } from '../../utils/clear-db';
-import { createPost } from '../../utils/posts/create-post';
+import { createPostAsAdmin } from '../../utils/posts/create-post.admin';
 import { getTestApp } from '../../setup/start-test-app';
 
 describe('DELETE post checks', () => {
@@ -15,7 +15,7 @@ describe('DELETE post checks', () => {
 
   beforeAll(async () => {
     await clearDb(app);
-    const post = await createPost(app);
+    const post = await createPostAsAdmin(app);
     postId = post.id;
   });
 

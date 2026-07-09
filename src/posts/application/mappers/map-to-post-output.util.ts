@@ -1,9 +1,7 @@
-
-import { PostDocument } from '../../domain/post.entity';
 import { PostViewModel } from '../output/post-view-model';
-
+import { PostMapperData } from './post-mapper-input';
 export function mapToPostOutput(
-  post: PostDocument,
+  { post, myStatus, newestLikes }: PostMapperData
 ): PostViewModel {
   return {
     id: post._id.toString(),
@@ -13,5 +11,11 @@ export function mapToPostOutput(
     blogId: post.blogId,
     blogName: post.blogName,
     createdAt: post.createdAt.toISOString(),
+    extendedLikesInfo: {
+      likesCount: post.extendedLikesInfo.likesCount,
+      dislikesCount: post.extendedLikesInfo.dislikesCount,
+      myStatus: myStatus,
+      newestLikes: newestLikes
+    }
   };
 }

@@ -8,6 +8,7 @@ import { getUserDto } from '../../utils/users/get-user-dto';
 import { createUserAndLogin } from '../../utils/users/create-user-n-login.token';
 import { AUTH_PATH, COMMENT_PATH } from '../../../src/core/paths/paths';
 import { HttpStatus } from '../../../src/core/consts/http-statuses';
+import { createPostAsAdmin } from '../../utils/posts/create-post.admin';
 
 
 
@@ -28,8 +29,10 @@ describe('UPDATE comment', () => {
     const loginResOther = await createUserAndLogin(app, userOther);
     accessTokenOther = loginResOther.accessToken;
 
+    const post = await createPostAsAdmin(app);
+    const postId = post.id;
     const commentDto = getCommentDto();
-    const comment = await createComment(app, accessTokenOwner, commentDto);
+    const comment = await createComment(app, accessTokenOwner, commentDto, postId);
     commentId = comment.id;
   });
 

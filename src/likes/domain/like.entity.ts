@@ -1,10 +1,17 @@
 import mongoose, { HydratedDocument, model, Model, Types } from "mongoose";
 import { LikeStatus } from "../../core/consts/like-statuses";
 
+export enum LikeTargetType {
+  Comment = 'Comment',
+  Post = 'Post',
+}
 type CreateLikeDto = {
   userId: string;
-  commentId: string;
+  targetId: string;
+  targetType: LikeTargetType;
   status: LikeStatus.Like | LikeStatus.Dislike;
+  login: string; //  денормализация!
+
 }
 
 export class LikeEntity {
@@ -13,8 +20,10 @@ export class LikeEntity {
 
   private constructor(
     public userId: mongoose.Types.ObjectId,
-    public commentId: mongoose.Types.ObjectId,
+    public targetId: mongoose.Types.ObjectId,
+    public targetType: LikeTargetType,
     public status: LikeStatus.Like | LikeStatus.Dislike,
+    public login: string
   ) { }
 
   // Instance methods
@@ -26,8 +35,10 @@ export class LikeEntity {
   static createLike(dto: CreateLikeDto): LikeDocument {
     return new LikeModel({
       userId: new mongoose.Types.ObjectId(dto.userId),
-      commentId: new mongoose.Types.ObjectId(dto.commentId),
+      targetId: new mongoose.Types.ObjectId(dto.targetId),
+      targetType: dto.targetType,
       status: dto.status,
+      login: dto.login,
     }) as LikeDocument;
   }
 }
@@ -46,9 +57,14 @@ export type LikeDocument = HydratedDocument<LikeEntity, LikeMethods>;
 
 export const LikeSchema = new mongoose.Schema<LikeEntity, LikeModel>({
   userId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  commentId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  targetId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  targetType: { type: String, enum: LikeTargetType, required: true },
   status: { type: String, enum: ['Like', 'Dislike'], required: true },
+  login: { type: String, required: true },
 }, { timestamps: true });
+
+// составной индекс один лайк на юзера на цель
+LikeSchema.index({ targetId: 1, targetType: 1, userId: 1 }, { unique: true });
 
 LikeSchema.loadClass(LikeEntity);
 export const LikeModel = model<LikeEntity, LikeModel>('Like', LikeSchema);

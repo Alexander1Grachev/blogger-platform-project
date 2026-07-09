@@ -4,7 +4,7 @@ import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { BLOGS_PATH } from '../../../src/core/paths/paths';
 import { getBlogById } from '../../utils/blogs/get-blog-by-id';
 import { clearDb } from "../../utils/clear-db";
-import { createBlog } from '../../utils/blogs/create-blog';
+import { createBlogAsAdmin } from '../../utils/blogs/create-blog.admin';
 import { getBlogDto } from '../../utils/blogs/get-blog-dto';
 import { getTestApp } from '../../setup/start-test-app';
 
@@ -17,7 +17,7 @@ describe('READ blogs', () => {
   beforeAll(async () => {
     await clearDb(app);
 
-    const blog = await createBlog(app);
+    const blog = await createBlogAsAdmin(app);
     blogId = blog.id
   });
 
@@ -32,7 +32,7 @@ describe('READ blogs', () => {
   });
 
   it('✅ should get blogs list with at least one blog', async () => {
-    await createBlog(app);
+    await createBlogAsAdmin(app);
     const res = await request(app).get(BLOGS_PATH).expect(HttpStatus.Ok);
 
     expect(res.body.items.length).toBeGreaterThanOrEqual(2); // список должен содержать хотя бы 2 блога

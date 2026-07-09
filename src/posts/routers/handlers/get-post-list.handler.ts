@@ -23,10 +23,11 @@ export class GetPostListController {
         locations: ['query'],
         includeOptionals: true,
       });
-
+      const userId = req.user?.userId ?? null;
       const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery);
-      const { items, totalCount } = await this.postsService.findMany(queryInput);
-      const postsOutput = mapToPostListPaginatedOutput(items, {
+      const { items, totalCount } = await this.postsService.findMany(queryInput, userId);
+      const postsOutput = mapToPostListPaginatedOutput(
+        items, {
         pageNumber: queryInput.pageNumber,
         pageSize: queryInput.pageSize,
         totalCount

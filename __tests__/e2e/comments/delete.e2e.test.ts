@@ -7,7 +7,7 @@ import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { createComment } from '../../utils/comments/create-comment-in-post';
 import { getCommentDto } from '../../utils/comments/get-comment-dto';
 import { getUserDto } from '../../utils/users/get-user-dto';
-import { createPost } from '../../utils/posts/create-post';
+import { createPostAsAdmin } from '../../utils/posts/create-post.admin';
 
 
 
@@ -28,7 +28,7 @@ describe('DELETE Comment by postId', () => {
     const loginResOther = await createUserAndLogin(app, userOther);
     accessTokenOther = loginResOther.accessToken;
 
-    const post = await createPost(app);
+    const post = await createPostAsAdmin(app);
     console.log('Post created:', post.id);
     // Проверим, что пост доступен
     const getPostRes = await request(app)

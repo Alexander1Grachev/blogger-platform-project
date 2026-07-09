@@ -7,8 +7,11 @@ import { LikeStatusInputDto } from '../../../core/types/like-status-input.dto';
 import { LikesService } from '../../../likes/application/likes.service';
 
 
+
+
+
 @injectable()
-export class UpdateCommentLikeStatusController {
+export class UpdatePostLikeStatusController {
   constructor(
     @inject(LikesService) private readonly likesService: LikesService,
   ) { };
@@ -17,13 +20,14 @@ export class UpdateCommentLikeStatusController {
     res: Response<void>,
   ) => {
     try {
-      const userId = req.user?.userId ?? null;
-      const commentId = req.params.id;
-      await this.likesService.updateCommentLikeStatus(commentId, userId, req.body.likeStatus);
-      res.sendStatus(HttpStatus.NoContent);
+      const userId = req.user!.userId;
+      const postId = req.params.id;
+      await this.likesService.updatePostLikeStatus(postId, userId, req.body.likeStatus);
+      res.sendStatus(HttpStatus.NoContent)
     } catch (e: unknown) {
+      console.error(e);
+
       errorsHandler(e, res);
     }
   }
 }
-

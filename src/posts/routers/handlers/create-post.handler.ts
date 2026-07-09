@@ -16,9 +16,9 @@ export class CreatePostController {
     res: Response,
   ) => {
     try {
-
-      const createdPostId = await this.postsService.create(req.body);
-      const createdPost = await this.postsService.findById(createdPostId);
+      const userId = req.user?.userId ?? null;
+      const postId = await this.postsService.create(req.body);
+      const createdPost = await this.postsService.findById({ postId, userId });
 
       const postOutput = mapToPostOutput(createdPost);
       res.status(HttpStatus.Created).send(postOutput);

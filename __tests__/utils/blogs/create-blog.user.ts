@@ -8,8 +8,9 @@ import { getBlogDto } from './get-blog-dto';
 import { BlogInputDto } from '../../../src/blogs/application/dtos/blog-input-dto';
 import { BlogViewModel } from '../../../src/blogs/application/output/blog-view-model';
 
-export async function createBlog(
+export async function createBlogAsUser(
   app: Express,
+  accessToken: string,
   blogDto?: BlogInputDto,
 ): Promise<BlogViewModel> {
 
@@ -18,7 +19,7 @@ export async function createBlog(
 
   const createBlogResponse = await request(app)
     .post(BLOGS_PATH)
-    .set('Authorization', generateBasicAuthToken())
+    .set('Authorization', `Bearer ${accessToken}`)
     .send(testBlogData)
     .expect(HttpStatus.Created);
 

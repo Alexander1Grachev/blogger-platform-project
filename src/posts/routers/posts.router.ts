@@ -21,14 +21,23 @@ import { GetPostController } from './handlers/get-post.handler';
 import { UpdatePostHController } from './handlers/update-post.handler';
 import { container } from "../../composition-root";
 import { likeStatusMiddleware } from '../../core/middlewares/like-status.middleware';
+import { likeStatusValidation } from '../../core/middlewares/validation/input-like-status-validtion.middleware';
+import { UpdatePostLikeStatusController } from './handlers/update-post-like-status.handler';
 
 
 export const postsRouter = Router();
 
 postsRouter
-  .get('/:id', idValidation, inputValidationResultMiddleware, container.get(GetPostController).handle)
+  .get(
+    '/:id',
+    likeStatusMiddleware,
+    idValidation,
+    inputValidationResultMiddleware,
+    container.get(GetPostController).handle
+  )
   .get(
     '/',
+    likeStatusMiddleware,
     paginationAndSortingValidation(PostSortField),
     inputValidationResultMiddleware,
     container.get(GetPostListController).handle,
@@ -71,4 +80,12 @@ postsRouter
     CommentInputDtoValidation,
     inputValidationResultMiddleware,
     container.get(CreateCommentController).handle
+  )
+  .put(
+    `/:id/like-status`,
+    accessTokenGuardMiddleware,
+    idValidation,
+    likeStatusValidation,
+    inputValidationResultMiddleware,
+    container.get(UpdatePostLikeStatusController).handle,
   )

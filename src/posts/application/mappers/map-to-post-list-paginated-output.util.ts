@@ -1,18 +1,19 @@
 
 import { PostViewModel } from '../output/post-view-model';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
-import { PostDocument } from '../../domain/post.entity';
+import { PostMapperData } from './post-mapper-input';
 
 export function mapToPostListPaginatedOutput(
-  posts: PostDocument[],
-  meta: { pageNumber: number, pageSize: number, totalCount: number }
+  items: PostMapperData[],
+  meta: { pageNumber: number, pageSize: number, totalCount: number },
+
 ): PostListPaginatedOutput {
   return {
     page: meta.pageNumber,
     pageSize: meta.pageSize,
     pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
     totalCount: meta.totalCount,
-    items: posts.map((post): PostViewModel => ({
+    items: items.map(({ post, myStatus, newestLikes }): PostViewModel => ({
       id: post._id.toString(),
       title: post.title,
       shortDescription: post.shortDescription,
@@ -20,6 +21,12 @@ export function mapToPostListPaginatedOutput(
       blogId: post.blogId,
       blogName: post.blogName,
       createdAt: post.createdAt.toISOString(),
+      extendedLikesInfo: {
+        likesCount: post.extendedLikesInfo.likesCount,
+        dislikesCount: post.extendedLikesInfo.dislikesCount,
+        myStatus: myStatus,
+        newestLikes: newestLikes
+      }
     }))
   };
 }

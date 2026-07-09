@@ -3,10 +3,10 @@ import { HttpStatus } from '../../../src/core/consts/http-statuses';
 import { POSTS_PATH } from '../../../src/core/paths/paths';
 import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
 import { getPostDto } from '../../utils/posts/get-post-dto';
-import { createPost } from '../../utils/posts/create-post';
+import { createPostAsAdmin } from '../../utils/posts/create-post.admin';
 import { getTestApp } from '../../setup/start-test-app';
 import { clearDb } from '../../utils/clear-db';
-import { createBlog } from '../../utils/blogs/create-blog';
+import { createBlogAsAdmin } from '../../utils/blogs/create-blog.admin';
 
 describe('CREATE post check', () => {
   const app = getTestApp();
@@ -17,7 +17,7 @@ describe('CREATE post check', () => {
 
   beforeAll(async () => {
     await clearDb(app);
-    const blog = await createBlog(app);
+    const blog = await createBlogAsAdmin(app);
     blogId = blog.id;
     getPostDto(blogId);
   });
@@ -60,7 +60,7 @@ describe('CREATE post check', () => {
   });
 
   it('✅ should create post with valid data & auth', async () => {
-    const createdPost = await createPost(app);
+    const createdPost = await createPostAsAdmin(app);
 
     expect(createdPost).toMatchObject({
       id: expect.any(String),

@@ -18,6 +18,8 @@ export class GetPostsByBlogController {
   ) => {
     try {
       const blogId = req.params.id;
+      const userId = req.user?.userId ?? null;
+
       const sanitizedQuery = matchedData<PostQueryInput>(
         req,
         {
@@ -25,8 +27,11 @@ export class GetPostsByBlogController {
           includeOptionals: true,
         });
       const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery)
-      const { items, totalCount } = await this.postsService.getPostForBlog(blogId,
-        queryInput,)
+      const { items, totalCount } = await this.postsService.getPostForBlog(
+        blogId,
+        queryInput,
+        userId
+      )
 
       const postListOutput = mapToPostListPaginatedOutput(
         items, {

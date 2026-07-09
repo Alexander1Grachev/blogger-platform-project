@@ -5,7 +5,7 @@ import { generateBasicAuthToken } from '../../utils/generate-admin-auth-token';
 import { getBlogDto } from '../../utils/blogs/get-blog-dto';
 import { updateBlog } from '../../utils/blogs/update-blog';
 import { getBlogById } from '../../utils/blogs/get-blog-by-id';
-import { createBlog } from '../../utils/blogs/create-blog';
+import { createBlogAsAdmin } from '../../utils/blogs/create-blog.admin';
 import { getTestApp } from '../../setup/start-test-app';
 import { clearDb } from '../../utils/clear-db';
 import { BlogInputDto } from '../../../src/blogs/application/dtos/blog-input-dto';
@@ -18,7 +18,7 @@ describe('UPDATE blog checks', () => {
 
   beforeAll(async () => {
     await clearDb(app)
-    const blog = await createBlog(app);
+    const blog = await createBlogAsAdmin(app);
     blogId = blog.id
   });
 

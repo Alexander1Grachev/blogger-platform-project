@@ -10,7 +10,7 @@ import { PostDocument, PostModel } from '../domain/post.entity';
 export class PostsQueryRepository {
   async findMany(
     queryDto: PostQueryInput
-  ): Promise<{ items: PostDocument[]; totalCount: number }> {
+  ): Promise<{ posts: PostDocument[]; totalCount: number }> {
     const {
       pageNumber,
       pageSize,
@@ -20,7 +20,7 @@ export class PostsQueryRepository {
     const skip = (pageNumber - 1) * pageSize;
     const filter: any = {};
 
-    const [items, totalCount] = await Promise.all([
+    const [posts, totalCount] = await Promise.all([
       PostModel
         .find(filter)
         .sort({ [sortBy]: sortDirection })
@@ -28,7 +28,7 @@ export class PostsQueryRepository {
         .limit(pageSize),
       PostModel.countDocuments(filter)
     ]);
-    return { items, totalCount };
+    return { posts, totalCount };
   }
 
   async findByIdOrFail(id: string): Promise<PostDocument> {
@@ -42,12 +42,12 @@ export class PostsQueryRepository {
   async getPostForBlog(
     blogId: string,
     queryDto: PostQueryInput,
-  ): Promise<{ items:PostDocument[]; totalCount: number }> {
+  ): Promise<{ posts:PostDocument[]; totalCount: number }> {
     const { pageNumber, pageSize, sortBy, sortDirection } = queryDto;
     const skip = (pageNumber - 1) * pageSize;
     const filter = { 'blogId': blogId };
 
-    const [items, totalCount] = await Promise.all([
+    const [posts, totalCount] = await Promise.all([
       PostModel
         .find(filter)
         .sort({ [sortBy]: sortDirection })
@@ -55,6 +55,6 @@ export class PostsQueryRepository {
         .limit(pageSize),
       PostModel.countDocuments(filter),
     ]);
-    return { items, totalCount };
+    return { posts, totalCount };
   }
 };

@@ -68,6 +68,7 @@ import { LikesService } from "./likes/application/likes.service";
 import { LikesRepository } from "./likes/repositories/likes.repository";
 import { UpdateCommentLikeStatusController } from "./comments/routers/handlers/update-comment-like-status.handler";
 import { LikesQueryRepository } from "./likes/repositories/likes.query.repository";
+import { UpdatePostLikeStatusController } from "./posts/routers/handlers/update-post-like-status.handler";
 
 export const container = new Container({ defaultScope: 'Singleton' });
 
@@ -135,3 +136,4 @@ container.bind(UpdatePostHController).to(UpdatePostHController);
 container.bind(PasswordRecoveryController).to(PasswordRecoveryController);
 container.bind(NewPasswordController).to(NewPasswordController);
 container.bind(UpdateCommentLikeStatusController).to(UpdateCommentLikeStatusController);
+container.bind(UpdatePostLikeStatusController).to(UpdatePostLikeStatusController);

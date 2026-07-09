@@ -10,6 +10,12 @@ import { PostQueryInput } from "../routers/input/post-query.input";
 import { BlogPostInputDto } from "../../blogs/application/dtos/blog-post-input-dto";
 import { injectable, inject } from "inversify";
 import { PostDocument, PostModel } from "../domain/post.entity";
+import { LikeStatus } from "../../core/consts/like-statuses";
+import { LikeTargetType } from "../../likes/domain/like.entity";
+import { LikesQueryRepository } from "../../likes/repositories/likes.query.repository";
+import { AuthService } from "../../auth/application/auth-user.service";
+import { NewestLike } from "../../likes/domain/like-info";
+import { PostMapperData } from "./mappers/post-mapper-input";
 
 
 @injectable()
@@ -18,12 +24,63 @@ export class PostsService {
     @inject(BlogsQueryRepository) private readonly blogsQueryRepository: BlogsQueryRepository,
     @inject(PostsRepository) private readonly postsRepository: PostsRepository,
     @inject(PostsQueryRepository) private readonly postsQueryRepository: PostsQueryRepository,
-  ) { };
+    @inject(LikesQueryRepository) private readonly likesQueryRepository: LikesQueryRepository,
+    @inject(AuthService) private readonly authService: AuthService,
 
+  ) { };
   async findMany(
-    queryDto: PostQueryInput
-  ): Promise<{ items: PostDocument[]; totalCount: number }> {
-    return this.postsQueryRepository.findMany(queryDto);
+    queryDto: PostQueryInput,
+    userId: string | null
+  ): Promise<{
+    items: PostMapperData[];
+    totalCount: number
+  }> {
+    const { posts, totalCount } = await this.postsQueryRepository.findMany(queryDto);
+    const items = await this.enrichPosts(posts, userId);
+
+    return { items: items, totalCount: totalCount }
+  }
+
+  async getPostForBlog(
+    blogId: string,
+    queryDto: PostQueryInput,
+    userId: string | null,
+  ): Promise<{ items: PostMapperData[]; totalCount: number }> {
+    await this.blogsQueryRepository.findByIdOrFail(blogId);
+
+    const { posts, totalCount } = await this.postsQueryRepository.getPostForBlog(blogId, queryDto);
+    const items = await this.enrichPosts(posts, userId);
+    return { items, totalCount };
+  }
+
+  async findById(params: {
+    postId: string,
+    userId: string | null
+  }): Promise<{
+    post: PostDocument;
+    myStatus: LikeStatus;
+    newestLikes: NewestLike[];
+  }> {
+
+    const like = params.userId
+      ? await this.likesQueryRepository.getUserLike({
+        targetId: params.postId,
+        targetType: LikeTargetType.Post,
+        userId: params.userId
+      })
+      : null;
+    const myStatus = like?.status ?? LikeStatus.None;
+
+    const post = await this.postsQueryRepository.findByIdOrFail(params.postId);
+    const newestLikes = await this.likesQueryRepository.getNewestLikes({
+      targetId: params.postId,
+      targetType: LikeTargetType.Post,
+    });
+    return {
+      post,
+      myStatus,
+      newestLikes
+    }
   }
 
   async create(dto: PostInputDto): Promise<string> {
@@ -31,10 +88,6 @@ export class PostsService {
     const newPost = PostModel.createPost(dto, blog.id, blog.name);
 
     return this.postsRepository.save(newPost)
-  }
-
-  async findById(id: string): Promise<PostDocument> {
-    return this.postsQueryRepository.findByIdOrFail(id);
   }
 
   async update(
@@ -56,13 +109,34 @@ export class PostsService {
 
     return this.postsRepository.save(newPost);
   }
+  // -------------------------
+  // Private helpers
+  // -------------------------
+  private async enrichPosts(
+    posts: PostDocument[],
+    userId: string | null,
+  ): Promise<PostMapperData[]> {
 
-  async getPostForBlog(
-    blogId: string,
-    queryDto: PostQueryInput,
-  ): Promise<{ items: PostDocument[]; totalCount: number }> {
-    await this.blogsQueryRepository.findByIdOrFail(blogId)
-    
-    return this.postsQueryRepository.getPostForBlog(blogId, queryDto);
+    const postIds = posts.map(p => p._id);
+
+    const userStatuses = userId
+      ? await this.likesQueryRepository.getListUsersLikes({
+        targetId: postIds,
+        targetType: LikeTargetType.Post,
+        userId: userId,
+      }) : new Map<string, LikeStatus>();
+
+    const newestLikes = await this.likesQueryRepository.getListNewestLikes({
+      targetId: postIds,
+      targetType: LikeTargetType.Post,
+    })
+    const items = posts.map(post => ({
+      post,
+      myStatus: userStatuses.get(post._id.toString()) ?? LikeStatus.None,
+      newestLikes: newestLikes.get(post._id.toString()) ?? [],
+    }))
+
+    return items;
   }
+
 }

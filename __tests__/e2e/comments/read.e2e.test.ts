@@ -8,6 +8,7 @@ import { createComment } from '../../utils/comments/create-comment-in-post';
 import { getCommentDto } from '../../utils/comments/get-comment-dto';
 import { getUserDto } from '../../utils/users/get-user-dto';
 import { createUserAndLogin } from '../../utils/users/create-user-n-login.token';
+import { createPostAsAdmin } from '../../utils/posts/create-post.admin';
 
 describe('GET comment by id', () => {
   const app = getTestApp();
@@ -21,7 +22,10 @@ describe('GET comment by id', () => {
     const loginResOwner = await createUserAndLogin(app, userOwner);
     accessTokenOwner = loginResOwner.accessToken;
 
-    comment = await createComment(app, accessTokenOwner, getCommentDto());
+    const post = await createPostAsAdmin(app);
+    const postId = post.id;
+    const commentDto = getCommentDto();
+    comment = await createComment(app, accessTokenOwner, commentDto, postId);
     commentId = comment.id
   });
 

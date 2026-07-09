@@ -5,9 +5,9 @@ import { BLOGS_PATH, POSTS_PATH } from '../../../src/core/paths/paths';
 import { PostInputDto } from '../../../src/posts/application/dtos/post-input-dto';
 import { getPostDto } from '../../utils/posts/get-post-dto';
 import { createPostForBlog } from '../../utils/blogs/create-post-for-blog';
-import { createBlog } from '../../utils/blogs/create-blog';
 import { getTestApp } from '../../setup/start-test-app';
 import { clearDb } from "../../utils/clear-db";
+import { createBlogAsAdmin } from '../../utils/blogs/create-blog.admin';
 
 describe('CREATE post for blog check', () => {
   const app = getTestApp();
@@ -19,7 +19,7 @@ describe('CREATE post for blog check', () => {
 
   beforeAll(async () => {
     await clearDb(app)
-    const blog = await createBlog(app);
+    const blog = await createBlogAsAdmin(app);
     blogId = blog.id
     correctTestPostData = getPostDto(blogId);
   });

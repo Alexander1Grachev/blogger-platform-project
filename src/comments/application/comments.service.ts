@@ -12,6 +12,7 @@ import { PostsQueryRepository } from "../../posts/reposytories/posts.query.repos
 import { LikeStatus } from "../../core/consts/like-statuses";
 import { CommentDocument, CommentModel } from "../domain/comment.entity";
 import { LikesQueryRepository } from "../../likes/repositories/likes.query.repository";
+import { LikeTargetType } from "../../likes/domain/like.entity";
 
 
 @injectable()
@@ -30,8 +31,13 @@ export class CommentsService {
     commentId: string,
     userId: string | null
   ): Promise<{ comment: CommentDocument, myStatus: LikeStatus }> {
+    
     const like = userId
-      ? await this.likesQueryRepository.getUserLike({ commentId, userId })
+      ? await this.likesQueryRepository.getUserLike({
+        targetId: commentId,
+        targetType: LikeTargetType.Comment
+        , userId
+      })
       : null;
     const myStatus = like?.status ?? LikeStatus.None;
 
@@ -45,12 +51,16 @@ export class CommentsService {
     userId: string | null,
   ): Promise<{ items: { comment: CommentDocument, myStatus: LikeStatus }[], totalCount: number }> {
 
-    await this.postsService.findById(postId);
+    await this.postsQueryRepository.findByIdOrFail(postId);
     const { items, totalCount } = await this.commentsQueryRepository.findMany(postId, queryDto);
 
     const itemsWithStatus = await Promise.all(items.map(async (comment) => {
       const like = userId
-        ? await this.likesQueryRepository.getUserLike({ commentId: comment._id.toString(), userId })
+        ? await this.likesQueryRepository.getUserLike({
+          targetId: comment._id.toString(),
+          targetType: LikeTargetType.Comment,
+          userId
+        })
         : null;
       const myStatus = like?.status ?? LikeStatus.None;
       return { comment, myStatus };

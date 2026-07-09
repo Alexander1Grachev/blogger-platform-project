@@ -4,8 +4,10 @@ import { LikeStatus } from "../../core/consts/like-statuses";
 import { LikesQueryRepository } from "../repositories/likes.query.repository";
 import { LikesRepository } from "../repositories/likes.repository";
 import { CommentsRepository } from "../../comments/repositories/comments.repository";
-import { LikeModel } from "../domain/like.entity";
-
+import { LikeModel, LikeTargetType } from "../domain/like.entity";
+import { PostsQueryRepository } from "../../posts/reposytories/posts.query.repository";
+import { PostsRepository } from "../../posts/reposytories/posts.repository";
+import { UsersQueryRepository } from "../../users/repositories/users.query.repository";
 
 
 @injectable()
@@ -16,10 +18,13 @@ export class LikesService {
     @inject(CommentsQueryRepository) private readonly commentsQueryRepository: CommentsQueryRepository,
     @inject(LikesRepository) private readonly likesRepository: LikesRepository,
     @inject(LikesQueryRepository) private readonly likesQueryRepository: LikesQueryRepository,
+    @inject(PostsQueryRepository) private readonly postsQueryRepository: PostsQueryRepository,
+    @inject(PostsRepository) private readonly postsRepository: PostsRepository,
+    @inject(UsersQueryRepository) private readonly usersQueryRepository: UsersQueryRepository,
 
 
   ) { };
-  async updateLikeStatus(
+  async updateCommentLikeStatus(
     commentId: string,
     userId: string | null,
     statusDto: LikeStatus
@@ -27,27 +32,83 @@ export class LikesService {
     if (!userId) return;
 
     const comment = await this.commentsQueryRepository.findByIdOrFail(commentId);
-    const like = await this.likesQueryRepository.getUserLike({ commentId, userId });
+    const like = await this.likesQueryRepository.getUserLike({
+      targetId: commentId,
+      targetType: LikeTargetType.Comment,
+      userId
+    });
 
     if (statusDto === LikeStatus.None) {
-      await this.likesRepository.deleteLike(userId, commentId);
+      await this.likesRepository.deleteLike({
+        userId,
+        targetId: commentId,
+        targetType: LikeTargetType.Comment,
+      });
     } else if (like) {
       like.updateLikeStatus(statusDto);
       await this.likesRepository.save(like);
     } else {
+      const user = await this.usersQueryRepository.findByIdOrFail(userId);
       const newLike = LikeModel.createLike({
-        commentId,
+        targetId: commentId,
+        targetType: LikeTargetType.Comment,
         userId,
-        status: statusDto
+        status: statusDto,
+        login: user.login,
       });
       await this.likesRepository.save(newLike);
-      console.log('saved like:', newLike); // ?
+      //console.log('saved like:', newLike); // ?
     }
 
-    const { likesCount, dislikesCount } = await this.likesQueryRepository.countLikes(commentId);
-    console.log('counts:', { likesCount, dislikesCount }); // 
+    const { likesCount, dislikesCount } = await this.likesQueryRepository.countLikes({
+      targetId: commentId,
+      targetType: LikeTargetType.Comment
+    });
+    //console.log('counts:', { likesCount, dislikesCount }); // 
     comment.updateLikeInfo(likesCount, dislikesCount);
-    console.log('comment.likesInfo after update:', comment.likesInfo); // 
+    //console.log('comment.likesInfo after update:', comment.likesInfo); // 
     await this.commentsRepository.save(comment);
+  }
+
+  async updatePostLikeStatus(
+    postId: string,
+    userId: string,
+    statusDto: LikeStatus
+  ): Promise<void> {
+
+    const post = await this.postsQueryRepository.findByIdOrFail(postId);
+    const like = await this.likesQueryRepository.getUserLike({
+      targetId: postId,
+      targetType: LikeTargetType.Post,
+      userId
+    });
+
+    if (statusDto === LikeStatus.None) {
+      await this.likesRepository.deleteLike({
+        targetId: postId,
+        targetType: LikeTargetType.Post,
+        userId
+      });
+    } else if (like) {
+      like.updateLikeStatus(statusDto);
+      await this.likesRepository.save(like);
+    } else {
+      const user = await this.usersQueryRepository.findByIdOrFail(userId);
+      const newLike = LikeModel.createLike({
+        targetId: postId,
+        targetType: LikeTargetType.Post,
+        userId,
+        status: statusDto,
+        login: user.login,
+      });
+      await this.likesRepository.save(newLike);
+    }
+
+    const { likesCount, dislikesCount } = await this.likesQueryRepository.countLikes({
+      targetId: postId,
+      targetType: LikeTargetType.Post,
+    });
+    post.updateExtendedLikesInfo(likesCount, dislikesCount);
+    await this.postsRepository.save(post);
   }
 }

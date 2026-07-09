@@ -16,7 +16,7 @@ export class CreateCommentController {
   ) => {
     try {
       const postId = req.params.id;
-      const userId = req.user!.userId
+      const userId = req.user!.userId;
       if (!userId) {
         return res.sendStatus(HttpStatus.Unauthorized);
       };

@@ -1,10 +1,8 @@
 import mongoose, { HydratedDocument, model, Model } from "mongoose";
 import { CommentInputDto } from "../application/dtos/comment-input.dto";
+import { likeInfoSchema, LikeInfoView } from "../../likes/domain/like-info";
 
-type LikeInfoView = {
-  likesCount: number;
-  dislikesCount: number;
-}
+
 export type CommentatorInfoView = {
   userId: string;
   userLogin: string;
@@ -62,10 +60,6 @@ interface CommentStatics {
 }
 
 
-export const likeInfoSchema = ({
-  likesCount: { type: Number, required: true, default: 0 },
-  dislikesCount: { type: Number, required: true, default: 0 },
-})
 
 export const commentatorInfoSchema = {
   userId: { type: String, required: true },

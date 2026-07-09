@@ -9,7 +9,9 @@ import { getTestApp } from '../../setup/start-test-app';
 import { createUserAndLogin } from '../../utils/users/create-user-n-login.token';
 import { getUserDto } from '../../utils/users/get-user-dto';
 import { getCommentDto } from '../../utils/comments/get-comment-dto';
-import { createPost } from '../../utils/posts/create-post';
+import { createBlogAsAdmin } from '../../utils/blogs/create-blog.admin';
+import { createPostForBlog } from '../../utils/blogs/create-post-for-blog';
+import { createPostAsAdmin } from '../../utils/posts/create-post.admin';
 
 
 
@@ -23,8 +25,8 @@ describe('Create post comments', () => {
     const userOwner = getUserDto();
     const loginResOwner = await createUserAndLogin(app, userOwner);
     accessTokenOwner = loginResOwner.accessToken;
-
-    const post = await createPost(app);
+  
+    const post = await createPostAsAdmin(app);
     postId = post.id;
 
 
